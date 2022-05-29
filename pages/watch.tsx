@@ -5,6 +5,7 @@ import videojs from "video.js";
 import "video.js/dist/video-js.css";
 import { useEffect, useRef, useState } from 'react';
 import { DateTime } from "luxon";
+import Link from 'next/link';
 
 interface GeneralNSM {
 	id: number;
@@ -86,12 +87,11 @@ const Watch = (props: PageProps) => {
 								</svg>
 							</div>
 							<p className="text-lg">
-								<a
-									href="/content"
+								<Link href="/content"><a
 									className="pl-3 text-primary-100 font-semibold cursor-pointer"
 								>
 									Videos
-								</a>{' '}
+								</a></Link>{' '}
 								→ {props.video.title}
 							</p>
 						</div>
