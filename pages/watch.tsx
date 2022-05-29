@@ -104,13 +104,13 @@ const Watch = (props: PageProps) => {
 						{/* Title & Video info Container */}
 						<div className="title-container w-full h-fit mt-10">
 							<div className="title-info-container w-full h-fit relative">
-								<h1 className='text-5xl font-medium'>{props.video.title}</h1>
+								<h1 className='text-3xl sm:text-5xl font-medium'>{props.video.title}</h1>
 								<div className='title-runner flex items-center w-fit h-[60px] mt-1 mb-6'>
 									<div className='avatar rounded-full bg-[url(https://content.hillview.tv/images/mobile/default.jpg)] bg-cover bg-no-repeat bg-center w-[30px] h-[30px]'></div>
 									<p className='ml-3 font-medium text-neutral-800'>HillviewTV Team</p>
 									<p className='ml-6 font-light text-neutral-600'>{props.video.ft}</p>
 								</div>
-								<button onClick={() => {shareLink()}} className='absolute right-0 full-vertical w-[150px] h-[45px] bg-primary-100 duration-200 text-white rounded-sm hover:bg-[#2b55c5]'>{shareButtonText}</button>
+								<button onClick={() => {shareLink()}} className='hidden sm:block absolute right-0 full-vertical w-[150px] h-[45px] bg-primary-100 duration-200 text-white rounded-sm hover:bg-[#2b55c5]'>{shareButtonText}</button>
 							</div>
 							<div className="hr w-full h-[2px] bg-neutral-200"></div>
 							<div className="w-full h-fit py-10">

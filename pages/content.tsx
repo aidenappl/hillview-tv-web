@@ -88,14 +88,14 @@ const Content = (props: ContentPageProps) => {
 			<div className="content-page w-full h-fit flex justify-center items-center">
 				<div className="w-11/12 max-w-screen-2xl h-fit">
 					{/* Header */}
-					<div className="header h-[500px] w-full flex justify-center items-center">
+					<div className="header h-[275px] md:h-[500px] w-full flex justify-center items-center">
 						<div className="center-object">
-							<h1 className="text-6xl font-semibold text-center">
+							<h1 className="text-4xl sm:text-5xl md:text-6xl font-semibold text-center">
 								Our Content
 							</h1>
 							<input
 								type="text"
-								className="mt-14 w-[550px] h-12 rounded-md pl-5 bg-neutral-100 outline outline-neutral-150 mb-10"
+								className="mt-8 md:mt-14 w-[320px] sm:w-[450px] md:w-[550px] h-12 rounded-md pl-5 bg-neutral-100 outline outline-neutral-150 mb-10"
 								placeholder="Search"
 								value={searchQuery}
 								onChange={(e) => {
@@ -106,7 +106,7 @@ const Content = (props: ContentPageProps) => {
 					</div>
 
 					{/* Video List */}
-					<div className="video-list h-fit w-full flex justify-around flex-wrap gap-10 pb-10">
+					<div className="video-list h-fit w-full flex justify-around flex-wrap gap-12 sm:gap-10 pb-10">
 						{searching ? (
 							<div className="flex relative w-full items-center justify-center">
 								<svg
@@ -140,36 +140,41 @@ const Content = (props: ContentPageProps) => {
 											key={i.url}
 										>
 											<a>
-												<div className="group video w-[560px] h-[315px] overflow-hidden relative">
-													<div className="video-data absolute top-0 left-0 w-full h-full z-30 p-10 text-white duration-300 ease-in-out opacity-0 group-hover:opacity-100">
-														<h1 className="text-4xl font-semibold pb-5">
-															{i.title}
-														</h1>
-														<p>{i.description}</p>
+												<div className="group video w-[320px] h-[180px] md:w-[560px] md:h-[315px] relative">
+													<div className="video w-full h-full overflow-hidden relative">
+														<div className="video-data absolute top-0 left-0 w-full h-full z-30 p-10 text-white duration-300 ease-in-out opacity-0 sm:group-hover:opacity-100">
+															<h1 className="text-4xl font-semibold pb-5">
+																{i.title}
+															</h1>
+															<p>{i.description}</p>
+														</div>
+														<div className="video-play opacity-1 scale-100 w-full h-full flex justify-center items-center absolute z-20 duration-200 ease-in-out sm:group-hover:scale-75 sm:group-hover:opacity-0">
+															<svg
+																className="z-20 stroke-white fill-white opacity-80 w-[70px] h-[70px] feather feather-play"
+																xmlns="http://www.w3.org/2000/svg"
+																width="24"
+																height="24"
+																strokeLinecap="round"
+																strokeLinejoin="round"
+																viewBox="0 0 24 24"
+																fill="none"
+																stroke="currentColor"
+															>
+																<polygon points="5 3 19 12 5 21 5 3"></polygon>
+															</svg>
+														</div>
+														<div className="video-background w-full h-full duration-300 ease-in-out bg-black opacity-0 sm:group-hover:opacity-40 z-10 absolute"></div>
+														<div className="video-thumbnail h-full w-full relative duration-300 ease-in-out sm:group-hover:scale-110">
+															<Image
+																src={i.thumbnail}
+																alt={i.title}
+																layout="fill"
+															/>
+														</div>
 													</div>
-													<div className="video-play opacity-1 scale-100 w-full h-full flex justify-center items-center absolute z-20 duration-200 ease-in-out group-hover:scale-75 group-hover:opacity-0">
-														<svg
-															className="z-20 stroke-white fill-white opacity-80 w-[70px] h-[70px] feather feather-play"
-															xmlns="http://www.w3.org/2000/svg"
-															width="24"
-															height="24"
-															strokeLinecap="round"
-															strokeLinejoin="round"
-															viewBox="0 0 24 24"
-															fill="none"
-															stroke="currentColor"
-														>
-															<polygon points="5 3 19 12 5 21 5 3"></polygon>
-														</svg>
-													</div>
-													<div className="video-background w-full h-full duration-300 ease-in-out bg-black opacity-0 group-hover:opacity-40 z-10 absolute"></div>
-													<div className="video-thumbnail h-full w-full relative duration-300 ease-in-out group-hover:scale-110">
-														<Image
-															src={i.thumbnail}
-															alt={i.title}
-															layout="fill"
-														/>
-													</div>
+													<h1 className="sm:hidden text-md font-medium absolute bottom-[-30px]">
+														{i.title}
+													</h1>
 												</div>
 											</a>
 										</Link>
