@@ -40,6 +40,11 @@ a {
   top: 50%;
 }
 
+.full-x-center {
+  transform: translateX(-50%);
+  left: 50%;
+}
+
 .primary-container {
   min-height: -webkit-fill-available;
   min-height: 100vh;

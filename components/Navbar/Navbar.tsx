@@ -221,6 +221,7 @@ const Navbar = (props: NavbarProps) => {
 																	}
 																>
 																	<Image
+																		objectFit='cover'
 																		src={
 																			i.thumbnail
 																		}

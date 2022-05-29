@@ -42,9 +42,9 @@ const Content = (props: ContentPageProps) => {
 	const loadMoreVideos = async () => {
 		try {
 			const response = await QueryVideos('', videos.length.toString());
-			console.log(response, videos)
+			console.log(response, videos);
 			setVideos([...videos, ...response]);
-			console.log(videos)
+			console.log(videos);
 		} catch (error) {
 			console.log(error);
 		}
@@ -146,7 +146,9 @@ const Content = (props: ContentPageProps) => {
 															<h1 className="text-4xl font-semibold pb-5">
 																{i.title}
 															</h1>
-															<p>{i.description}</p>
+															<p>
+																{i.description}
+															</p>
 														</div>
 														<div className="video-play opacity-1 scale-100 w-full h-full flex justify-center items-center absolute z-20 duration-200 ease-in-out sm:group-hover:scale-75 sm:group-hover:opacity-0">
 															<svg
@@ -166,7 +168,10 @@ const Content = (props: ContentPageProps) => {
 														<div className="video-background w-full h-full duration-300 ease-in-out bg-black opacity-0 sm:group-hover:opacity-40 z-10 absolute"></div>
 														<div className="video-thumbnail h-full w-full relative duration-300 ease-in-out sm:group-hover:scale-110">
 															<Image
-																src={i.thumbnail}
+																objectFit="cover"
+																src={
+																	i.thumbnail
+																}
 																alt={i.title}
 																layout="fill"
 															/>
