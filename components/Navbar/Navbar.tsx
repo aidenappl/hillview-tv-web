@@ -321,7 +321,7 @@ const Navbar = (props: NavbarProps) => {
 			<div
 				className={
 					'fs-nav md:hidden relative left-0 w-full h-fit bg-white z-10 duration-200 ease-in-out ' +
-					(showMobileNav ? 'top-[0px] drop-shadow-lg' : 'top-[-350px] drop-shadow-none')
+					(showMobileNav ? 'top-[0px] shadow-lg' : 'top-[-350px] shadow-none')
 				}
 			>
 				<div className="nav-button-container w-full flex flex-wrap pb-1">

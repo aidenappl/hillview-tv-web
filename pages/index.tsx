@@ -5,7 +5,7 @@ import Layout from '../components/Layout';
 const Home: NextPage = () => {
 	return (
 		<Layout>
-			<div className='w-full h-[calc(100vh-100px)] relative'>
+			<div className='w-full h-[calc(100%-100px)] absolute'>
 				<div className="lander-content h-fit full-center w-11/12 max-w-[1800px] flex justify-between">
 					<div className="w-fit max-w-[50%]">
 						<p className="text-7xl sm:text-8xl 2xl:text-9xl font-semibold text-header-100 sm:whitespace-nowrap">

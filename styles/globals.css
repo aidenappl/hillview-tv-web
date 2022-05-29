@@ -40,6 +40,11 @@ a {
   top: 50%;
 }
 
+.primary-container {
+  min-height: -webkit-fill-available;
+  min-height: 100vh;
+}
+
 .header-stroke {
   font-family: Inter,sans-serif;
   -webkit-text-stroke: 2px black;
