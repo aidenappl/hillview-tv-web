@@ -37,27 +37,40 @@ const Content = (props: ContentPageProps) => {
 		setSearchQuery('');
 		setSearching(false);
 		setVideos(props.videos);
-	}
+	};
 
-	const SearchVideos = async (query: string) => {
+	const loadMoreVideos = async () => {
 		try {
-			const response = await axios.get(`https://api.hillview.tv/video/v1.1/list/videos?limit=24&offset=0&search=${query}`)
+			const response = await QueryVideos('', videos.length.toString());
+			console.log(response, videos)
+			setVideos([...videos, ...response]);
+			console.log(videos)
+		} catch (error) {
+			console.log(error);
+		}
+	};
+
+	const QueryVideos = async (query: string, offset: string) => {
+		try {
+			const response = await axios.get(
+				`https://api.hillview.tv/video/v1.1/list/videos?limit=24&offset=${offset}&search=${query}`
+			);
 			return response.data || [];
 		} catch (error) {
-			throw error
+			throw error;
 		}
-	} 
+	};
 
 	const handleSearch = async (e: any) => {
 		try {
 			setSearchQuery(e.target.value);
-			let value = e.target.value.trim()
+			let value = e.target.value.trim();
 
 			if (value.length > 0) {
 				setSearching(true);
 				clearTimeout(timeout);
 				const newTimer = setTimeout(async () => {
-					const response: Video[] = await SearchVideos(value);
+					const response: Video[] = await QueryVideos(value, '0');
 					setVideos(response);
 					setSearching(false);
 				}, 500);
@@ -68,7 +81,7 @@ const Content = (props: ContentPageProps) => {
 		} catch (error) {
 			console.error(error);
 		}
-	}
+	};
 
 	return (
 		<Layout>
@@ -165,8 +178,21 @@ const Content = (props: ContentPageProps) => {
 							</>
 						)}
 					</div>
-					<div className={'w-full h-full flex justify-center items-center py-20' + ((showLoadBtn)  ? '' : ' hidden') + (searching || videos.length < 20 ? ' hidden' : '')}>
-						<button className='w-[150px] h-[42px] bg-primary-100 text-white rounded-md cursor-pointer outline-none mb-20'>Load More</button>
+					<div
+						className={
+							'w-full h-full flex justify-center items-center py-20' +
+							(showLoadBtn ? '' : ' hidden') +
+							(searching || videos.length < 20 ? ' hidden' : '')
+						}
+					>
+						<button
+							onClick={() => {
+								loadMoreVideos();
+							}}
+							className="w-[150px] h-[42px] bg-primary-100 text-white rounded-md cursor-pointer outline-none mb-20"
+						>
+							Load More
+						</button>
 					</div>
 				</div>
 			</div>
