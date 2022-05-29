@@ -172,7 +172,7 @@ const Content = (props: ContentPageProps) => {
 															/>
 														</div>
 													</div>
-													<h1 className="sm:hidden text-md font-medium absolute bottom-[-30px]">
+													<h1 className="sm:hidden text-md font-medium absolute bottom-[-30px] text-neutral-800">
 														{i.title}
 													</h1>
 												</div>
