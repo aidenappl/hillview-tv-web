@@ -338,10 +338,10 @@ const Navbar = (props: NavbarProps) => {
 			</div>
 			<div
 				className={
-					'fs-dark w-full h-[100vh] absolute top-0 left-0 z-[1] bg-black duration-300 ' +
+					'fs-dark w-full h-[100vh] absolute top-0 left-0 z-[1] ' +
 					(showMobileNav
-						? 'opacity-10 pointer-events-auto'
-						: 'opacity-0 pointer-events-none')
+						? 'pointer-events-auto'
+						: 'pointer-events-none')
 				}
 				onClick={() => {
 					setShowMobileNav(false);
