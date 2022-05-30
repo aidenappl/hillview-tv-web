@@ -126,7 +126,9 @@ export const getServerSideProps: GetServerSideProps = async (context: any) => {
     	return {
     		props: {
                 playlist: playlist,
-                title: playlist.name
+                title: playlist.name,
+                description: playlist.description,
+                image: playlist.banner_image
             },
     	};
     } catch (error) {
