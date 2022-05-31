@@ -68,17 +68,9 @@ const Playlists = (props: PlaylistsPageProps) => {
 												<h1 className="font-medium text-lg sm:text-xl ml-5 w-[calc(100%-100px)]">
 													{i.name}
 												</h1>
-												<Link
-													href={
-														'/playlist/' + i.route
-													}
-												>
-													<a className="hidden sm:block right-0 absolute pr-5">
-														<button className="w-[130px] h-[40px] bg-primary-100 rounded-md text-white font-normal">
-															View Playlist
-														</button>
-													</a>
-												</Link>
+													<button className="w-[130px] h-[40px] bg-primary-100 rounded-md text-white font-normal">
+														View Playlist
+													</button>
 											</div>
 										</a>
 									</Link>
