@@ -25,15 +25,18 @@ function HillviewWeb({ Component, pageProps }: AppProps) {
   const RouteProtection = (props: RouteGuardParams) => {
     const { children } = props;
 
-    useEffect(async () => {
-      const response = await LookupRoute(router.asPath)
-      if (children.props.statusCode === 404 && router.asPath) {
-        console.log(response)
-        if (response.destination) {
-          router.replace(response.destination)
-          return
+    useEffect(() => {
+      const fetchData = async () => {
+        const response = await LookupRoute(router.asPath)
+        if (children.props.statusCode === 404 && router.asPath) {
+          console.log(response)
+          if (response.destination) {
+            router.replace(response.destination)
+            return
+          }
         }
       }
+      fetchData()
       if (children.props.redirect !== undefined) {
         router.push({
             pathname: children.props.redirect,
