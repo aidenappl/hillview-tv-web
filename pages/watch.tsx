@@ -113,7 +113,7 @@ const Watch = (props: PageProps) => {
 								<button onClick={() => {shareLink()}} className='hidden sm:block absolute right-0 full-vertical w-[150px] h-[45px] bg-primary-100 duration-200 text-white rounded-sm hover:bg-[#2b55c5]'>{shareButtonText}</button>
 							</div>
 							<div className="hr w-full h-[2px] bg-neutral-200"></div>
-							<div className="w-full h-fit py-10">
+							<div className="w-full h-fit py-10 whitespace-pre-wrap">
 								<p>{props.video.description}</p>
 							</div>
 						</div>
