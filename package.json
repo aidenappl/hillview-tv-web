@@ -11,12 +11,16 @@
   "dependencies": {
     "@types/luxon": "^2.3.2",
     "@types/video.js": "^7.3.40",
+    "@types/videojs-contrib-quality-levels": "^2.0.1",
+    "@types/videojs-hls-quality-selector": "^1.1.0",
     "axios": "^0.27.2",
     "luxon": "^2.4.0",
     "next": "12.1.6",
     "react": "18.1.0",
     "react-dom": "18.1.0",
-    "video.js": "^7.19.2"
+    "video.js": "^7.19.2",
+    "videojs-contrib-quality-levels": "^2.1.0",
+    "videojs-hls-quality-selector": "^1.1.4"
   },
   "devDependencies": {
     "@types/node": "17.0.35",
