@@ -146,7 +146,7 @@ const Content = (props: ContentPageProps) => {
 															<h1 className="text-4xl font-semibold pb-5">
 																{i.title}
 															</h1>
-															<p>
+															<p className="line-clamp-5">
 																{i.description}
 															</p>
 														</div>

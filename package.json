@@ -9,6 +9,7 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@tailwindcss/line-clamp": "^0.4.2",
     "@types/luxon": "^2.3.2",
     "@types/video.js": "^7.3.40",
     "@types/videojs-contrib-quality-levels": "^2.0.1",
