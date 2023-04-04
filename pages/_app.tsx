@@ -1,13 +1,10 @@
 import '../styles/globals.css';
 import type { AppProps } from 'next/app';
 import PageHead from '../components/PageHead';
-import { Children, useEffect, useState } from 'react';
-import { useRouter } from 'next/router';
-import axios from 'axios';
+import { config as fontawesomeConfig } from '@fortawesome/fontawesome-svg-core';
+import '@fortawesome/fontawesome-svg-core/styles.css';
 
-interface RouteGuardParams {
-	children: any;
-}
+fontawesomeConfig.autoAddCss = false;
 
 function HillviewWeb({ Component, pageProps }: AppProps) {
 	return (

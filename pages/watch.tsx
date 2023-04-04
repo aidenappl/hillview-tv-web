@@ -9,6 +9,8 @@ import { useEffect, useRef, useState } from 'react';
 import { DateTime } from 'luxon';
 import Link from 'next/link';
 import VideoPlayer from '../components/Player/Player';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faDownload } from '@fortawesome/free-solid-svg-icons';
 
 interface GeneralNSM {
 	id: number;
@@ -24,6 +26,8 @@ interface Video {
 	thumbnail: string;
 	url: string;
 	status: GeneralNSM;
+	allow_downloads: boolean;
+	download_url: string;
 	inserted_at: Date;
 }
 
@@ -35,7 +39,6 @@ const Watch = (props: PageProps) => {
 	const router = useRouter();
 
 	const videoRef = useRef(null);
-	const [initialized, setInitialized] = useState(false);
 	const [player, setPlayer] = useState({} as VideoJsPlayer);
 
 	let liveURL = props.video.url;
@@ -64,7 +67,7 @@ const Watch = (props: PageProps) => {
 
 			videojs.registerPlugin('hlsQualitySelector', qualitySelector);
 			videojs.registerPlugin('qualityLevels', qualityLevels);
-			
+
 			const p = videojs(
 				videoRef.current,
 				videoJsOptions,
@@ -73,17 +76,16 @@ const Watch = (props: PageProps) => {
 				}
 			);
 
-
 			setPlayer(p);
 
-			player.qualityLevels()
+			player.qualityLevels();
 			player.hlsQualitySelector({ displayCurrentQuality: true });
 
 			return () => {
 				if (player) player.dispose();
 			};
 		}
-	}
+	};
 
 	const shareLink = () => {
 		let fullUrl = window.location.href;
@@ -137,7 +139,7 @@ const Watch = (props: PageProps) => {
 
 						{/* Video Container */}
 						<div className="video-container w-full h-fit">
-							<VideoPlayer url={props.video.url}/>
+							<VideoPlayer url={props.video.url} />
 						</div>
 
 						{/* Title & Video info Container */}
@@ -155,14 +157,25 @@ const Watch = (props: PageProps) => {
 										{props.video.ft}
 									</p>
 								</div>
-								<button
-									onClick={() => {
-										shareLink();
-									}}
-									className="hidden sm:block absolute right-0 full-vertical w-[150px] h-[45px] bg-primary-100 duration-200 text-white rounded-sm hover:bg-[#2b55c5]"
-								>
-									{shareButtonText}
-								</button>
+								<div className="absolute right-0 full-vertical flex items-center gap-4">
+									{props.video.allow_downloads &&
+									props.video.download_url ? (
+										<div className="cursor-pointer group">
+											<FontAwesomeIcon
+												icon={faDownload}
+												className="text-xl text-neutral-600 group-hover:text-neutral-900 transition cursor-pointer"
+											/>
+										</div>
+									) : null}
+									<button
+										onClick={() => {
+											shareLink();
+										}}
+										className="hidden sm:block w-[150px] h-[45px] bg-primary-100 duration-200 text-white rounded-sm hover:bg-[#2b55c5]"
+									>
+										{shareButtonText}
+									</button>
+								</div>
 							</div>
 							<div className="hr w-full h-[2px] bg-neutral-200"></div>
 							<div className="w-full h-fit py-10 whitespace-pre-wrap">
@@ -180,7 +193,7 @@ export const getServerSideProps: GetServerSideProps = async (context: any) => {
 	try {
 		let id = context.query.v;
 		const response = await fetch(
-			'https://api.hillview.tv/video/v1.1/read/videoByID/' + id
+			'https://api.hillview.tv/video/v1.1/video?id=' + id
 		);
 
 		if (response.ok) {
