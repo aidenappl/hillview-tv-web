@@ -9,6 +9,8 @@ import { useEffect, useRef, useState } from 'react';
 import { DateTime } from 'luxon';
 import Link from 'next/link';
 import VideoPlayer from '../components/Player/Player';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faDownload } from '@fortawesome/free-solid-svg-icons';
 
 interface GeneralNSM {
 	id: number;
@@ -157,14 +159,45 @@ const Watch = (props: PageProps) => {
 										{props.video.ft}
 									</p>
 								</div>
-								<button
-									onClick={() => {
-										shareLink();
-									}}
-									className="hidden sm:block absolute right-0 full-vertical w-[150px] h-[45px] bg-primary-100 duration-200 text-white rounded-sm hover:bg-[#2b55c5]"
-								>
-									{shareButtonText}
-								</button>
+								<div className="absolute right-0 full-vertical flex items-center gap-4">
+									{props.video.allow_downloads &&
+									props.video.download_url ? (
+										<div
+											className="cursor-pointer group"
+											onClick={() => {
+												// new JsFileDownloader({
+												// 	url: props.video
+												// 		.download_url,
+												// })
+												// 	.then(function () {
+												// 		// Called when download ended
+												// 	})
+												// 	.catch(function (error) {
+												// 		// Called when an error occurred
+												// 	});
+											}}
+										>
+											<FontAwesomeIcon
+												icon={faDownload}
+												className="text-xl text-neutral-600 group-hover:text-neutral-900 transition cursor-pointer"
+											/>
+											<a
+												href={props.video.download_url}
+												className="hidden"
+												id="download-video-a"
+												download
+											/>
+										</div>
+									) : null}
+									<button
+										onClick={() => {
+											shareLink();
+										}}
+										className="hidden sm:block w-[150px] h-[45px] bg-primary-100 duration-200 text-white rounded-sm hover:bg-[#2b55c5]"
+									>
+										{shareButtonText}
+									</button>
+								</div>
 							</div>
 							<div className="hr w-full h-[2px] bg-neutral-200"></div>
 							<div className="w-full h-fit py-10 whitespace-pre-wrap">
