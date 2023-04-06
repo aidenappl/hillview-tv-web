@@ -122,10 +122,7 @@ const Watch = (props: PageProps) => {
 									strokeLinecap="round"
 									strokeLinejoin="round"
 								>
-									<polyline
-										_ngcontent-waj-c10=""
-										points="15 18 9 12 15 6"
-									></polyline>
+									<polyline points="15 18 9 12 15 6"></polyline>
 								</svg>
 							</div>
 							<p className="text-lg">
