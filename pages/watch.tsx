@@ -19,10 +19,13 @@ interface GeneralNSM {
 interface Video {
 	ft: string;
 	id: number;
+	uuid: string;
 	title: string;
 	description: string;
 	thumbnail: string;
 	url: string;
+	download_url?: string;
+	allow_downloads: boolean;
 	status: GeneralNSM;
 	inserted_at: Date;
 }
@@ -64,7 +67,7 @@ const Watch = (props: PageProps) => {
 
 			videojs.registerPlugin('hlsQualitySelector', qualitySelector);
 			videojs.registerPlugin('qualityLevels', qualityLevels);
-			
+
 			const p = videojs(
 				videoRef.current,
 				videoJsOptions,
@@ -73,17 +76,16 @@ const Watch = (props: PageProps) => {
 				}
 			);
 
-
 			setPlayer(p);
 
-			player.qualityLevels()
+			player.qualityLevels();
 			player.hlsQualitySelector({ displayCurrentQuality: true });
 
 			return () => {
 				if (player) player.dispose();
 			};
 		}
-	}
+	};
 
 	const shareLink = () => {
 		let fullUrl = window.location.href;
@@ -137,7 +139,7 @@ const Watch = (props: PageProps) => {
 
 						{/* Video Container */}
 						<div className="video-container w-full h-fit">
-							<VideoPlayer url={props.video.url}/>
+							<VideoPlayer url={props.video.url} />
 						</div>
 
 						{/* Title & Video info Container */}
@@ -178,9 +180,9 @@ const Watch = (props: PageProps) => {
 
 export const getServerSideProps: GetServerSideProps = async (context: any) => {
 	try {
-		let id = context.query.v;
+		let uuid = context.query.v;
 		const response = await fetch(
-			'https://api.hillview.tv/video/v1.1/read/videoByID/' + id
+			'https://api.hillview.tv/video/v1.1/video?uuid=' + uuid
 		);
 
 		if (response.ok) {

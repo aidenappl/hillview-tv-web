@@ -13,6 +13,7 @@ interface GeneralNSM {
 
 interface Video {
 	id: number;
+	uuid: string;
 	title: string;
 	description: string;
 	thumbnail: string;
@@ -136,7 +137,7 @@ const Content = (props: ContentPageProps) => {
 								{videos.map((i) => {
 									return (
 										<Link
-											href={'/watch?v=' + i.id}
+											href={'/watch?v=' + i.uuid}
 											key={i.url}
 										>
 											<a>
