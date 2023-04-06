@@ -11,6 +11,7 @@ import Link from 'next/link';
 import VideoPlayer from '../components/Player/Player';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faDownload } from '@fortawesome/free-solid-svg-icons';
+import JsFileDownloader from 'js-file-downloader';
 
 interface GeneralNSM {
 	id: number;
@@ -160,10 +161,30 @@ const Watch = (props: PageProps) => {
 								<div className="absolute right-0 full-vertical flex items-center gap-4">
 									{props.video.allow_downloads &&
 									props.video.download_url ? (
-										<div className="cursor-pointer group">
+										<div
+											className="cursor-pointer group"
+											onClick={() => {
+												new JsFileDownloader({
+													url: props.video
+														.download_url,
+												})
+													.then(function () {
+														// Called when download ended
+													})
+													.catch(function (error) {
+														// Called when an error occurred
+													});
+											}}
+										>
 											<FontAwesomeIcon
 												icon={faDownload}
 												className="text-xl text-neutral-600 group-hover:text-neutral-900 transition cursor-pointer"
+											/>
+											<a
+												href={props.video.download_url}
+												className="hidden"
+												id="download-video-a"
+												download
 											/>
 										</div>
 									) : null}
