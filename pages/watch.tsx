@@ -11,6 +11,7 @@ import Link from "next/link";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faDownload } from "@fortawesome/free-solid-svg-icons";
 import { saveAs } from "file-saver";
+import axios from "axios";
 
 interface GeneralNSM {
   id: number;
@@ -48,7 +49,24 @@ const Watch = (props: PageProps) => {
 
   useEffect(() => {
     initPlayer();
+    recordView();
   }, []);
+
+  const recordView = async () => {
+    try {
+      let response = await axios({
+        method: "POST",
+        url: `https://api.hillview.tv/video/v1.1/recordView/${props.video.uuid}`,
+      });
+      if (response.status === 204) {
+        console.log("View Recorded");
+      } else {
+        console.log("View Not Recorded");
+      }
+    } catch (error) {
+      console.error(error);
+    }
+  };
 
   const initPlayer = () => {
     if (videoRef.current) {

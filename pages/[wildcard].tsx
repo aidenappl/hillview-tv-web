@@ -8,7 +8,7 @@ const WildcardHandler: NextPage = () => {
 const LookupRoute = async (path: string) => {
 	try {
 		const response = await axios.get(
-			`https://api.hillview.tv/links/v1.1/check/${path}`
+			`https://api.hillview.tv/links/v1.1/check/${path}?recordClick=true`
 		);
 		return response.data;
 	} catch (error) {
