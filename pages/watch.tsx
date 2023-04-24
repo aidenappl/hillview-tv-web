@@ -43,7 +43,7 @@ const Watch = (props: PageProps) => {
   const [initialized, setInitialized] = useState(false);
   const [player, setPlayer] = useState({} as VideoJsPlayer);
 
-  let liveURL = props.video.url;
+  let liveURL = props.video.url.replaceAll("/manifest/video.m3u8", "/iframe");
 
   const [shareButtonText, updateShareButtonText] = useState("Share Video");
 
@@ -141,7 +141,17 @@ const Watch = (props: PageProps) => {
 
             {/* Video Container */}
             <div className="video-container w-full h-fit">
-              <VideoPlayer url={props.video.url} />
+              {/* <VideoPlayer url={props.video.url} /> */}
+              <div className="relative pt-[56.25%]">
+                <iframe
+                  src={
+                    liveURL + "?preload=auto&poster=" + props.video.thumbnail
+                  }
+                  className="border-none absolute top-0 h-full w-full"
+                  allow="accelerometer; gyroscope; autoplay; encrypted-media; picture-in-picture;"
+                  allowFullScreen={true}
+                ></iframe>
+              </div>
             </div>
 
             {/* Title & Video info Container */}
