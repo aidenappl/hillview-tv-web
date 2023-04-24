@@ -4,13 +4,11 @@ import { useRouter } from "next/router";
 import videojs, { VideoJsPlayer, VideoJsPlayerOptions } from "video.js";
 import qualitySelector from "videojs-hls-quality-selector";
 import qualityLevels from "videojs-contrib-quality-levels";
-import "video.js/dist/video-js.css";
 import { useEffect, useRef, useState } from "react";
 import { DateTime } from "luxon";
 import Link from "next/link";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faDownload } from "@fortawesome/free-solid-svg-icons";
-import { saveAs } from "file-saver";
 import axios from "axios";
 
 interface GeneralNSM {
@@ -40,17 +38,74 @@ interface PageProps {
 const Watch = (props: PageProps) => {
   const router = useRouter();
 
-  const videoRef = useRef(null);
-  const [player, setPlayer] = useState({} as VideoJsPlayer);
-
   let liveURL = props.video.url.replaceAll("/manifest/video.m3u8", "/iframe");
 
   const [shareButtonText, updateShareButtonText] = useState("Share Video");
+  const [progress, setProgress] = useState(0);
+  const [eta, setEta] = useState(0);
+  const [downloadInProgress, setDownloadInProgress] = useState(false);
 
   useEffect(() => {
-    initPlayer();
     recordView();
   }, []);
+
+  const handleDownload = async (url: string) => {
+    if (downloadInProgress) return;
+    setDownloadInProgress(true);
+    let startTime = Date.now();
+    let lastProgress = 0;
+
+    try {
+      const response = await axios.get(url, {
+        responseType: "blob",
+        headers: {
+          Accept: "video/mp4",
+          "Content-Type": "video/mp4",
+        },
+        onDownloadProgress: (progressEvent) => {
+          const progress = Math.round(
+            (progressEvent.loaded / progressEvent.total) * 100
+          );
+          setProgress(progress);
+          if (progress != lastProgress) {
+            const elapsedTime = Date.now() - startTime!;
+            const remainingTime = (elapsedTime / progress) * (100 - progress);
+            setEta(remainingTime);
+          }
+          lastProgress = progress;
+        },
+      });
+      console.log(response);
+
+      const blob = response.data
+      const urlObject = URL.createObjectURL(blob);
+      const link = document.createElement("a");
+      link.href = urlObject;
+      link.download = props.video.title.replaceAll(" ", "_") + ".mp4";
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+      setDownloadInProgress(false);
+    } catch (error) {
+      console.error("Error downloading file:", error);
+    }
+  };
+
+  const formatTime = (milliseconds: any) => {
+    const seconds = Math.round(milliseconds / 1000);
+    const minutes = Math.floor(seconds / 60);
+    const remainingSeconds = seconds % 60;
+    if (progress === 0) {
+      return "Calculating...";
+    }
+    if (minutes === 0) {
+      if (remainingSeconds < 30) {
+        return `Less than a minute remaining...`;
+      }
+      return `About ${remainingSeconds} seconds remaining...`;
+    }
+    return `About ${minutes} minutes remaining...`;
+  };
 
   const recordView = async () => {
     try {
@@ -68,44 +123,6 @@ const Watch = (props: PageProps) => {
     }
   };
 
-  const initPlayer = () => {
-    if (videoRef.current) {
-      const videoJsOptions: VideoJsPlayerOptions = {
-        preload: "auto",
-        autoplay: "any",
-        controls: true,
-        fluid: true,
-        responsive: true,
-        sources: [
-          {
-            src: liveURL,
-            type: "application/x-mpegURL",
-          },
-        ],
-      };
-
-      videojs.registerPlugin("hlsQualitySelector", qualitySelector);
-      videojs.registerPlugin("qualityLevels", qualityLevels);
-
-      const p = videojs(
-        videoRef.current,
-        videoJsOptions,
-        function onPlayerReaady() {
-          console.log("onPlayerReady");
-        }
-      );
-
-      setPlayer(p);
-
-      player.qualityLevels();
-      player.hlsQualitySelector({ displayCurrentQuality: true });
-
-      return () => {
-        if (player) player.dispose();
-      };
-    }
-  };
-
   const shareLink = () => {
     let fullUrl = window.location.href;
     navigator.clipboard.writeText(fullUrl);
@@ -116,8 +133,40 @@ const Watch = (props: PageProps) => {
     }, 3000);
   };
 
+  useEffect(() => {
+    const progressBar = document.getElementById("progress-bar");
+    if (progressBar) {
+      progressBar.style.width = `${progress}%`;
+    }
+  }, [progress]);
+
   return (
     <Layout>
+      {downloadInProgress ? (
+        <div className="w-full h-screen fixed top-0 left-0 flex items-end justify-center z-10 pointer-events-none">
+          <div className="bg-white px-6 py-5 rounded-md shadow-lg border-[1px] border-slate-100 w-4/5 max-w-[700px] mb-10 flex flex-col gap-1">
+            <h2 className="font-semibold text-slate-900">
+              Downloading Video...
+            </h2>
+            <p className="text-slate-500 font-light">
+              We are currently exporting your video. This can take some time as
+              we try to give you the highest quality possible.
+            </p>
+            <div className="flex items-center gap-3 mt-3">
+              <div className="w-full h-[30px] border-2 border-[#739dd8] relative rounded-md overflow-hidden">
+                <div
+                  id="progress-bar"
+                  className={`z-10 h-full bg-primary-100 absolute top-0 left-0`}
+                ></div>
+              </div>
+              <p className="font-semibold">{progress}%</p>
+            </div>
+            <p className="whitespace-nowrap text-slate-700">
+              {formatTime(eta)}
+            </p>
+          </div>
+        </div>
+      ) : null}
       {!props.video ? (
         ""
       ) : (
@@ -189,28 +238,10 @@ const Watch = (props: PageProps) => {
                 <div className="absolute right-0 full-vertical flex items-center gap-4">
                   {props.video.allow_downloads && props.video.download_url ? (
                     <div
-                      className="cursor-pointer group"
+                      className="cursor-pointer group w-[20px] h-[20px]"
                       onClick={async () => {
                         try {
-                          // Fetch the file from the URL
-                          const response = await fetch(
-                            props.video.download_url!
-                          );
-
-                          if (!response.ok) {
-                            throw new Error(
-                              `Error fetching the file: ${response.statusText}`
-                            );
-                          }
-
-                          // Read the file as a Blob
-                          const blob = await response.blob();
-
-                          // Save the file using FileSaver
-                          saveAs(
-                            blob,
-                            props.video.title.replaceAll(" ", "_") + ".mp4"
-                          );
+                          handleDownload(props.video.download_url!);
                         } catch (error) {
                           console.error(
                             "Error downloading the MP4 file:",

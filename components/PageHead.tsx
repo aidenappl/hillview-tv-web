@@ -45,11 +45,6 @@ const PageHead = ({
 			/>
 			<meta name="theme-color" content="#ffffff" />
 
-			<link
-				href="https://vjs.zencdn.net/5.11/video-js.min.css"
-				rel="stylesheet"
-			/>
-
 			<meta charSet="utf-8" />
 
 			<meta name="description" content={description} />
