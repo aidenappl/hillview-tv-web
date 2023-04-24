@@ -52,7 +52,7 @@ const Playlists = (props: PlaylistsPageProps) => {
           </div>
           {/* Content */}
           <div className="content w-full h-fit flex justify-center">
-            <div className="w-full max-w-[900px] h-fit flex flex-col gap-4">
+            <div className="w-full max-w-[900px] h-fit flex flex-col gap-4 pb-[100px]">
               {props.playlists.map((i) => {
                 return (
                   <Link href={"/playlist/" + i.route} key={i.id}>
