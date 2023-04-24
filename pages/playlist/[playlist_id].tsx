@@ -3,6 +3,7 @@ import Layout from "../../components/Layout";
 import Image from "next/image";
 import Link from "next/link";
 import ContentImage from "../../components/ContentImage";
+import { Video } from "../content";
 
 interface PlaylsitPageProps {
   playlist: Playlist;
@@ -22,16 +23,6 @@ interface GeneralNSM {
   id: number;
   name: string;
   short_name: string;
-}
-
-interface Video {
-  id: number;
-  title: string;
-  description: string;
-  thumbnail: string;
-  url: string;
-  status: GeneralNSM;
-  inserted_at: Date;
 }
 
 const Playlist = (props: PlaylsitPageProps) => {
@@ -59,7 +50,7 @@ const Playlist = (props: PlaylsitPageProps) => {
           <div className="video-list h-fit w-full flex justify-around flex-wrap gap-12 sm:gap-10 pb-10">
             {props.playlist.videos.map((i) => {
               return (
-                <Link href={"/watch?v=" + i.id} key={i.url}>
+                <Link href={"/watch?v=" + i.uuid} key={i.url}>
                   <a>
                     <div className="group video w-[320px] h-[180px] md:w-[560px] md:h-[315px] relative">
                       <div className="video w-full h-full overflow-hidden relative">
@@ -67,7 +58,7 @@ const Playlist = (props: PlaylsitPageProps) => {
                           <h1 className="text-4xl font-semibold pb-5">
                             {i.title}
                           </h1>
-                          <p>{i.description}</p>
+                          <p className="line-clamp-5">{i.description}</p>
                         </div>
                         <div className="video-play opacity-1 scale-100 w-full h-full flex justify-center items-center absolute z-20 duration-200 ease-in-out sm:group-hover:scale-75 sm:group-hover:opacity-0">
                           <svg
