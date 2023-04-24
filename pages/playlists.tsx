@@ -40,32 +40,33 @@ const Playlists = (props: PlaylistsPageProps) => {
       <div className="playlist-page w-full h-fit flex justify-center items-center relative">
         <div className="w-11/12 max-w-screen-2xl h-fit">
           {/* Header */}
-          <div className="header h-[150px] md:h-[400px] w-full flex justify-center items-center">
+          <div className="header h-[150px] md:h-[350px] w-full flex justify-center items-center">
             <div className="center-object">
               <h1 className="text-4xl sm:text-5xl md:text-6xl font-semibold text-center">
                 Playlists
               </h1>
+              <p className="pt-2 md:pt-4 text-[#9493a3] md:text-xl">
+                A more curated look at our content
+              </p>
             </div>
           </div>
           {/* Content */}
           <div className="content w-full h-fit flex justify-center">
-            <div className="w-fit h-fit">
+            <div className="w-full max-w-[900px] h-fit flex flex-col gap-4">
               {props.playlists.map((i) => {
                 return (
                   <Link href={"/playlist/" + i.route} key={i.id}>
-                    <a>
-                      <div className="w-full sm:w-[750px] h-[85px] bg-neutral-50 basis-5 mb-6 rounded-lg shadow-md border-2 border-neutral-100 flex items-center relative">
-                        <div className="avatar w-[80px] sm:w-[120px] h-[70px] rounded-lg ml-1 relative overflow-hidden block">
-                          <ContentImage image={i.banner_image} alt={i.name} />
-                        </div>
-                        <h1 className="font-medium text-lg sm:text-xl ml-5 w-[calc(100%-100px)]">
-                          {i.name}
-                        </h1>
-                        <button className="w-[130px] h-[40px] bg-primary-100 rounded-md text-white font-normal">
-                          View Playlist
-                        </button>
+                    <div className="cursor-pointer p-3 w-full bg-neutral-50 rounded-lg shadow-md border-2 border-neutral-100 flex items-center relative">
+                      <div className="avatar w-[80px] sm:w-[100px] h-[65px] rounded-lg relative overflow-hidden block flex-shrink-0">
+                        <ContentImage image={i.banner_image} alt={i.name} />
                       </div>
-                    </a>
+                      <h1 className="pr-2 line-clamp-1 font-medium overflow-ellipsis max-w-full text-lg sm:text-xl ml-5 w-[calc(100%-100px)]">
+                        {i.name}
+                      </h1>
+                      <button className="hidden sm:block px-5 whitespace-nowrap py-2 bg-primary-100 rounded-md text-white font-normal">
+                        View Playlist
+                      </button>
+                    </div>
                   </Link>
                 );
               })}
