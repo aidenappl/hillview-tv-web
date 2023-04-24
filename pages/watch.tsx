@@ -156,7 +156,7 @@ const Watch = (props: PageProps) => {
             {/* Title & Video info Container */}
             <div className="title-container w-full h-fit mt-10">
               <div className="title-info-container w-full h-fit relative">
-                <h1 className="text-3xl sm:text-5xl font-medium">
+                <h1 className="text-3xl sm:text-5xl font-medium w-full pr-[150px]">
                   {props.video.title}
                 </h1>
                 <div className="title-runner flex items-center w-fit h-[60px] mt-1 mb-6">
@@ -189,7 +189,10 @@ const Watch = (props: PageProps) => {
                           const blob = await response.blob();
 
                           // Save the file using FileSaver
-                          saveAs(blob, "your-filename.mp4");
+                          saveAs(
+                            blob,
+                            props.video.title.replaceAll(" ", "_") + ".mp4"
+                          );
                         } catch (error) {
                           console.error(
                             "Error downloading the MP4 file:",
