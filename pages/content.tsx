@@ -90,14 +90,14 @@ const Content = (props: ContentPageProps) => {
       <div className="content-page w-full h-fit flex justify-center items-center">
         <div className="w-11/12 max-w-screen-2xl h-fit">
           {/* Header */}
-          <div className="header h-[275px] md:h-[500px] w-full flex justify-center items-center">
+          <div className="header h-[275px] md:h-[450px] w-full flex justify-center items-center">
             <div className="center-object">
               <h1 className="text-4xl sm:text-5xl md:text-6xl font-semibold text-center">
                 Our Content
               </h1>
               <input
                 type="text"
-                className="mt-8 md:mt-14 w-[320px] sm:w-[450px] md:w-[550px] h-12 rounded-md pl-5 bg-neutral-100 outline outline-neutral-150 mb-10"
+                className="mt-8 md:mt-10 w-[320px] sm:w-[450px] md:w-[550px] h-12 rounded-md pl-5 bg-neutral-100 outline outline-neutral-150 mb-10"
                 placeholder="Search"
                 value={searchQuery}
                 onChange={(e) => {
