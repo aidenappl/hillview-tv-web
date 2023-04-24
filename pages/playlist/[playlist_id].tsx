@@ -37,7 +37,7 @@ interface Video {
 const Playlist = (props: PlaylsitPageProps) => {
   return (
     <Layout>
-      <div className="content-page w-full h-fit flex justify-center items-center">
+      <div className="content-page w-full h-fit flex justify-center items-center pb-[100px]">
         <div className="w-11/12 max-w-screen-2xl h-fit">
           {/* Header */}
           <div className="header h-[275px] md:h-[400px] w-full flex justify-center items-center">
