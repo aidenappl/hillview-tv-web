@@ -24,7 +24,7 @@ const Home: NextPage = () => {
             </Link>
           </div>
           <div className="w-fit max-w-[50%] hidden lg:block">
-            <div className="relative full-vertical sun bg-[url('/assets/logos/sun.png')] w-[20rem] 2xl:w-[30rem] h-[20rem] 2xl:h-[30rem] bg-no-repeat bg-contain bg-center"></div>
+            <div className="relative full-vertical sun bg-[url('/assets/logos/sun.png')] w-[20rem] 2xl:w-[30rem] h-[20rem] 2xl:h-[30rem] bg-no-repeat bg-cover bg-center"></div>
           </div>
         </div>
       </div>
