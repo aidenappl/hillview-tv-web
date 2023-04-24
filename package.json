@@ -17,6 +17,7 @@
     "@types/videojs-contrib-quality-levels": "^2.0.1",
     "@types/videojs-hls-quality-selector": "^1.1.0",
     "axios": "^0.27.2",
+    "file-saver": "^2.0.5",
     "luxon": "^2.4.0",
     "next": "12.1.6",
     "react": "18.1.0",
@@ -26,6 +27,7 @@
     "videojs-hls-quality-selector": "^1.1.4"
   },
   "devDependencies": {
+    "@types/file-saver": "^2.0.5",
     "@types/node": "17.0.35",
     "@types/react": "18.0.9",
     "@types/react-dom": "18.0.4",

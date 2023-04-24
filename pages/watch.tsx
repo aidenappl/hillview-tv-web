@@ -1,4 +1,4 @@
-import type { GetServerSideProps, NextPage } from "next";
+import type { GetServerSideProps } from "next";
 import Layout from "../components/Layout";
 import { useRouter } from "next/router";
 import videojs, { VideoJsPlayer, VideoJsPlayerOptions } from "video.js";
@@ -8,9 +8,9 @@ import "video.js/dist/video-js.css";
 import { useEffect, useRef, useState } from "react";
 import { DateTime } from "luxon";
 import Link from "next/link";
-import VideoPlayer from "../components/Player/Player";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faDownload } from "@fortawesome/free-solid-svg-icons";
+import { saveAs } from "file-saver";
 
 interface GeneralNSM {
   id: number;
@@ -40,7 +40,6 @@ const Watch = (props: PageProps) => {
   const router = useRouter();
 
   const videoRef = useRef(null);
-  const [initialized, setInitialized] = useState(false);
   const [player, setPlayer] = useState({} as VideoJsPlayer);
 
   let liveURL = props.video.url.replaceAll("/manifest/video.m3u8", "/iframe");
@@ -173,28 +172,35 @@ const Watch = (props: PageProps) => {
                   {props.video.allow_downloads && props.video.download_url ? (
                     <div
                       className="cursor-pointer group"
-                      onClick={() => {
-                        // new JsFileDownloader({
-                        // 	url: props.video
-                        // 		.download_url,
-                        // })
-                        // 	.then(function () {
-                        // 		// Called when download ended
-                        // 	})
-                        // 	.catch(function (error) {
-                        // 		// Called when an error occurred
-                        // 	});
+                      onClick={async () => {
+                        try {
+                          // Fetch the file from the URL
+                          const response = await fetch(
+                            props.video.download_url!
+                          );
+
+                          if (!response.ok) {
+                            throw new Error(
+                              `Error fetching the file: ${response.statusText}`
+                            );
+                          }
+
+                          // Read the file as a Blob
+                          const blob = await response.blob();
+
+                          // Save the file using FileSaver
+                          saveAs(blob, "your-filename.mp4");
+                        } catch (error) {
+                          console.error(
+                            "Error downloading the MP4 file:",
+                            error
+                          );
+                        }
                       }}
                     >
                       <FontAwesomeIcon
                         icon={faDownload}
                         className="text-xl text-neutral-600 group-hover:text-neutral-900 transition cursor-pointer"
-                      />
-                      <a
-                        href={props.video.download_url}
-                        className="hidden"
-                        id="download-video-a"
-                        download
                       />
                     </div>
                   ) : null}
