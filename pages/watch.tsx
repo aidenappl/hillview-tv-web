@@ -50,6 +50,11 @@ const Watch = (props: PageProps) => {
   }, []);
 
   const handleDownload = async (url: string) => {
+    if (url === undefined) return;
+    if (url.includes("customer-nakrsdfbtn3mdz5z.cloudflarestream.com")) {
+      window.open(url, "_blank");
+      return;
+    }
     if (downloadInProgress) return;
     setDownloadInProgress(true);
     let startTime = Date.now();
@@ -77,7 +82,7 @@ const Watch = (props: PageProps) => {
       });
       console.log(response);
 
-      const blob = response.data
+      const blob = response.data;
       const urlObject = URL.createObjectURL(blob);
       const link = document.createElement("a");
       link.href = urlObject;
