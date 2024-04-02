@@ -38,7 +38,21 @@ interface PageProps {
 const Watch = (props: PageProps) => {
   const router = useRouter();
 
-  let liveURL = props.video.url.replaceAll("/manifest/video.m3u8", "/iframe");
+  console.log(props.video.url)
+  let liveURL = props.video.url
+
+  if (props.video.url.includes("customer-nakrsdfbtn3mdz5z.cloudflarestream.com")) {
+    // Cloudflare Video
+    liveURL = liveURL.replaceAll("/manifest/video.m3u8", "/iframe");
+  } else if (props.video.url.includes("vimeo")) {
+    // Vimeo Video
+    const regex = /\/external\/(\d+)\.m3u8/;
+    const match = liveURL.match(regex);
+    if (match === null || match.length < 2) {
+      console.error("Vimeo URL not found");
+    }
+    liveURL = "https://player.vimeo.com/video/" + match![1]
+  }
 
   const [shareButtonText, updateShareButtonText] = useState("Share Video");
   const [progress, setProgress] = useState(0);
@@ -52,6 +66,7 @@ const Watch = (props: PageProps) => {
   const handleDownload = async (url: string) => {
     if (url === undefined) return;
     if (url.includes("customer-nakrsdfbtn3mdz5z.cloudflarestream.com")) {
+      console.log("Opening in new tab")
       window.open(url, "_blank");
       return;
     }
