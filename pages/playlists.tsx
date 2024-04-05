@@ -1,8 +1,6 @@
-import axios from "axios";
-import type { GetServerSideProps, NextPage } from "next";
+import type { GetServerSideProps } from "next";
 import Link from "next/link";
 import Layout from "../components/Layout";
-import Image from "next/image";
 import ContentImage from "../components/ContentImage";
 interface PlaylistsPageProps {
   playlists: Playlist[];

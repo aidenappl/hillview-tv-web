@@ -1,8 +1,7 @@
-import type { GetServerSideProps, NextPage } from "next";
+import type { GetServerSideProps } from "next";
+import { useState } from "react";
 import Link from "next/link";
-import { useEffect, useState } from "react";
 import Layout from "../components/Layout";
-import Image from "next/image";
 import axios from "axios";
 import ContentImage from "../components/ContentImage";
 

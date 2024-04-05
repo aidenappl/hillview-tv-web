@@ -1,10 +1,7 @@
 import type { GetServerSideProps } from "next";
 import Layout from "../components/Layout";
 import { useRouter } from "next/router";
-import videojs, { VideoJsPlayer, VideoJsPlayerOptions } from "video.js";
-import qualitySelector from "videojs-hls-quality-selector";
-import qualityLevels from "videojs-contrib-quality-levels";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import { DateTime } from "luxon";
 import Link from "next/link";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -38,10 +35,12 @@ interface PageProps {
 const Watch = (props: PageProps) => {
   const router = useRouter();
 
-  console.log(props.video.url)
-  let liveURL = props.video.url
+  console.log(props.video.url);
+  let liveURL = props.video.url;
 
-  if (props.video.url.includes("customer-nakrsdfbtn3mdz5z.cloudflarestream.com")) {
+  if (
+    props.video.url.includes("customer-nakrsdfbtn3mdz5z.cloudflarestream.com")
+  ) {
     // Cloudflare Video
     liveURL = liveURL.replaceAll("/manifest/video.m3u8", "/iframe");
   } else if (props.video.url.includes("vimeo")) {
@@ -51,7 +50,7 @@ const Watch = (props: PageProps) => {
     if (match === null || match.length < 2) {
       console.error("Vimeo URL not found");
     }
-    liveURL = "https://player.vimeo.com/video/" + match![1]
+    liveURL = "https://player.vimeo.com/video/" + match![1];
   }
 
   const [shareButtonText, updateShareButtonText] = useState("Share Video");
@@ -66,7 +65,7 @@ const Watch = (props: PageProps) => {
   const handleDownload = async (url: string) => {
     if (url === undefined) return;
     if (url.includes("customer-nakrsdfbtn3mdz5z.cloudflarestream.com")) {
-      console.log("Opening in new tab")
+      console.log("Opening in new tab");
       window.open(url, "_blank");
       return;
     }

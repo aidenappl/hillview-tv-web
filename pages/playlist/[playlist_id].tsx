@@ -1,6 +1,5 @@
-import type { GetServerSideProps, NextPage } from "next";
+import type { GetServerSideProps } from "next";
 import Layout from "../../components/Layout";
-import Image from "next/image";
 import Link from "next/link";
 import ContentImage from "../../components/ContentImage";
 import { Video } from "../content";
