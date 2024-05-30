@@ -54,7 +54,7 @@ const Content = (props: ContentPageProps) => {
   const QueryVideos = async (query: string, offset: string) => {
     try {
       const response = await axios.get(
-        `https://api.hillview.tv/video/v1.1/list/videos?limit=24&offset=${offset}&search=${query}`
+        `https://api.hillview.tv/video/v1.1/list/videos?limit=24&offset=${offset}&search=${query}&sort=desc&by=views`
       );
       return response.data || [];
     } catch (error) {

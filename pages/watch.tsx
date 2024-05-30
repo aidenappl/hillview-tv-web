@@ -39,7 +39,11 @@ const Watch = (props: PageProps) => {
   let liveURL = props.video.url;
 
   if (
-    props.video.url.includes("customer-nakrsdfbtn3mdz5z.cloudflarestream.com")
+    props.video.url.includes(
+      "customer-nakrsdfbtn3mdz5z.cloudflarestream.com"
+    ) ||
+    props.video.url.includes("cloudflarestream.com") ||
+    props.video.url.includes("videodelivery.net")
   ) {
     // Cloudflare Video
     liveURL = liveURL.replaceAll("/manifest/video.m3u8", "/iframe");
