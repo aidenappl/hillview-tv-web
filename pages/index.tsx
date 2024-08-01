@@ -26,7 +26,7 @@ const Home: NextPage = () => {
         .email({ tlds: { allow: false } })
         .required(),
     });
-    let response = schema.validate({ email: newsletterEmail });
+    let response = schema.validate({ email: newsletterEmail.trim() });
     if (response.error) {
       // Error handle bad email & exit flow
       toast.error("Must have a valid email address");
@@ -72,7 +72,7 @@ const Home: NextPage = () => {
             required
             value={newsletterEmail}
             onChange={(e) => {
-              setNewsletterEmail(e.target.value);
+              setNewsletterEmail(e.target.value.trim());
             }}
             onKeyUp={(e) => {
               if (e.key == "Enter") {
