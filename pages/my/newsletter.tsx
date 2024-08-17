@@ -18,9 +18,9 @@ const MyNewsletter: NextPage = () => {
   }, []);
 
   return (
-    <div className="w-full justify-center flex flex-wrap text-center pt-20">
-      <div className="max-w-[1000px] flex justify-center flex-wrap">
-        <h1 className="text-2xl font-semibold w-full text-center">
+    <div className="flex flex-wrap justify-center w-full pt-20 text-center">
+      <div className="flex max-w-[1000px] flex-wrap justify-center">
+        <h1 className="w-full text-2xl font-semibold text-center">
           HillviewTV Newsletter
         </h1>
         {!success ? (
@@ -32,7 +32,7 @@ const MyNewsletter: NextPage = () => {
               home page to restart your HillviewTV Newsletter.
             </p>
             <button
-              className="px-3.5 w-[140px] py-2.5 bg-primary-100 text-white text-sm font-semibold rounded-md shadow flex items-center justify-center"
+              className="flex w-[140px] items-center justify-center rounded-md bg-primary-100 px-3.5 py-2.5 text-sm font-semibold text-white shadow"
               onClick={async () => {
                 // handle unsubscribe
                 if (loadingNewsletter) return;
@@ -67,11 +67,11 @@ const MyNewsletter: NextPage = () => {
           </>
         ) : (
           <>
-            <p className="py-4 w-full">
+            <p className="w-full py-4">
               Successfully unsubscribed {email} from all future notifications.
             </p>
             <Link href={"/"}>
-              <a className="px-3.5 w-[140px] py-2.5 bg-primary-100 text-white text-sm font-semibold rounded-md shadow flex items-center justify-center">
+              <a className="flex w-[140px] items-center justify-center rounded-md bg-primary-100 px-3.5 py-2.5 text-sm font-semibold text-white shadow">
                 Go Home
               </a>
             </Link>
