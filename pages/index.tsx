@@ -59,8 +59,8 @@ const Home: NextPage = () => {
 
   return (
     <Layout>
-      <div className="px-10 w-full h-fit flex-wrap gap-4 py-6 md:gap-12 md:flex-nowrap md:h-[90px] bg-primary-500 md:absolute flex items-center justify-center z-20">
-        <h5 className="text-center md:text-left text-white text-md sm:text-lg lg:text-xl font-semibold">
+      <div className="px-6 w-full h-fit flex-wrap gap-4 py-5 md:gap-12 md:flex-nowrap md:h-[90px] bg-primary-500 md:absolute flex items-center justify-center z-20">
+        <h5 className="text-center md:text-left text-white text-sm sm:text-md md:text-lg lg:text-xl font-semibold">
           Want to be notified when a new production is uploaded?
         </h5>
         <div className="flex gap-3 w-full md:w-1/3 max-w-[500px]">
@@ -103,16 +103,16 @@ const Home: NextPage = () => {
       <div className="w-full h-[calc(100%-300px)] md:h-[calc(100%-100px)] absolute z-10">
         <div className="lander-content h-fit full-center w-11/12 max-w-screen-2xl flex justify-between">
           <div className="w-fit max-w-[50%]">
-            <p className="text-7xl sm:text-8xl 2xl:text-9xl font-semibold text-header-100 sm:whitespace-nowrap">
+            <p className="text-5xl sm:text-8xl 2xl:text-9xl font-semibold text-header-100 sm:whitespace-nowrap">
               Good Morning <br></br>
               <b className="font-bold header-stroke text-white">Hillview</b>
             </p>
-            <p className="text-header-200 text-xl sm:text-2xl my-5 whitespace-nowrap">
+            <p className="text-header-200 text-md sm:text-2xl my-5 whitespace-nowrap">
               Putting the spotlight on the stories <br></br>that matter.
             </p>
             <Link href="/content">
               <a>
-                <button className="w-[10rem] h-[44px] text-white bg-primary-100 rounded-md font-semibold my-4 2xl:my-10">
+                <button className="text-sm sm:text-md px-6 py-2.5 text-white bg-primary-100 rounded-md font-semibold my-4 2xl:my-10">
                   The Latest
                 </button>
               </a>
