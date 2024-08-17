@@ -35,33 +35,33 @@ interface Video {
 const Playlists = (props: PlaylistsPageProps) => {
   return (
     <Layout>
-      <div className="playlist-page w-full h-fit flex justify-center items-center relative">
-        <div className="w-11/12 max-w-screen-2xl h-fit">
+      <div className="relative flex items-center justify-center w-full playlist-page h-fit">
+        <div className="w-11/12 h-fit max-w-screen-2xl">
           {/* Header */}
-          <div className="header h-[150px] md:h-[350px] w-full flex justify-center items-center">
+          <div className="header flex h-[150px] w-full items-center justify-center md:h-[350px]">
             <div className="center-object">
-              <h1 className="text-4xl sm:text-5xl md:text-6xl font-semibold text-center">
+              <h1 className="text-4xl font-semibold text-center sm:text-5xl md:text-6xl">
                 Playlists
               </h1>
-              <p className="pt-2 md:pt-4 text-[#9493a3] md:text-xl">
+              <p className="pt-2 text-[#9493a3] md:pt-4 md:text-xl">
                 A more curated look at our content
               </p>
             </div>
           </div>
           {/* Content */}
-          <div className="content w-full h-fit flex justify-center">
-            <div className="w-full max-w-[900px] h-fit flex flex-col gap-4 pb-[100px]">
+          <div className="flex justify-center w-full content h-fit">
+            <div className="flex h-fit w-full max-w-[900px] flex-col gap-4 pb-[100px]">
               {props.playlists.map((i) => {
                 return (
                   <Link href={"/playlist/" + i.route} key={i.id}>
-                    <div className="cursor-pointer p-3 w-full bg-neutral-50 rounded-lg shadow-md border-2 border-neutral-100 flex items-center relative">
-                      <div className="avatar w-[80px] sm:w-[100px] h-[65px] rounded-lg relative overflow-hidden block flex-shrink-0">
+                    <div className="relative flex items-center w-full p-3 border-2 rounded-lg shadow-md cursor-pointer border-neutral-100 bg-neutral-50">
+                      <div className="avatar relative block h-[65px] w-[80px] flex-shrink-0 overflow-hidden rounded-lg sm:w-[100px]">
                         <ContentImage image={i.banner_image} alt={i.name} />
                       </div>
-                      <h1 className="pr-2 line-clamp-1 font-medium overflow-ellipsis max-w-full text-lg sm:text-xl ml-5 w-[calc(100%-100px)]">
+                      <h1 className="ml-5 line-clamp-1 w-[calc(100%-100px)] max-w-full overflow-ellipsis pr-2 text-lg font-medium sm:text-xl">
                         {i.name}
                       </h1>
-                      <button className="hidden sm:block px-5 whitespace-nowrap py-2 bg-primary-100 rounded-md text-white font-normal">
+                      <button className="hidden px-5 py-2 font-normal text-white rounded-md whitespace-nowrap bg-primary-100 sm:block">
                         View Playlist
                       </button>
                     </div>
@@ -79,7 +79,7 @@ const Playlists = (props: PlaylistsPageProps) => {
 export const getServerSideProps: GetServerSideProps = async (context: any) => {
   try {
     const response = await fetch(
-      "https://api.hillview.tv/video/v1.1/list/playlists?limit=24&offset=0"
+      "https://api.hillview.tv/video/v1.1/list/playlists?limit=24&offset=0",
     );
 
     if (!response.ok) {

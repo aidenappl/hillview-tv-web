@@ -40,7 +40,7 @@ const Watch = (props: PageProps) => {
 
   if (
     props.video.url.includes(
-      "customer-nakrsdfbtn3mdz5z.cloudflarestream.com"
+      "customer-nakrsdfbtn3mdz5z.cloudflarestream.com",
     ) ||
     props.video.url.includes("cloudflarestream.com") ||
     props.video.url.includes("videodelivery.net")
@@ -87,7 +87,7 @@ const Watch = (props: PageProps) => {
         },
         onDownloadProgress: (progressEvent) => {
           const progress = Math.round(
-            (progressEvent.loaded / progressEvent.total) * 100
+            (progressEvent.loaded / progressEvent.total) * 100,
           );
           setProgress(progress);
           if (progress != lastProgress) {
@@ -166,20 +166,20 @@ const Watch = (props: PageProps) => {
   return (
     <Layout>
       {downloadInProgress ? (
-        <div className="w-full h-screen fixed top-0 left-0 flex items-end justify-center z-10 pointer-events-none">
-          <div className="bg-white px-6 py-5 rounded-md shadow-lg border-[1px] border-slate-100 w-4/5 max-w-[700px] mb-10 flex flex-col gap-1">
+        <div className="pointer-events-none fixed left-0 top-0 z-10 flex h-screen w-full items-end justify-center">
+          <div className="mb-10 flex w-4/5 max-w-[700px] flex-col gap-1 rounded-md border-[1px] border-slate-100 bg-white px-6 py-5 shadow-lg">
             <h2 className="font-semibold text-slate-900">
               Downloading Video...
             </h2>
-            <p className="text-slate-500 font-light">
+            <p className="font-light text-slate-500">
               We are currently exporting your video. This can take some time as
               we try to give you the highest quality possible.
             </p>
-            <div className="flex items-center gap-3 mt-3">
-              <div className="w-full h-[30px] border-2 border-[#739dd8] relative rounded-md overflow-hidden">
+            <div className="mt-3 flex items-center gap-3">
+              <div className="relative h-[30px] w-full overflow-hidden rounded-md border-2 border-[#739dd8]">
                 <div
                   id="progress-bar"
-                  className={`z-10 h-full bg-primary-100 absolute top-0 left-0`}
+                  className={`absolute left-0 top-0 z-10 h-full bg-primary-100`}
                 ></div>
               </div>
               <p className="font-semibold">{progress}%</p>
@@ -193,13 +193,13 @@ const Watch = (props: PageProps) => {
       {!props.video ? (
         ""
       ) : (
-        <div className="watch-page w-full h-fit flex justify-center items-center">
-          <div className="w-11/12 max-w-screen-xl h-fit">
+        <div className="watch-page flex h-fit w-full items-center justify-center">
+          <div className="h-fit w-11/12 max-w-screen-xl">
             {/* Header Breadcrumbs */}
-            <div className="breadcrumb-container w-full h-[100px] flex items-center ">
+            <div className="breadcrumb-container flex h-[100px] w-full items-center">
               <div
                 onClick={() => router.back()}
-                className="back-btn relative w-[50px] h-[50px] bg-white rounded-[15px] border-2 border-neutral-150 cursor-pointer flex justify-center items-center"
+                className="back-btn relative flex h-[50px] w-[50px] cursor-pointer items-center justify-center rounded-[15px] border-2 border-neutral-150 bg-white"
               >
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
@@ -220,7 +220,7 @@ const Watch = (props: PageProps) => {
               </div>
               <p className="text-lg">
                 <Link href="/content">
-                  <a className="pl-3 text-primary-100 font-semibold cursor-pointer">
+                  <a className="cursor-pointer pl-3 font-semibold text-primary-100">
                     Videos
                   </a>
                 </Link>{" "}
@@ -229,14 +229,14 @@ const Watch = (props: PageProps) => {
             </div>
 
             {/* Video Container */}
-            <div className="video-container w-full h-fit">
+            <div className="video-container h-fit w-full">
               {/* <VideoPlayer url={props.video.url} /> */}
               <div className="relative pt-[56.25%]">
                 <iframe
                   src={
                     liveURL + "?preload=auto&poster=" + props.video.thumbnail
                   }
-                  className="border-none absolute top-0 h-full w-full"
+                  className="absolute top-0 h-full w-full border-none"
                   allow="accelerometer; gyroscope; autoplay; encrypted-media; picture-in-picture;"
                   allowFullScreen={true}
                 ></iframe>
@@ -244,13 +244,13 @@ const Watch = (props: PageProps) => {
             </div>
 
             {/* Title & Video info Container */}
-            <div className="title-container w-full h-fit mt-10">
-              <div className="title-info-container w-full h-fit relative">
-                <h1 className="text-3xl sm:text-5xl font-medium w-full pr-[150px]">
+            <div className="title-container mt-10 h-fit w-full">
+              <div className="title-info-container relative h-fit w-full">
+                <h1 className="w-full pr-[150px] text-3xl font-medium sm:text-5xl">
                   {props.video.title}
                 </h1>
-                <div className="title-runner flex items-center w-fit h-[60px] mt-1 mb-6">
-                  <div className="avatar rounded-full bg-[url(https://content.hillview.tv/images/mobile/default.jpg)] bg-cover bg-no-repeat bg-center w-[30px] h-[30px]"></div>
+                <div className="title-runner mb-6 mt-1 flex h-[60px] w-fit items-center">
+                  <div className="avatar h-[30px] w-[30px] rounded-full bg-[url(https://content.hillview.tv/images/mobile/default.jpg)] bg-cover bg-center bg-no-repeat"></div>
                   <p className="ml-3 font-medium text-neutral-800">
                     HillviewTV Team
                   </p>
@@ -258,24 +258,24 @@ const Watch = (props: PageProps) => {
                     {props.video.ft}
                   </p>
                 </div>
-                <div className="absolute right-0 full-vertical flex items-center gap-4">
+                <div className="full-vertical absolute right-0 flex items-center gap-4">
                   {props.video.allow_downloads && props.video.download_url ? (
                     <div
-                      className="cursor-pointer group w-[20px] h-[20px]"
+                      className="group h-[20px] w-[20px] cursor-pointer"
                       onClick={async () => {
                         try {
                           handleDownload(props.video.download_url!);
                         } catch (error) {
                           console.error(
                             "Error downloading the MP4 file:",
-                            error
+                            error,
                           );
                         }
                       }}
                     >
                       <FontAwesomeIcon
                         icon={faDownload}
-                        className="text-xl text-neutral-600 group-hover:text-neutral-900 transition cursor-pointer"
+                        className="cursor-pointer text-xl text-neutral-600 transition group-hover:text-neutral-900"
                       />
                     </div>
                   ) : null}
@@ -283,14 +283,14 @@ const Watch = (props: PageProps) => {
                     onClick={() => {
                       shareLink();
                     }}
-                    className="hidden sm:block w-[150px] h-[45px] bg-primary-100 duration-200 text-white rounded-sm hover:bg-[#2b55c5]"
+                    className="hidden h-[45px] w-[150px] rounded-sm bg-primary-100 text-white duration-200 hover:bg-[#2b55c5] sm:block"
                   >
                     {shareButtonText}
                   </button>
                 </div>
               </div>
-              <div className="hr w-full h-[2px] bg-neutral-200"></div>
-              <div className="w-full h-fit py-10 whitespace-pre-wrap">
+              <div className="hr h-[2px] w-full bg-neutral-200"></div>
+              <div className="h-fit w-full whitespace-pre-wrap py-10">
                 <p>{props.video.description}</p>
               </div>
             </div>
@@ -305,13 +305,13 @@ export const getServerSideProps: GetServerSideProps = async (context: any) => {
   try {
     let q = context.query.v;
     const response = await fetch(
-      "https://api.hillview.tv/video/v1.1/video/" + q
+      "https://api.hillview.tv/video/v1.1/video/" + q,
     );
 
     if (response.ok) {
       const data = await response.json();
       data.ft = DateTime.fromISO(data.inserted_at.toString()).toFormat(
-        "MMMM dd, yyyy"
+        "MMMM dd, yyyy",
       );
       return {
         props: {

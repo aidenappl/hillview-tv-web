@@ -54,7 +54,7 @@ const Content = (props: ContentPageProps) => {
   const QueryVideos = async (query: string, offset: string) => {
     try {
       const response = await axios.get(
-        `https://api.hillview.tv/video/v1.1/list/videos?limit=24&offset=${offset}&search=${query}&sort=desc&by=views`
+        `https://api.hillview.tv/video/v1.1/list/videos?limit=24&offset=${offset}&search=${query}&sort=desc&by=views`,
       );
       return response.data || [];
     } catch (error) {
@@ -86,17 +86,17 @@ const Content = (props: ContentPageProps) => {
 
   return (
     <Layout>
-      <div className="content-page w-full h-fit flex justify-center items-center">
-        <div className="w-11/12 max-w-screen-2xl h-fit">
+      <div className="flex items-center justify-center w-full content-page h-fit">
+        <div className="w-11/12 h-fit max-w-screen-2xl">
           {/* Header */}
-          <div className="header h-[275px] md:h-[450px] w-full flex justify-center items-center">
+          <div className="header flex h-[275px] w-full items-center justify-center md:h-[450px]">
             <div className="center-object">
-              <h1 className="text-4xl sm:text-5xl md:text-6xl font-semibold text-center">
+              <h1 className="text-4xl font-semibold text-center sm:text-5xl md:text-6xl">
                 Our Content
               </h1>
               <input
                 type="text"
-                className="mt-8 md:mt-10 w-[320px] sm:w-[450px] md:w-[550px] h-12 rounded-md pl-5 bg-neutral-100 outline outline-neutral-150 mb-10"
+                className="mb-10 mt-8 h-12 w-[320px] rounded-md bg-neutral-100 pl-5 outline outline-neutral-150 sm:w-[450px] md:mt-10 md:w-[550px]"
                 placeholder="Search"
                 value={searchQuery}
                 onChange={(e) => {
@@ -107,9 +107,9 @@ const Content = (props: ContentPageProps) => {
           </div>
 
           {/* Video List */}
-          <div className="video-list h-fit w-full flex justify-around flex-wrap gap-12 sm:gap-10 pb-10">
+          <div className="flex flex-wrap justify-around w-full gap-12 pb-10 video-list h-fit sm:gap-10">
             {searching ? (
-              <div className="flex relative w-full items-center justify-center">
+              <div className="relative flex items-center justify-center w-full">
                 <svg
                   version="1.1"
                   id="L9"
@@ -117,7 +117,7 @@ const Content = (props: ContentPageProps) => {
                   x="0px"
                   y="0px"
                   viewBox="0 0 100 100"
-                  className="fill-black w-20 h-20 stroke-black opacity-30"
+                  className="w-20 h-20 fill-black stroke-black opacity-30"
                 >
                   <path d="M73,50c0-12.7-10.3-23-23-23S27,37.3,27,50 M30.9,50c0-10.5,8.5-19.1,19.1-19.1S69.1,39.5,69.1,50">
                     <animateTransform
@@ -138,17 +138,17 @@ const Content = (props: ContentPageProps) => {
                   return (
                     <Link href={"/watch?v=" + i.uuid} key={i.url}>
                       <a>
-                        <div className="group video w-[320px] h-[180px] md:w-[560px] md:h-[315px] relative">
-                          <div className="video w-full h-full overflow-hidden relative">
-                            <div className="video-data absolute top-0 left-0 w-full h-full z-30 p-10 text-white duration-300 ease-in-out opacity-0 sm:group-hover:opacity-100">
-                              <h1 className="text-4xl font-semibold pb-5">
+                        <div className="video group relative h-[180px] w-[320px] md:h-[315px] md:w-[560px]">
+                          <div className="relative w-full h-full overflow-hidden video">
+                            <div className="absolute top-0 left-0 z-30 w-full h-full p-10 text-white duration-300 ease-in-out opacity-0 video-data sm:group-hover:opacity-100">
+                              <h1 className="pb-5 text-4xl font-semibold">
                                 {i.title}
                               </h1>
                               <p className="line-clamp-5">{i.description}</p>
                             </div>
-                            <div className="video-play opacity-1 scale-100 w-full h-full flex justify-center items-center absolute z-20 duration-200 ease-in-out sm:group-hover:scale-75 sm:group-hover:opacity-0">
+                            <div className="absolute z-20 flex items-center justify-center w-full h-full duration-200 ease-in-out scale-100 video-play opacity-1 sm:group-hover:scale-75 sm:group-hover:opacity-0">
                               <svg
-                                className="z-20 stroke-white fill-white opacity-80 w-[70px] h-[70px] feather feather-play"
+                                className="feather feather-play z-20 h-[70px] w-[70px] fill-white stroke-white opacity-80"
                                 xmlns="http://www.w3.org/2000/svg"
                                 width="24"
                                 height="24"
@@ -161,12 +161,12 @@ const Content = (props: ContentPageProps) => {
                                 <polygon points="5 3 19 12 5 21 5 3"></polygon>
                               </svg>
                             </div>
-                            <div className="video-background w-full h-full duration-300 ease-in-out bg-black opacity-0 sm:group-hover:opacity-40 z-10 absolute"></div>
-                            <div className="video-thumbnail h-full w-full relative duration-300 ease-in-out sm:group-hover:scale-110">
+                            <div className="absolute z-10 w-full h-full duration-300 ease-in-out bg-black opacity-0 video-background sm:group-hover:opacity-40"></div>
+                            <div className="relative w-full h-full duration-300 ease-in-out video-thumbnail sm:group-hover:scale-110">
                               <ContentImage image={i.thumbnail} alt={i.title} />
                             </div>
                           </div>
-                          <h1 className="sm:hidden text-md font-medium absolute bottom-[-30px] text-neutral-800">
+                          <h1 className="text-md absolute bottom-[-30px] font-medium text-neutral-800 sm:hidden">
                             {i.title}
                           </h1>
                         </div>
@@ -179,7 +179,7 @@ const Content = (props: ContentPageProps) => {
           </div>
           <div
             className={
-              "w-full h-full flex justify-center items-center py-20" +
+              "flex h-full w-full items-center justify-center py-20" +
               (showLoadBtn ? "" : " hidden") +
               (searching || videos.length < 20 ? " hidden" : "")
             }
@@ -188,7 +188,7 @@ const Content = (props: ContentPageProps) => {
               onClick={() => {
                 loadMoreVideos();
               }}
-              className="w-[150px] h-[42px] bg-primary-100 text-white rounded-md cursor-pointer outline-none mb-20"
+              className="mb-20 h-[42px] w-[150px] cursor-pointer rounded-md bg-primary-100 text-white outline-none"
             >
               Load More
             </button>
@@ -202,7 +202,7 @@ const Content = (props: ContentPageProps) => {
 export const getServerSideProps: GetServerSideProps = async (context: any) => {
   try {
     const response = await fetch(
-      "https://api.hillview.tv/video/v1.1/list/videos?limit=24&offset=0&search="
+      "https://api.hillview.tv/video/v1.1/list/videos?limit=24&offset=0&search=",
     );
 
     if (!response.ok) {
