@@ -59,11 +59,11 @@ const Home: NextPage = () => {
 
   return (
     <Layout>
-      <div className="px-6 w-full h-fit flex-wrap gap-4 py-5 md:gap-12 md:flex-nowrap md:h-[90px] bg-primary-500 md:absolute flex items-center justify-center z-20">
-        <h5 className="text-center md:text-left text-white text-sm sm:text-md md:text-lg lg:text-xl font-semibold">
+      <div className="z-20 flex h-fit w-full flex-wrap items-center justify-center gap-4 bg-primary-500 px-6 py-5 md:absolute md:h-[90px] md:flex-nowrap md:gap-12">
+        <h5 className="text-sm font-semibold text-center text-white sm:text-md md:text-left md:text-lg lg:text-xl">
           Want to be notified when a new production is uploaded?
         </h5>
-        <div className="flex gap-3 w-full md:w-1/3 max-w-[500px]">
+        <div className="flex w-full max-w-[500px] gap-3 md:w-1/3">
           <input
             id="email-address"
             name="email"
@@ -79,12 +79,12 @@ const Home: NextPage = () => {
                 submitNewsletterForm();
               }
             }}
-            className="text-sm min-w-0 flex-auto rounded-md border-0 bg-white/5 px-3.5 py-2 text-white shadow-sm ring-1 ring-inset ring-white/30 focus:ring-2 focus:ring-inset focus:ring-indigo-500 sm:text-sm sm:leading-6"
+            className="focus:ring-indigo-500 min-w-0 flex-auto rounded-md border-0 bg-white/5 px-3.5 py-2 text-sm text-white shadow-sm ring-1 ring-inset ring-white/30 focus:ring-2 focus:ring-inset sm:text-sm sm:leading-6"
             placeholder="Enter your email"
           />
           <button
             type="submit"
-            className="flex-none rounded-md bg-primary-550 hover:bg-[#181542] w-[94px] flex items-center justify-center py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-indigo-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-500"
+            className="hover:bg-indigo-400 focus-visible:outline-indigo-500 flex w-[94px] flex-none items-center justify-center rounded-md bg-primary-550 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-[#181542] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2"
             disabled={loadingNewsletter}
             onClick={() => {
               submitNewsletterForm();
@@ -100,26 +100,26 @@ const Home: NextPage = () => {
           </button>
         </div>
       </div>
-      <div className="w-full h-[calc(100%-300px)] md:h-[calc(100%-100px)] absolute z-10">
-        <div className="lander-content h-fit full-center w-11/12 max-w-screen-2xl flex justify-between">
+      <div className="absolute z-10 h-[calc(100%-300px)] w-full md:h-[calc(100%-100px)]">
+        <div className="flex justify-between w-11/12 lander-content full-center h-fit max-w-screen-2xl">
           <div className="w-fit max-w-[50%]">
-            <p className="text-5xl sm:text-8xl 2xl:text-9xl font-semibold text-header-100 sm:whitespace-nowrap">
+            <p className="text-5xl font-semibold text-header-100 sm:whitespace-nowrap sm:text-8xl 2xl:text-9xl">
               Good Morning <br></br>
-              <b className="font-bold header-stroke text-white">Hillview</b>
+              <b className="font-bold text-white header-stroke">Hillview</b>
             </p>
-            <p className="text-header-200 text-md sm:text-2xl my-5 whitespace-nowrap">
+            <p className="my-5 text-md whitespace-nowrap text-header-200 sm:text-2xl">
               Putting the spotlight on the stories <br></br>that matter.
             </p>
             <Link href="/content">
               <a>
-                <button className="text-sm sm:text-md px-6 py-2.5 text-white bg-primary-100 rounded-md font-semibold my-4 2xl:my-10">
+                <button className="sm:text-md my-4 rounded-md bg-primary-100 px-6 py-2.5 text-sm font-semibold text-white 2xl:my-10">
                   The Latest
                 </button>
               </a>
             </Link>
           </div>
-          <div className="w-fit max-w-[50%] hidden lg:block">
-            <div className="relative full-vertical sun bg-[url('/assets/logos/sun.png')] w-[20rem] 2xl:w-[30rem] h-[20rem] 2xl:h-[30rem] bg-no-repeat bg-cover bg-center"></div>
+          <div className="hidden w-fit max-w-[50%] lg:block">
+            <div className="full-vertical sun relative h-[20rem] w-[20rem] bg-[url('/assets/logos/sun.png')] bg-cover bg-center bg-no-repeat 2xl:h-[30rem] 2xl:w-[30rem]"></div>
           </div>
         </div>
       </div>
