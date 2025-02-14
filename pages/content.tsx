@@ -167,7 +167,7 @@ const Content = (props: ContentPageProps) => {
                                 />
                               </div>
                             </div>
-                            <h1 className="text-md text-nowrap absolute bottom-[-30px] font-medium text-neutral-800 sm:hidden">
+                            <h1 className="text-md text-nowrap absolute bottom-[-30px] font-semibold text-neutral-800">
                               {i.video.title}
                             </h1>
                           </div>
