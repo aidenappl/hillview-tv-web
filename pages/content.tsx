@@ -167,7 +167,7 @@ const Content = (props: ContentPageProps) => {
                                 />
                               </div>
                             </div>
-                            <h1 className="text-md text-nowrap absolute bottom-[-30px] font-medium text-neutral-700">
+                            <h1 className="text-md text-nowrap absolute bottom-[-30px] font-medium text-neutral-700 whitespace-nowrap overflow-ellipsis w-full overflow-hidden">
                               {i.video.title}
                             </h1>
                           </div>
@@ -244,7 +244,7 @@ const Content = (props: ContentPageProps) => {
                               <ContentImage image={i.thumbnail} alt={i.title} />
                             </div>
                           </div>
-                          <h1 className="text-md text-nowrap absolute bottom-[-30px] font-medium text-neutral-800 sm:hidden">
+                          <h1 className="text-md text-nowrap absolute bottom-[-30px] font-medium text-neutral-800 sm:hidden whitespace-nowrap overflow-ellipsis w-full overflow-hidden">
                             {i.title}
                           </h1>
                         </div>
