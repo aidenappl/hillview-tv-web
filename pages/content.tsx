@@ -140,7 +140,7 @@ const Content = (props: ContentPageProps) => {
                                 <h1 className="pb-3 text-3xl font-semibold">
                                   {i.video.title}
                                 </h1>
-                                <p className="line-clamp-5">
+                                <p className="line-clamp-5 text-sm">
                                   {i.video.description}
                                 </p>
                               </div>
