@@ -68,6 +68,7 @@ const Watch = (props: PageProps) => {
 
   const handleDownload = async (url: string) => {
     if (url === undefined) return;
+    recordDownload();
     if (url.includes("customer-nakrsdfbtn3mdz5z.cloudflarestream.com")) {
       console.log("Opening in new tab");
       window.open(url, "_blank");
@@ -140,6 +141,23 @@ const Watch = (props: PageProps) => {
         console.log("View Recorded");
       } else {
         console.log("View Not Recorded");
+      }
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  // Record a download when the download button is clicked
+  const recordDownload = async () => {
+    try {
+      let response = await axios({
+        method: "POST",
+        url: `https://api.hillview.tv/video/v1.1/recordDownload/${props.video.uuid}`,
+      });
+      if (response.status === 204) {
+        console.log("Download Recorded");
+      } else {
+        console.log("Download Not Recorded");
       }
     } catch (error) {
       console.error(error);
