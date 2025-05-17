@@ -60,7 +60,7 @@ const Home: NextPage = () => {
   return (
     <Layout>
       <div className="z-20 flex h-fit w-full flex-wrap items-center justify-center gap-4 bg-primary-500 px-6 py-5 md:absolute md:h-[90px] md:flex-nowrap md:gap-12">
-        <h5 className="text-sm font-semibold text-center text-white sm:text-md md:text-left md:text-lg lg:text-xl">
+        <h5 className="sm:text-md text-center text-sm font-semibold text-white md:text-left md:text-lg lg:text-xl">
           Want to be notified when a new production is uploaded?
         </h5>
         <div className="flex w-full max-w-[500px] gap-3 md:w-1/3">
@@ -100,14 +100,14 @@ const Home: NextPage = () => {
           </button>
         </div>
       </div>
-      <div className="absolute z-10 h-[calc(100%-300px)] w-full md:h-[calc(100%-100px)]">
-        <div className="flex justify-between w-11/12 lander-content full-center h-fit max-w-screen-2xl">
+      <div className="z-5 absolute h-[calc(100%-300px)] w-full md:h-[calc(100%-100px)]">
+        <div className="lander-content full-center flex h-fit w-11/12 max-w-screen-2xl justify-between">
           <div className="w-fit max-w-[50%]">
             <p className="text-5xl font-semibold text-header-100 sm:whitespace-nowrap sm:text-8xl 2xl:text-9xl">
               Good Morning <br></br>
-              <b className="font-bold text-white header-stroke">Hillview</b>
+              <b className="header-stroke font-bold text-white">Hillview</b>
             </p>
-            <p className="my-5 text-md whitespace-nowrap text-header-200 sm:text-2xl">
+            <p className="text-md my-5 whitespace-nowrap text-header-200 sm:text-2xl">
               Putting the spotlight on the stories <br></br>that matter.
             </p>
             <Link href="/content">
