@@ -16,7 +16,6 @@ function HillviewWeb({ Component, pageProps }: AppProps) {
         toastOptions={{
           className: "",
           style: {
-            maxWidth: "50%",
             textAlign: "center",
             width: "fit-content",
           },
