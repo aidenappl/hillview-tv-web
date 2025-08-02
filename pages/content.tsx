@@ -63,7 +63,7 @@ const Content = (props: ContentPageProps) => {
   const QueryVideos = async (query: string, offset: string) => {
     try {
       const response = await axios.get(
-        `https://api.hillview.tv/video/v1.1/list/videos?limit=24&offset=${offset}&search=${query}&sort=desc&by=views`,
+        `https://api.hillview.tv/video/v1.1/list/videos?limit=24&offset=${offset}&search=${query}&sort=desc`,
       );
       return response.data || [];
     } catch (error) {
@@ -167,7 +167,7 @@ const Content = (props: ContentPageProps) => {
                                 />
                               </div>
                             </div>
-                            <h1 className="text-md text-nowrap absolute bottom-[-30px] font-medium text-neutral-700 whitespace-nowrap overflow-ellipsis w-full overflow-hidden">
+                            <h1 className="text-md text-nowrap absolute bottom-[-30px] w-full overflow-hidden overflow-ellipsis whitespace-nowrap font-medium text-neutral-700">
                               {i.video.title}
                             </h1>
                           </div>
@@ -244,7 +244,7 @@ const Content = (props: ContentPageProps) => {
                               <ContentImage image={i.thumbnail} alt={i.title} />
                             </div>
                           </div>
-                          <h1 className="text-md text-nowrap absolute bottom-[-30px] font-medium text-neutral-800 sm:hidden whitespace-nowrap overflow-ellipsis w-full overflow-hidden">
+                          <h1 className="text-md text-nowrap absolute bottom-[-30px] w-full overflow-hidden overflow-ellipsis whitespace-nowrap font-medium text-neutral-800 sm:hidden">
                             {i.title}
                           </h1>
                         </div>
