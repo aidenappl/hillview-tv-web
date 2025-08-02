@@ -280,7 +280,7 @@ const Content = (props: ContentPageProps) => {
 export const getServerSideProps: GetServerSideProps = async (context: any) => {
   try {
     const response = await fetch(
-      "https://api.hillview.tv/video/v1.1/list/videos?limit=24&offset=0&search=",
+      "https://api.hillview.tv/video/v1.1/list/videos?limit=24&offset=0",
     );
 
     if (!response.ok) {
@@ -295,7 +295,7 @@ export const getServerSideProps: GetServerSideProps = async (context: any) => {
     const data = await response.json();
 
     const response2 = await fetch(
-      "https://api.hillview.tv/video/v1.1/spotlight?limit=24&offset=0&search=",
+      "https://api.hillview.tv/video/v1.1/spotlight?limit=24&offset=0",
     );
 
     if (!response2.ok) {
