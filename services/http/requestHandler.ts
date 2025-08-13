@@ -1,5 +1,4 @@
-import axios from "axios";
-import { GeneralResponse } from "../../models/generalResponse.model";
+import axios, { AxiosError, AxiosRequestConfig } from "axios";
 
 type HTTPMethod = "GET" | "POST" | "PUT" | "DELETE" | "PATCH";
 
@@ -14,63 +13,74 @@ type RequestReq = {
   authToken?: string | null;
 };
 
-const NewRequest = async (req: RequestReq): Promise<GeneralResponse> => {
+// Generic success response
+type ApiSuccess<T> = {
+  success: true;
+  message: string;
+  data: T;
+};
+
+// Generic error response
+type ApiError = {
+  success?: false;
+  error: string;
+  error_message: string;
+  error_code: number;
+};
+
+// Union type for API responses
+export type ApiResponse<T> = ApiSuccess<T> | ApiError;
+
+// Axios instance for API requests
+const axios_api = axios.create({
+  baseURL: process.env.NEXT_PUBLIC_API_URL,
+  headers: {
+    "Content-Type": "application/json",
+  },
+  validateStatus: () => true,
+  timeout: 10000,
+});
+
+// Basic fetch instance for non-API requests
+const fetch = axios.create({
+  headers: {
+    "Content-Type": "application/json",
+  },
+  validateStatus: () => true,
+  timeout: 10000,
+});
+
+// Fetch API instance for making API requests
+const FetchAPI = async <T>(
+  config: AxiosRequestConfig,
+): Promise<ApiResponse<T>> => {
   try {
-    const headers: any = {
-      "Content-Type": "application/json",
-      Accept: "application/json",
-    };
+    const response = await axios_api.request(config);
 
-    if (req.headers && req.headers.length > 0) {
-      req.headers.forEach((header: any) => {
-        headers[Object.keys(header)[0]] = Object.values(header)[0];
-      });
-    }
-
-    if (req.authToken) {
-      headers["Authorization"] = "Bearer " + req.authToken;
-    }
-
-    const response = await axios.request({
-      url: req.route,
-      method: req.method,
-      baseURL: req.url,
-      headers,
-      data: req.body || {},
-      params: req.params || {},
-      validateStatus: () => true,
-    });
-
-    if (response.status >= 200 && response.status < 300) {
+    if (response.data && response.data.success) {
       return {
-        status: response.status,
-        data: response.data,
         success: true,
-        message: "success",
-      };
-    } else if (response.status == 404) {
-      return {
-        status: response.status,
-        data: response,
-        success: false,
-        message: response.data,
-      };
-    } else {
-      return {
-        status: response.status,
-        data: response,
-        success: false,
-        message: response.data.data.error,
+        message: response.data.message,
+        data: response.data.data as T,
       };
     }
-  } catch (error: any) {
+
     return {
-      status: 500,
-      data: error,
       success: false,
-      message: "failed to make request: " + error.message,
+      error: response.data?.error ?? "Unknown error",
+      error_message:
+        response.data?.error_message ?? "Unexpected error occurred",
+      error_code: response.data?.error_code ?? 0,
+    };
+  } catch (err: unknown) {
+    const axiosError = err as AxiosError;
+    return {
+      success: false,
+      error: "request_failed",
+      error_message: axiosError.message ?? "Request failed unexpectedly",
+      error_code: -1,
     };
   }
 };
 
-export { NewRequest };
+export { FetchAPI, fetch };

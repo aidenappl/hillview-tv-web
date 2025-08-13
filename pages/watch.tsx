@@ -7,6 +7,7 @@ import Link from "next/link";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faDownload } from "@fortawesome/free-solid-svg-icons";
 import axios from "axios";
+import QueryVideo from "../hooks/QueryVideo";
 
 interface GeneralNSM {
   id: number;
@@ -322,12 +323,9 @@ const Watch = (props: PageProps) => {
 export const getServerSideProps: GetServerSideProps = async (context: any) => {
   try {
     let q = context.query.v;
-    const response = await fetch(
-      "https://api.hillview.tv/video/v1.1/video/" + q,
-    );
+    const data = await QueryVideo(q);
 
-    if (response.ok) {
-      const data = await response.json();
+    if (data) {
       data.ft = DateTime.fromISO(data.inserted_at.toString()).toFormat(
         "MMMM dd, yyyy",
       );
