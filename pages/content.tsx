@@ -1,7 +1,7 @@
 import type { GetServerSideProps } from "next";
 import { useState } from "react";
 import Layout from "../components/Layout";
-import axios from "axios";
+
 import VideoPreview from "../components/ContentPage/VideoPreview";
 import SearchSpinner from "../components/ContentPage/Searching";
 import QueryVideos from "../hooks/QueryVideos";
