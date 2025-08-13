@@ -1,9 +1,6 @@
 import Link from "next/link";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/router";
-import axios from "axios";
-import Image from "next/image";
-import { loadComponents } from "next/dist/server/load-components";
 
 interface NavbarProps {
   hideLinks: boolean;
@@ -36,76 +33,16 @@ const Navbar = (props: NavbarProps) => {
     { title: "Tune In", url: "https://watch.hillview.tv/" },
   ];
 
-  const [searchResults, setSearchResults] = useState([] as Video[]);
   const [activeUrl, setActiveUrl] = useState("");
-  const [searching, setSearching] = useState(false);
-  const [showResults, setShowResults] = useState(false);
-  const [showSearch, setShowSearch] = useState(false);
-  const [searchQuery, setSearchQuery] = useState("");
-
-  const searchInput = useRef(null as any);
-
-  const [timer, setTimer] = useState(null as any);
   const [showMobileNav, setShowMobileNav] = useState(false);
 
   useEffect(() => {
     setActiveUrl(router.pathname);
-    resetSearch();
   }, [router.pathname]);
 
-  const search = async (query: string) => {
-    try {
-      if (query.length > 0) {
-        const response: any = await axios.get(
-          "https://api.hillview.tv/video/v1.1/list/videos?limit=5&offset=0&search=" +
-            query
-        );
-        return response.data ? response.data : [];
-      } else {
-        return [];
-      }
-    } catch (error) {
-      throw error;
-    }
-  };
-
-  const resetSearch = () => {
-    setSearchQuery("");
-    setShowSearch(false);
-    setShowResults(false);
-    setSearchResults([]);
-  };
-
-  const handleSearch = async (e: any) => {
-    try {
-      setSearchQuery(e.target.value);
-      clearTimeout(timer);
-      let value = e.target.value.trim();
-
-      if (value.length > 0) {
-        setSearchResults([]);
-        setShowResults(true);
-        setSearching(true);
-        const newTimer = setTimeout(async () => {
-          setSearching(false);
-          let results = await search(value);
-          setSearchResults(results);
-        }, 500);
-
-        setTimer(newTimer);
-      } else {
-        setSearchResults([]);
-        setShowResults(false);
-        setSearching(false);
-      }
-    } catch (error) {
-      console.log(error);
-    }
-  };
-
   return (
-    <div className="w-screen h-[100px] z-20 shrink-0">
-      <div className="z-20 bg-white relative w-full px-5 sm:px-0 sm:w-11/12 sm:max-w-screen-2xl sm:mx-auto flex items-center justify-between h-full border-b-2 border-neutral-100">
+    <div className="z-20 h-[100px] w-screen shrink-0">
+      <div className="relative z-20 flex h-full w-full items-center justify-between border-b-2 border-neutral-100 bg-white px-5 sm:mx-auto sm:w-11/12 sm:max-w-screen-2xl sm:px-0">
         <Link href="/">
           <a>
             <h1 className="text-2xl font-semibold text-header-100">
@@ -126,7 +63,7 @@ const Navbar = (props: NavbarProps) => {
               >
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
-                  className={"h-7 w-7 block " + (showMobileNav ? "hidden" : "")}
+                  className={"block h-7 w-7 " + (showMobileNav ? "hidden" : "")}
                   fill="none"
                   viewBox="0 0 24 24"
                   stroke="currentColor"
@@ -154,13 +91,13 @@ const Navbar = (props: NavbarProps) => {
                 </svg>
               </div>
             </div>
-            <div className="hidden md:flex items-center justify-center mt-0.5 gap-10">
+            <div className="mt-0.5 hidden items-center justify-center gap-10 md:flex">
               {navButtons.map((i) => {
                 return (
                   <Link href={i.url} key={i.url}>
                     <a
                       className={
-                        "font-medium text-base font-inter transition " +
+                        "font-inter text-base font-medium transition " +
                         (activeUrl === i.url
                           ? "text-primary-100"
                           : "text-neutral-500 hover:text-neutral-900")
@@ -177,15 +114,15 @@ const Navbar = (props: NavbarProps) => {
       </div>
       <div
         className={
-          "fs-nav md:hidden relative left-0 w-full h-fit bg-white z-10 duration-200 ease-in-out " +
+          "fs-nav relative left-0 z-10 h-fit w-full bg-white duration-200 ease-in-out md:hidden " +
           (showMobileNav ? "top-[0px] shadow-lg" : "top-[-350px] shadow-none")
         }
       >
-        <div className="nav-button-container w-full flex flex-wrap pb-1">
+        <div className="nav-button-container flex w-full flex-wrap pb-1">
           {navButtons.map((i) => {
             return (
               <Link href={i.url} key={i.url}>
-                <a className="w-full h-fit text-center py-6 font-medium text-xl">
+                <a className="h-fit w-full py-6 text-center text-xl font-medium">
                   {i.title}
                 </a>
               </Link>
@@ -195,7 +132,7 @@ const Navbar = (props: NavbarProps) => {
       </div>
       <div
         className={
-          "fs-dark w-full h-[100vh] absolute top-0 left-0 z-[1] " +
+          "fs-dark absolute left-0 top-0 z-[1] h-[100vh] w-full " +
           (showMobileNav ? "pointer-events-auto" : "pointer-events-none")
         }
         onClick={() => {

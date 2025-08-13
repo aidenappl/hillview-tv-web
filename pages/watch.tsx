@@ -6,8 +6,10 @@ import { DateTime } from "luxon";
 import Link from "next/link";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faDownload } from "@fortawesome/free-solid-svg-icons";
-import axios from "axios";
+
 import QueryVideo from "../hooks/QueryVideo";
+import { FetchAPI } from "../services/http/requestHandler";
+import axios from "axios";
 
 interface GeneralNSM {
   id: number;
@@ -134,11 +136,11 @@ const Watch = (props: PageProps) => {
 
   const recordView = async () => {
     try {
-      let response = await axios({
+      let response = await FetchAPI({
         method: "POST",
         url: `https://api.hillview.tv/video/v1.1/recordView/${props.video.uuid}`,
       });
-      if (response.status === 204) {
+      if (response.success) {
         console.log("View Recorded");
       } else {
         console.log("View Not Recorded");
@@ -151,11 +153,11 @@ const Watch = (props: PageProps) => {
   // Record a download when the download button is clicked
   const recordDownload = async () => {
     try {
-      let response = await axios({
+      let response = await FetchAPI({
         method: "POST",
         url: `https://api.hillview.tv/video/v1.1/recordDownload/${props.video.uuid}`,
       });
-      if (response.status === 204) {
+      if (response.success) {
         console.log("Download Recorded");
       } else {
         console.log("Download Not Recorded");

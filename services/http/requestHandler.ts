@@ -57,6 +57,14 @@ const FetchAPI = async <T>(
   try {
     const response = await axios_api.request(config);
 
+    if (response.status === 204) {
+      return {
+        success: true,
+        message: "No Content",
+        data: {} as T,
+      };
+    } 
+
     if (response.data && response.data.success) {
       return {
         success: true,

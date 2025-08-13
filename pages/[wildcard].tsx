@@ -1,19 +1,9 @@
-import axios from "axios";
 import type { NextPage } from "next";
+import { FetchAPI } from "../services/http/requestHandler";
+import QueryRoute from "../hooks/QueryRoute";
 
 const WildcardHandler: NextPage = () => {
   return <></>;
-};
-
-const LookupRoute = async (path: string) => {
-  try {
-    const response = await axios.get(
-      `https://api.hillview.tv/links/v1.1/check/${path}?recordClick=true`,
-    );
-    return response.data;
-  } catch (error) {
-    throw error;
-  }
 };
 
 export const getServerSideProps = async (context: any) => {
@@ -21,7 +11,7 @@ export const getServerSideProps = async (context: any) => {
   console.log(lookup);
 
   try {
-    const response = await LookupRoute(lookup);
+    const response = await QueryRoute(lookup);
 
     if (!response) {
       return {
