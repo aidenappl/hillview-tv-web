@@ -3,8 +3,10 @@ import Layout from "../../components/Layout";
 import Link from "next/link";
 import ContentImage from "../../components/ContentImage";
 import { Video } from "../content";
+import QueryPlaylist from "../../hooks/QueryPlaylist";
+import VideoPreview from "../../components/ContentPage/VideoPreview";
 
-interface PlaylsitPageProps {
+interface PlaylistPageProps {
   playlist: Playlist;
 }
 
@@ -18,25 +20,19 @@ interface Playlist {
   videos: Video[];
 }
 
-interface GeneralNSM {
-  id: number;
-  name: string;
-  short_name: string;
-}
-
-const Playlist = (props: PlaylsitPageProps) => {
+const Playlist = (props: PlaylistPageProps) => {
   return (
     <Layout>
       <div className="content-page flex h-fit w-full items-center justify-center pb-[100px]">
-        <div className="w-11/12 h-fit max-w-screen-2xl">
+        <div className="h-fit w-11/12 max-w-screen-2xl">
           {/* Header */}
           <div className="header flex h-[275px] w-full items-center justify-center md:h-[400px]">
-            <div className="items-center pb-20 center-object">
-              <h1 className="text-4xl font-semibold text-center sm:text-5xl md:text-6xl">
+            <div className="center-object items-center pb-20">
+              <h1 className="text-center text-4xl font-semibold sm:text-5xl md:text-6xl">
                 {props.playlist.name}
               </h1>
               <Link href={"/playlists"}>
-                <a className="absolute mt-8 full-x-center">
+                <a className="full-x-center absolute mt-8">
                   <button className="h-[40px] w-[130px] rounded-md bg-primary-100 font-normal text-white">
                     Go Back
                   </button>
@@ -46,46 +42,9 @@ const Playlist = (props: PlaylsitPageProps) => {
           </div>
 
           {/* Video List */}
-          <div className="flex flex-wrap justify-around w-full gap-12 pb-10 video-list h-fit sm:gap-10">
+          <div className="video-list flex h-fit w-full flex-wrap justify-around gap-12 pb-10 sm:gap-10">
             {props.playlist.videos.map((i) => {
-              return (
-                <Link href={"/watch?v=" + i.uuid} key={i.url}>
-                  <a>
-                    <div className="video group relative h-[180px] w-[320px] md:h-[315px] md:w-[560px]">
-                      <div className="relative w-full h-full overflow-hidden video">
-                        <div className="absolute top-0 left-0 z-30 w-full h-full p-10 text-white duration-300 ease-in-out opacity-0 video-data sm:group-hover:opacity-100">
-                          <h1 className="pb-5 text-4xl font-semibold">
-                            {i.title}
-                          </h1>
-                          <p className="line-clamp-5">{i.description}</p>
-                        </div>
-                        <div className="absolute z-20 flex items-center justify-center w-full h-full duration-200 ease-in-out scale-100 video-play opacity-1 sm:group-hover:scale-75 sm:group-hover:opacity-0">
-                          <svg
-                            className="feather feather-play z-20 h-[70px] w-[70px] fill-white stroke-white opacity-80"
-                            xmlns="http://www.w3.org/2000/svg"
-                            width="24"
-                            height="24"
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            viewBox="0 0 24 24"
-                            fill="none"
-                            stroke="currentColor"
-                          >
-                            <polygon points="5 3 19 12 5 21 5 3"></polygon>
-                          </svg>
-                        </div>
-                        <div className="absolute z-10 w-full h-full duration-300 ease-in-out bg-black opacity-0 video-background sm:group-hover:opacity-40"></div>
-                        <div className="relative w-full h-full duration-300 ease-in-out video-thumbnail sm:group-hover:scale-110">
-                          <ContentImage image={i.thumbnail} alt={i.title} />
-                        </div>
-                      </div>
-                      <h1 className="text-md absolute bottom-[-30px] font-medium text-neutral-800 sm:hidden">
-                        {i.title}
-                      </h1>
-                    </div>
-                  </a>
-                </Link>
-              );
+              return <VideoPreview key={i.id} video={i} />;
             })}
           </div>
         </div>
@@ -98,24 +57,20 @@ export const getServerSideProps: GetServerSideProps = async (context: any) => {
   try {
     let route = context.params.playlist_id;
 
-    const response = await fetch(
-      `https://api.hillview.tv/video/v1.1//read/playlist?route=${route}`,
-    );
+    const response = await QueryPlaylist(route);
 
-    if (!response.ok) {
+    if (!response) {
       return {
         notFound: true,
       };
     }
 
-    const playlist = await response.json();
-
     return {
       props: {
-        playlist: playlist,
-        title: playlist.name,
-        description: playlist.description,
-        image: playlist.banner_image,
+        playlist: response,
+        title: response.name,
+        description: response.description,
+        image: response.banner_image,
       },
     };
   } catch (error) {

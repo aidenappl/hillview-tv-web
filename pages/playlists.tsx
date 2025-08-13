@@ -2,6 +2,7 @@ import type { GetServerSideProps } from "next";
 import Link from "next/link";
 import Layout from "../components/Layout";
 import ContentImage from "../components/ContentImage";
+import QueryPlaylists from "../hooks/QueryPlaylists";
 interface PlaylistsPageProps {
   playlists: Playlist[];
 }
@@ -35,12 +36,12 @@ interface Video {
 const Playlists = (props: PlaylistsPageProps) => {
   return (
     <Layout>
-      <div className="relative flex items-center justify-center w-full playlist-page h-fit">
-        <div className="w-11/12 h-fit max-w-screen-2xl">
+      <div className="playlist-page relative flex h-fit w-full items-center justify-center">
+        <div className="h-fit w-11/12 max-w-screen-2xl">
           {/* Header */}
           <div className="header flex h-[150px] w-full items-center justify-center md:h-[350px]">
             <div className="center-object">
-              <h1 className="text-4xl font-semibold text-center sm:text-5xl md:text-6xl">
+              <h1 className="text-center text-4xl font-semibold sm:text-5xl md:text-6xl">
                 Playlists
               </h1>
               <p className="pt-2 text-[#9493a3] md:pt-4 md:text-xl">
@@ -49,19 +50,19 @@ const Playlists = (props: PlaylistsPageProps) => {
             </div>
           </div>
           {/* Content */}
-          <div className="flex justify-center w-full content h-fit">
+          <div className="content flex h-fit w-full justify-center">
             <div className="flex h-fit w-full max-w-[900px] flex-col gap-4 pb-[100px]">
               {props.playlists.map((i) => {
                 return (
                   <Link href={"/playlist/" + i.route} key={i.id}>
-                    <div className="relative flex items-center w-full p-3 border-2 rounded-lg shadow-md cursor-pointer border-neutral-100 bg-neutral-50">
+                    <div className="relative flex w-full cursor-pointer items-center rounded-lg border-2 border-neutral-100 bg-neutral-50 p-3 shadow-md">
                       <div className="avatar relative block h-[65px] w-[80px] flex-shrink-0 overflow-hidden rounded-lg sm:w-[100px]">
                         <ContentImage image={i.banner_image} alt={i.name} />
                       </div>
                       <h1 className="ml-5 line-clamp-1 w-[calc(100%-100px)] max-w-full overflow-ellipsis pr-2 text-lg font-medium sm:text-xl">
                         {i.name}
                       </h1>
-                      <button className="hidden px-5 py-2 font-normal text-white rounded-md whitespace-nowrap bg-primary-100 sm:block">
+                      <button className="hidden whitespace-nowrap rounded-md bg-primary-100 px-5 py-2 font-normal text-white sm:block">
                         View Playlist
                       </button>
                     </div>
@@ -78,11 +79,9 @@ const Playlists = (props: PlaylistsPageProps) => {
 
 export const getServerSideProps: GetServerSideProps = async (context: any) => {
   try {
-    const response = await fetch(
-      "https://api.hillview.tv/video/v1.1/list/playlists?limit=24&offset=0",
-    );
+    const response = await QueryPlaylists();
 
-    if (!response.ok) {
+    if (response.length === 0) {
       return {
         redirect: {
           destination: "/",
@@ -91,12 +90,10 @@ export const getServerSideProps: GetServerSideProps = async (context: any) => {
       };
     }
 
-    const data = await response.json();
-
     return {
       props: {
         title: "HillviewTV - Playlists",
-        playlists: data,
+        playlists: response,
       },
     };
   } catch (error) {
