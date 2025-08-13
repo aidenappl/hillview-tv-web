@@ -1,8 +1,8 @@
 import { NextPage } from "next";
 import { useEffect, useState } from "react";
 import Spinner from "../../components/Spinner";
-import { NewRequest } from "../../services/http/requestHandler";
 import Link from "next/link";
+import { FetchAPI } from "../../services/http/requestHandler";
 
 const MyNewsletter: NextPage = () => {
   const [email, setEmail] = useState<string>("");
@@ -18,9 +18,9 @@ const MyNewsletter: NextPage = () => {
   }, []);
 
   return (
-    <div className="flex flex-wrap justify-center w-full pt-20 text-center">
+    <div className="flex w-full flex-wrap justify-center pt-20 text-center">
       <div className="flex max-w-[1000px] flex-wrap justify-center">
-        <h1 className="w-full text-2xl font-semibold text-center">
+        <h1 className="w-full text-center text-2xl font-semibold">
           HillviewTV Newsletter
         </h1>
         {!success ? (
@@ -39,11 +39,10 @@ const MyNewsletter: NextPage = () => {
                 setLoadingNewsletter(true);
 
                 // Submit to hillviewtv API
-                const response = await NewRequest({
-                  route: "/newsletter/unsubscribe",
+                const response = await FetchAPI({
+                  url: "/newsletter/unsubscribe",
                   method: "POST",
-                  url: "https://api.hillview.tv/video/v1.1",
-                  body: {
+                  data: {
                     email: email,
                   },
                 });

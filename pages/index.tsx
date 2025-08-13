@@ -5,7 +5,7 @@ import Spinner from "../components/Spinner";
 import { useState } from "react";
 import Joi from "joi";
 import toast from "react-hot-toast";
-import { NewRequest } from "../services/http/requestHandler";
+import { FetchAPI } from "../services/http/requestHandler";
 
 const Home: NextPage = () => {
   const [loadingNewsletter, setLoadingNewsletter] = useState<boolean>(false);
@@ -35,11 +35,10 @@ const Home: NextPage = () => {
     }
 
     // Submit to hillviewtv API
-    const request = await NewRequest({
-      route: "/newsletter",
+    const request = await FetchAPI({
+      url: "/newsletter",
       method: "POST",
-      url: "https://api.hillview.tv/video/v1.1",
-      body: {
+      data: {
         email: newsletterEmail,
       },
     });
@@ -47,7 +46,7 @@ const Home: NextPage = () => {
     // Validate response from API
     if (!request.success) {
       // handle bad response & exit flow
-      toast.error(request.message);
+      toast.error(request.error_message);
       setLoadingNewsletter(false);
       return;
     }
