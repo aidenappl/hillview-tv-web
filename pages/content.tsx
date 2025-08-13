@@ -53,6 +53,7 @@ const Content = (props: ContentPageProps) => {
     try {
       const response = await QueryVideos("", videos.length.toString());
       console.log(response, videos);
+      if (response.length < 24) setShowLoadBtn(false);
       setVideos([...videos, ...response]);
       console.log(videos);
     } catch (error) {
@@ -159,7 +160,7 @@ const Content = (props: ContentPageProps) => {
                                   <polygon points="5 3 19 12 5 21 5 3"></polygon>
                                 </svg>
                               </div>
-                              <div className="video-background absolute z-10 h-full w-full bg-black opacity-0 duration-300 ease-in-out sm:group-hover:opacity-40"></div>
+                              <div className="video-background absolute z-10 h-full w-full bg-black opacity-0 duration-300 ease-in-out sm:group-hover:opacity-70"></div>
                               <div className="video-thumbnail relative h-full w-full duration-300 ease-in-out sm:group-hover:scale-110">
                                 <ContentImage
                                   image={i.video.thumbnail}
@@ -239,7 +240,7 @@ const Content = (props: ContentPageProps) => {
                                 <polygon points="5 3 19 12 5 21 5 3"></polygon>
                               </svg>
                             </div>
-                            <div className="video-background absolute z-10 h-full w-full bg-black opacity-0 duration-300 ease-in-out sm:group-hover:opacity-40"></div>
+                            <div className="video-background absolute z-10 h-full w-full bg-black opacity-0 duration-300 ease-in-out sm:group-hover:opacity-70"></div>
                             <div className="video-thumbnail relative h-full w-full duration-300 ease-in-out sm:group-hover:scale-110">
                               <ContentImage image={i.thumbnail} alt={i.title} />
                             </div>
