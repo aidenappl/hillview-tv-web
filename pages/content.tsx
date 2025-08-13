@@ -134,7 +134,7 @@ const Content = (props: ContentPageProps) => {
                     return (
                       <Link href={"/watch?v=" + i.video.uuid} key={i.video.url}>
                         <a>
-                          <div className="video group relative h-[180px] w-[320px] md:h-[275px] md:w-[460px]">
+                          <div className="video group relative h-[180px] w-[320px] shadow-md md:h-[275px] md:w-[460px]">
                             <div className="video relative h-full w-full overflow-hidden">
                               <div className="video-data absolute left-0 top-0 z-30 h-full w-full p-10 text-white opacity-0 duration-300 ease-in-out sm:group-hover:opacity-100">
                                 <h1 className="pb-3 text-3xl font-semibold">
@@ -216,7 +216,7 @@ const Content = (props: ContentPageProps) => {
                   return (
                     <Link href={"/watch?v=" + i.uuid} key={i.url}>
                       <a>
-                        <div className="video group relative h-[180px] w-[320px] md:h-[315px] md:w-[560px]">
+                        <div className="video group relative h-[180px] w-[320px] border border-slate-100 shadow-md md:h-[315px] md:w-[560px]">
                           <div className="video relative h-full w-full overflow-hidden">
                             <div className="video-data absolute left-0 top-0 z-30 h-full w-full p-10 text-white opacity-0 duration-300 ease-in-out sm:group-hover:opacity-100">
                               <h1 className="pb-5 text-4xl font-semibold">
