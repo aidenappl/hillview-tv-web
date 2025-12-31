@@ -35,7 +35,7 @@ const Home: NextPage = () => {
 
     // Submit to hillviewtv API
     const request = await FetchAPI({
-      url: "/newsletter",
+      url: "/video/v1.1/newsletter",
       method: "POST",
       data: {
         email: newsletterEmail,

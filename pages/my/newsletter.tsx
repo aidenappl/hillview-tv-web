@@ -40,7 +40,7 @@ const MyNewsletter: NextPage = () => {
 
                 // Submit to hillviewtv API
                 const response = await FetchAPI({
-                  url: "/newsletter/unsubscribe",
+                  url: "/video/v1.1/newsletter/unsubscribe",
                   method: "POST",
                   data: {
                     email: email,
