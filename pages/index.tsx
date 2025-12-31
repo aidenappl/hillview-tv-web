@@ -48,7 +48,7 @@ const Home: NextPage = () => {
       if (request.error_code === 1000) {
         toast.error("This email has already been registered");
       } else {
-        toast.error(request.error_message);
+        toast.error(request.error || "An unknown error occurred");
       }
       setLoadingNewsletter(false);
       return;
