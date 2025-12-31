@@ -5,7 +5,7 @@ const OldVideo: NextPage = () => {
 };
 
 export const getServerSideProps: GetServerSideProps = async (context: any) => {
-  let id = context.params.video;
+  const id = context.params.video;
   return {
     redirect: {
       destination: "/watch?v=" + id,

@@ -1,5 +1,5 @@
-import { Rank, Video } from "../pages/content";
-import { ApiResponse, FetchAPI } from "../services/http/requestHandler";
+import { Rank } from "../pages/content";
+import { FetchAPI } from "../services/http/requestHandler";
 
 const QuerySpotlight = async (
   limit?: number,

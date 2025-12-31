@@ -77,7 +77,7 @@ const Playlists = (props: PlaylistsPageProps) => {
   );
 };
 
-export const getServerSideProps: GetServerSideProps = async (context: any) => {
+export const getServerSideProps: GetServerSideProps = async (_context: any) => {
   try {
     const response = await QueryPlaylists();
 

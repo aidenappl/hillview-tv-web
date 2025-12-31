@@ -1,18 +1,5 @@
 import axios, { AxiosError, AxiosRequestConfig } from "axios";
 
-type HTTPMethod = "GET" | "POST" | "PUT" | "DELETE" | "PATCH";
-
-type RequestReq = {
-  route: string;
-  method: HTTPMethod;
-  url?: string;
-  params?: object;
-  auth?: boolean;
-  body?: object;
-  headers?: object[];
-  authToken?: string | null;
-};
-
 // Generic success response
 type ApiSuccess<T> = {
   success: true;

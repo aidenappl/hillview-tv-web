@@ -1,5 +1,4 @@
 import type { NextPage } from "next";
-import { FetchAPI } from "../services/http/requestHandler";
 import QueryRoute from "../hooks/QueryRoute";
 
 const WildcardHandler: NextPage = () => {
@@ -30,7 +29,7 @@ export const getServerSideProps = async (context: any) => {
         notFound: true,
       };
     }
-  } catch (error) {
+  } catch (_error) {
     return {
       notFound: true,
     };

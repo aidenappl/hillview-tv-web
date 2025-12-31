@@ -1,4 +1,4 @@
-import { ApiResponse, FetchAPI } from "./../services/http/requestHandler";
+import { FetchAPI } from "./../services/http/requestHandler";
 import { Video } from "../pages/content";
 
 const QueryVideos = async (

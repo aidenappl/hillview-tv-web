@@ -16,7 +16,7 @@ commands:
     run: npm run lint
   - name: lint-fix
     description: Fix ESLint issues
-    run: npm run lint -- --fix
+    run: npm run lint:fix
   - name: format
     description: Format code with Prettier
     run: npx prettier --write .
@@ -27,7 +27,7 @@ commands:
     description: Run TypeScript type checking
     run: npx tsc --noEmit
   - name: check
-    description: Run all checks
+    description: Run all checks (lint, format, typecheck)
     run: npm run lint && npx prettier --check . && npx tsc --noEmit
   - name: install
     description: Install dependencies

@@ -87,7 +87,7 @@ const Watch = (props: PageProps) => {
     }
     if (downloadInProgress) return;
     setDownloadInProgress(true);
-    let startTime = Date.now();
+    const startTime = Date.now();
     let lastProgress = 0;
 
     try {
@@ -154,7 +154,7 @@ const Watch = (props: PageProps) => {
   };
 
   const shareLink = () => {
-    let fullUrl = window.location.href;
+    const fullUrl = window.location.href;
     navigator.clipboard.writeText(fullUrl);
     updateShareButtonText("Link Copied!");
 
@@ -310,7 +310,7 @@ const Watch = (props: PageProps) => {
 
 export const getServerSideProps: GetServerSideProps = async (context: any) => {
   try {
-    let q = context.query.v;
+    const q = context.query.v;
     const data = await QueryVideo(q);
 
     if (data) {

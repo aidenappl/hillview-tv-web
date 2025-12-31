@@ -38,8 +38,8 @@ interface ContentPageProps {
 }
 
 const Content = (props: ContentPageProps) => {
-  let [videos, setVideos] = useState(props.videos);
-  let [highlightedVideos, setHighlightedVideos] = useState(
+  const [videos, setVideos] = useState(props.videos);
+  const [highlightedVideos, _setHighlightedVideos] = useState(
     props.highlightedVideos,
   );
 
@@ -67,7 +67,7 @@ const Content = (props: ContentPageProps) => {
   const handleSearch = async (e: any) => {
     try {
       setSearchQuery(e.target.value);
-      let value = e.target.value.trim();
+      const value = e.target.value.trim();
 
       if (value.length > 0) {
         setSearching(true);
@@ -169,7 +169,7 @@ const Content = (props: ContentPageProps) => {
   );
 };
 
-export const getServerSideProps: GetServerSideProps = async (context: any) => {
+export const getServerSideProps: GetServerSideProps = async (_context: any) => {
   try {
     const videos = await QueryVideos();
 

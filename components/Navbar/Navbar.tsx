@@ -6,22 +6,6 @@ interface NavbarProps {
   hideLinks: boolean;
 }
 
-interface GeneralNSM {
-  id: number;
-  name: string;
-  short_name: string;
-}
-
-interface Video {
-  id: number;
-  title: string;
-  description: string;
-  thumbnail: string;
-  url: string;
-  status: GeneralNSM;
-  inserted_at: Date;
-}
-
 const Navbar = (props: NavbarProps) => {
   const { hideLinks } = props;
 

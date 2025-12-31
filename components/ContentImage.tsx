@@ -1,7 +1,5 @@
 import Image from "next/image";
-import { Video } from "../pages/content";
 import { useState } from "react";
-import { Playlist } from "../pages/playlists";
 
 interface Props {
   image: string;
@@ -36,7 +34,7 @@ const ContentImage = (props: Props) => {
           src={props.image}
           alt={props.alt}
           layout="fill"
-          onLoad={(e) => {
+          onLoad={(_e) => {
             setLoaded(true);
           }}
         />

@@ -20,13 +20,12 @@ const Home: NextPage = () => {
     setLoadingNewsletter(true);
 
     // Validate email
-    let schema: Joi.ObjectSchema<any>;
-    schema = Joi.object({
+    const schema = Joi.object({
       email: Joi.string()
         .email({ tlds: { allow: false } })
         .required(),
     });
-    let response = schema.validate({ email: newsletterEmail.trim() });
+    const response = schema.validate({ email: newsletterEmail.trim() });
     if (response.error) {
       // Error handle bad email & exit flow
       toast.error("Must have a valid email address");

@@ -1,7 +1,6 @@
 import type { GetServerSideProps } from "next";
 import Layout from "../../components/Layout";
 import Link from "next/link";
-import ContentImage from "../../components/ContentImage";
 import { Video } from "../content";
 import QueryPlaylist from "../../hooks/QueryPlaylist";
 import VideoPreview from "../../components/ContentPage/VideoPreview";
@@ -55,7 +54,7 @@ const Playlist = (props: PlaylistPageProps) => {
 
 export const getServerSideProps: GetServerSideProps = async (context: any) => {
   try {
-    let route = context.params.playlist_id;
+    const route = context.params.playlist_id;
 
     const response = await QueryPlaylist(route);
 

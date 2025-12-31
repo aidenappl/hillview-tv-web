@@ -1,9 +1,8 @@
 import React, { useRef, useState, useEffect } from "react";
 import videojs from "video.js";
 import type Player from "video.js/dist/types/player";
-// those imports are important
 import qualitySelector from "videojs-hls-quality-selector";
-import qualityLevels from "videojs-contrib-quality-levels";
+import "videojs-contrib-quality-levels";
 
 interface PlayerProps {
   url: string;
@@ -55,7 +54,6 @@ const VideoPlayer = (props: PlayerProps) => {
     return () => {
       if (p) p.dispose();
     };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   useEffect(() => {
