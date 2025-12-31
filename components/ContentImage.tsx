@@ -12,15 +12,15 @@ const ContentImage = (props: Props) => {
   const [loaded, setLoaded] = useState(false);
   return (
     <>
-      <div className="relative w-full h-full">
+      <div className="relative h-full w-full">
         {!loaded ? (
           <div
             role="status"
-            className="z-10 absolute top-0 space-y-8 animate-pulse md:space-y-0 md:space-x-8 md:flex md:items-center w-full h-full"
+            className="absolute top-0 z-10 h-full w-full animate-pulse space-y-8 md:flex md:items-center md:space-x-8 md:space-y-0"
           >
-            <div className="flex items-center justify-center w-full h-full bg-neutral-300 rounded dark:bg-neutral-300">
+            <div className="flex h-full w-full items-center justify-center rounded bg-neutral-300 dark:bg-neutral-300">
               <svg
-                className="w-12 h-12 text-neutral-400"
+                className="h-12 w-12 text-neutral-400"
                 xmlns="http://www.w3.org/2000/svg"
                 aria-hidden="true"
                 fill="currentColor"

@@ -8,7 +8,6 @@ const WildcardHandler: NextPage = () => {
 
 export const getServerSideProps = async (context: any) => {
   const lookup = context.params.wildcard;
-  console.log(lookup);
 
   try {
     const response = await QueryRoute(lookup);

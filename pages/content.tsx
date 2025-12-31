@@ -60,7 +60,7 @@ const Content = (props: ContentPageProps) => {
       if (response.length < 24) setShowLoadBtn(false);
       setVideos([...videos, ...response]);
     } catch (error) {
-      console.log(error);
+      console.error("Error loading more videos:", error);
     }
   };
 

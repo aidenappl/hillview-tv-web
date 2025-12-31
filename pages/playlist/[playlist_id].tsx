@@ -74,7 +74,7 @@ export const getServerSideProps: GetServerSideProps = async (context: any) => {
       },
     };
   } catch (error) {
-    console.log(error);
+    console.error("Error fetching playlist:", error);
     return {
       notFound: true,
     };

@@ -20,7 +20,7 @@ const QueryRoute = async (path: string): Promise<RouteRedirect | null> => {
     url: `/links/v1.1/check/${path}`,
     method: "GET",
     params: {
-      recordClick: true
+      recordClick: true,
     },
   });
 

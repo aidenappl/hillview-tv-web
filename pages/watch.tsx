@@ -38,7 +38,6 @@ interface PageProps {
 const Watch = (props: PageProps) => {
   const router = useRouter();
 
-  console.log(props.video.url);
   let liveURL = props.video.url;
 
   if (
@@ -66,14 +65,23 @@ const Watch = (props: PageProps) => {
   const [downloadInProgress, setDownloadInProgress] = useState(false);
 
   useEffect(() => {
+    const recordView = async () => {
+      try {
+        await FetchAPI({
+          method: "POST",
+          url: `https://api.hillview.tv/video/v1.1/recordView/${props.video.uuid}`,
+        });
+      } catch (error) {
+        console.error("Error recording view:", error);
+      }
+    };
     recordView();
-  }, []);
+  }, [props.video.uuid]);
 
   const handleDownload = async (url: string) => {
     if (url === undefined) return;
     recordDownload();
     if (url.includes("customer-nakrsdfbtn3mdz5z.cloudflarestream.com")) {
-      console.log("Opening in new tab");
       window.open(url, "_blank");
       return;
     }
@@ -90,9 +98,9 @@ const Watch = (props: PageProps) => {
           "Content-Type": "video/mp4",
         },
         onDownloadProgress: (progressEvent) => {
-          const progress = Math.round(
-            (progressEvent.loaded / progressEvent.total) * 100,
-          );
+          const total = progressEvent.total ?? 0;
+          if (total === 0) return;
+          const progress = Math.round((progressEvent.loaded / total) * 100);
           setProgress(progress);
           if (progress != lastProgress) {
             const elapsedTime = Date.now() - startTime!;
@@ -102,7 +110,6 @@ const Watch = (props: PageProps) => {
           lastProgress = progress;
         },
       });
-      console.log(response);
 
       const blob = response.data;
       const urlObject = URL.createObjectURL(blob);
@@ -134,36 +141,15 @@ const Watch = (props: PageProps) => {
     return `About ${minutes} minutes remaining...`;
   };
 
-  const recordView = async () => {
-    try {
-      let response = await FetchAPI({
-        method: "POST",
-        url: `https://api.hillview.tv/video/v1.1/recordView/${props.video.uuid}`,
-      });
-      if (response.success) {
-        console.log("View Recorded");
-      } else {
-        console.log("View Not Recorded");
-      }
-    } catch (error) {
-      console.error(error);
-    }
-  };
-
   // Record a download when the download button is clicked
   const recordDownload = async () => {
     try {
-      let response = await FetchAPI({
+      await FetchAPI({
         method: "POST",
         url: `https://api.hillview.tv/video/v1.1/recordDownload/${props.video.uuid}`,
       });
-      if (response.success) {
-        console.log("Download Recorded");
-      } else {
-        console.log("Download Not Recorded");
-      }
     } catch (error) {
-      console.error(error);
+      console.error("Error recording download:", error);
     }
   };
 

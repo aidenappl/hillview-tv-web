@@ -1,9 +1,7 @@
-import { FetchAPI } from '../services/http/requestHandler';
+import { FetchAPI } from "../services/http/requestHandler";
 import { Video } from "../pages/content";
 
-const QueryVideo = async (
-  query?: string,
-): Promise<Video | null> => {
+const QueryVideo = async (query?: string): Promise<Video | null> => {
   if (!query) {
     return null;
   }
@@ -11,7 +9,7 @@ const QueryVideo = async (
     url: `/video/v1.1/video/${query}`,
     method: "GET",
   });
-  
+
   //   Validating response
   if (response.success) {
     return response.data;

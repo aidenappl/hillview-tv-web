@@ -63,7 +63,7 @@ const FetchAPI = async <T>(
         message: "No Content",
         data: {} as T,
       };
-    } 
+    }
 
     if (response.data && response.data.success) {
       return {

@@ -1,21 +1,18 @@
 import Navbar from "./Navbar/Navbar";
 
 interface LayoutProps {
-	children: any;
+  children: any;
 }
 
 const Layout = (props: LayoutProps) => {
+  const { children } = props;
 
-	const {
-		children,
-	} = props;
-
-	return (
-		<div className="primary-container"> 
-			<Navbar hideLinks={false}/>
-            {children}
-        </div>
-	);
-}
+  return (
+    <div className="primary-container">
+      <Navbar hideLinks={false} />
+      {children}
+    </div>
+  );
+};
 
 export default Layout;

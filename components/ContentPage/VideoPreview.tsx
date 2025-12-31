@@ -41,7 +41,7 @@ const VideoPreview = (props: VideoPreviewProps) => {
               />
             </div>
           </div>
-          <h1 className="text-md text-nowrap absolute bottom-[-30px] w-full overflow-hidden overflow-ellipsis whitespace-nowrap font-medium text-neutral-700">
+          <h1 className="text-md absolute bottom-[-30px] w-full overflow-hidden overflow-ellipsis whitespace-nowrap text-nowrap font-medium text-neutral-700">
             {props.video.title}
           </h1>
         </div>

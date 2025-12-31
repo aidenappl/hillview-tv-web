@@ -14,16 +14,12 @@ const Spinner = (props: Props) => {
     <Oval
       height={size}
       width={size}
-      color={
-        style === "default" ? "#192536" : "#fefefe"
-      }
+      color={style === "default" ? "#192536" : "#fefefe"}
       wrapperStyle={{}}
       wrapperClass={wrapperClass}
       visible={true}
       ariaLabel="oval-loading"
-      secondaryColor={
-        style === "default" ? "#38414f" : "#fefefe"
-      }
+      secondaryColor={style === "default" ? "#38414f" : "#fefefe"}
       strokeWidth={6}
       strokeWidthSecondary={6}
     />

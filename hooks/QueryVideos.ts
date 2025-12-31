@@ -1,4 +1,4 @@
-import { ApiResponse, FetchAPI } from './../services/http/requestHandler';
+import { ApiResponse, FetchAPI } from "./../services/http/requestHandler";
 import { Video } from "../pages/content";
 
 const QueryVideos = async (
@@ -19,7 +19,7 @@ const QueryVideos = async (
       sort: "desc",
     },
   });
-  
+
   //   Validating response
   if (response.success) {
     return response.data;

@@ -15,7 +15,7 @@ const QuerySpotlight = async (
       offset,
     },
   });
-  
+
   //   Validating response
   if (response.success) {
     return response.data;
