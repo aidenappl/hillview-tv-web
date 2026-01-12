@@ -226,10 +226,11 @@ const Watch = (props: PageProps) => {
                 </svg>
               </div>
               <p className="text-lg">
-                <Link href="/content">
-                  <a className="cursor-pointer pl-3 font-semibold text-primary-100">
-                    Videos
-                  </a>
+                <Link
+                  href="/content"
+                  className="cursor-pointer pl-3 font-semibold text-primary-100"
+                >
+                  Videos
                 </Link>{" "}
                 → {props.video.title}
               </p>
@@ -241,7 +242,10 @@ const Watch = (props: PageProps) => {
               <div className="relative pt-[56.25%]">
                 <iframe
                   src={
-                    liveURL + "?preload=auto&poster=" + props.video.thumbnail
+                    liveURL +
+                    "?preload=auto&poster=" +
+                    props.video.thumbnail +
+                    "&fit=clip&width=1280&height=720"
                   }
                   className="absolute top-0 h-full w-full border-none"
                   allow="accelerometer; gyroscope; autoplay; encrypted-media; picture-in-picture;"

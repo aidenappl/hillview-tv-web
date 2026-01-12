@@ -1,34 +1,91 @@
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+# HillviewTV Web
 
-## Getting Started
+The official website for HillviewTV - a Next.js application for streaming and showcasing video productions.
 
-First, run the development server:
+## Prerequisites
+
+- [Node.js](https://nodejs.org/) 20.x or higher
+- [dev CLI](https://github.com/devcli/dev) (recommended)
+
+## Setup
+
+1. Clone the repository:
 
 ```bash
-npm run dev
+git clone https://github.com/aidenappl/hillview-tv-web.git
+cd hillview-tv-web
+```
+
+2. Copy the environment file and configure it:
+
+```bash
+cp .env.example .env
+```
+
+3. Install dependencies:
+
+```bash
+dev install
 # or
-yarn dev
+npm install
+```
+
+## Development
+
+Start the development server:
+
+```bash
+dev dev
+# or
+npm run dev
 ```
 
 Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
 
-You can start editing the page by modifying `pages/index.tsx`. The page auto-updates as you edit the file.
+## Available Commands
 
-[API routes](https://nextjs.org/docs/api-routes/introduction) can be accessed on [http://localhost:3000/api/hello](http://localhost:3000/api/hello). This endpoint can be edited in `pages/api/hello.ts`.
+Using the `dev` CLI (recommended):
 
-The `pages/api` directory is mapped to `/api/*`. Files in this directory are treated as [API routes](https://nextjs.org/docs/api-routes/introduction) instead of React pages.
+| Command            | Description                              |
+| ------------------ | ---------------------------------------- |
+| `dev dev`          | Start development server                 |
+| `dev build`        | Build for production                     |
+| `dev start`        | Start production server                  |
+| `dev lint`         | Run ESLint                               |
+| `dev lint-fix`     | Fix ESLint issues automatically          |
+| `dev format`       | Format code with Prettier                |
+| `dev format-check` | Check code formatting                    |
+| `dev typecheck`    | Run TypeScript type checking             |
+| `dev check`        | Run all checks (lint, format, typecheck) |
+| `dev clean`        | Remove build artifacts and node_modules  |
+| `dev ci`           | Run full CI pipeline locally             |
 
-## Learn More
+## Project Structure
 
-To learn more about Next.js, take a look at the following resources:
+```
+├── components/       # React components
+├── hooks/            # Custom React hooks
+├── pages/            # Next.js pages and API routes
+├── public/           # Static assets
+├── services/         # API services and utilities
+├── styles/           # CSS and Tailwind styles
+└── Devfile.yaml      # Dev CLI configuration
+```
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## Tech Stack
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
+- [Next.js](https://nextjs.org/) - React framework
+- [TypeScript](https://www.typescriptlang.org/) - Type safety
+- [Tailwind CSS](https://tailwindcss.com/) - Styling
+- [Video.js](https://videojs.com/) - Video player
+- [Font Awesome](https://fontawesome.com/) - Icons
 
-## Deploy on Vercel
+## Deployment
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+The application is designed to be deployed on [Vercel](https://vercel.com).
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
+Check out the [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
+
+## License
+
+Private - All rights reserved.

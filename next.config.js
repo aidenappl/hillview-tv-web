@@ -2,13 +2,16 @@
 const nextConfig = {
   reactStrictMode: false,
   images: {
-    domains: [
-      "content.hillview.tv",
-      "customer-nakrsdfbtn3mdz5z.cloudflarestream.com",
+    remotePatterns: [
+      {
+        protocol: "https",
+        hostname: "content.hillview.tv",
+      },
+      {
+        protocol: "https",
+        hostname: "customer-nakrsdfbtn3mdz5z.cloudflarestream.com",
+      },
     ],
-  },
-  api: {
-    responseLimit: false,
   },
 };
 

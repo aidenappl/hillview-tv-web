@@ -28,11 +28,7 @@ const Navbar = (props: NavbarProps) => {
     <div className="z-20 h-[100px] w-screen shrink-0">
       <div className="relative z-20 flex h-full w-full items-center justify-between border-b-2 border-neutral-100 bg-white px-5 sm:mx-auto sm:w-11/12 sm:max-w-screen-2xl sm:px-0">
         <Link href="/">
-          <a>
-            <h1 className="text-2xl font-semibold text-header-100">
-              HillviewTV
-            </h1>
-          </a>
+          <h1 className="text-2xl font-semibold text-header-100">HillviewTV</h1>
         </Link>
         {hideLinks ? (
           ""
@@ -78,17 +74,17 @@ const Navbar = (props: NavbarProps) => {
             <div className="mt-0.5 hidden items-center justify-center gap-10 md:flex">
               {navButtons.map((i) => {
                 return (
-                  <Link href={i.url} key={i.url}>
-                    <a
-                      className={
-                        "font-inter text-base font-medium transition " +
-                        (activeUrl === i.url
-                          ? "text-primary-100"
-                          : "text-neutral-500 hover:text-neutral-900")
-                      }
-                    >
-                      {i.title}
-                    </a>
+                  <Link
+                    href={i.url}
+                    key={i.url}
+                    className={
+                      "font-inter text-base font-medium transition " +
+                      (activeUrl === i.url
+                        ? "text-primary-100"
+                        : "text-neutral-500 hover:text-neutral-900")
+                    }
+                  >
+                    {i.title}
                   </Link>
                 );
               })}
@@ -105,10 +101,12 @@ const Navbar = (props: NavbarProps) => {
         <div className="nav-button-container flex w-full flex-wrap pb-1">
           {navButtons.map((i) => {
             return (
-              <Link href={i.url} key={i.url}>
-                <a className="h-fit w-full py-6 text-center text-xl font-medium">
-                  {i.title}
-                </a>
+              <Link
+                href={i.url}
+                key={i.url}
+                className="h-fit w-full py-6 text-center text-xl font-medium"
+              >
+                {i.title}
               </Link>
             );
           })}

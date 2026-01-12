@@ -30,12 +30,10 @@ const Playlist = (props: PlaylistPageProps) => {
               <h1 className="text-center text-4xl font-semibold sm:text-5xl md:text-6xl">
                 {props.playlist.name}
               </h1>
-              <Link href={"/playlists"}>
-                <a className="full-x-center absolute mt-8">
-                  <button className="h-[40px] w-[130px] rounded-md bg-primary-100 font-normal text-white">
-                    Go Back
-                  </button>
-                </a>
+              <Link href={"/playlists"} className="full-x-center absolute mt-8">
+                <button className="h-[40px] w-[130px] rounded-md bg-primary-100 font-normal text-white">
+                  Go Back
+                </button>
               </Link>
             </div>
           </div>

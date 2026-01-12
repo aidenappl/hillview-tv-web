@@ -69,10 +69,11 @@ const MyNewsletter: NextPage = () => {
             <p className="w-full py-4">
               Successfully unsubscribed {email} from all future notifications.
             </p>
-            <Link href={"/"}>
-              <a className="flex w-[140px] items-center justify-center rounded-md bg-primary-100 px-3.5 py-2.5 text-sm font-semibold text-white shadow">
-                Go Home
-              </a>
+            <Link
+              href={"/"}
+              className="flex w-[140px] items-center justify-center rounded-md bg-primary-100 px-3.5 py-2.5 text-sm font-semibold text-white shadow"
+            >
+              Go Home
             </Link>
           </>
         )}
