@@ -23,7 +23,7 @@
     "react-loader-spinner": "^6.1.6",
     "video.js": "^8.21.1",
     "videojs-contrib-quality-levels": "^4.1.0",
-    "videojs-hls-quality-selector": "^1.1.4"
+    "videojs-hls-quality-selector": "^2.0.0"
   },
   "devDependencies": {
     "@types/luxon": "^3.7.1",
