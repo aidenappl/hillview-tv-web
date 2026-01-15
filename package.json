@@ -14,7 +14,7 @@
     "@fortawesome/free-solid-svg-icons": "^6.4.0",
     "@fortawesome/react-fontawesome": "^0.2.0",
     "axios": "^1.7.9",
-    "joi": "^17.13.3",
+    "joi": "^18.0.2",
     "luxon": "^3.5.0",
     "next": "^16.1.1",
     "react": "^18.3.1",
