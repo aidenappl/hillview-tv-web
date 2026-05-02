@@ -113,7 +113,7 @@ const Home: NextPage = () => {
               Putting the spotlight on the stories <br></br>that matter.
             </p>
             <Link href="/content">
-              <button className="sm:text-md my-4 rounded-md bg-primary-100 px-6 py-2.5 text-sm font-semibold text-white 2xl:my-10">
+              <button className="sm:text-md my-4 rounded-full bg-primary-100 px-7 py-2.5 text-sm font-semibold text-white shadow-[0_2px_8px_rgba(25,123,255,0.25)] transition-all duration-200 hover:bg-[#0d6efd] hover:shadow-[0_4px_16px_rgba(25,123,255,0.35)] 2xl:my-10">
                 The Latest
               </button>
             </Link>

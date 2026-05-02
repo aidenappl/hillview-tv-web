@@ -111,6 +111,16 @@ a {
   }
 } */
 
+/* Live dot pulse */
+@keyframes live-pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.4; }
+}
+
+.live-dot {
+  animation: live-pulse 1.5s ease-in-out infinite;
+}
+
 .vjs-big-play-button {
   height: 50px !important;
   border-radius: 4px !important;
