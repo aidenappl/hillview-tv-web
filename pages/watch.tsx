@@ -4,8 +4,6 @@ import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import { DateTime } from "luxon";
 import Link from "next/link";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faDownload } from "@fortawesome/free-solid-svg-icons";
 import toast from "react-hot-toast";
 
 import QueryVideo from "../hooks/QueryVideo";
@@ -42,16 +40,12 @@ const Watch = (props: PageProps) => {
   let liveURL = props.video.url;
 
   if (
-    props.video.url.includes(
-      "customer-nakrsdfbtn3mdz5z.cloudflarestream.com",
-    ) ||
+    props.video.url.includes("customer-nakrsdfbtn3mdz5z.cloudflarestream.com") ||
     props.video.url.includes("cloudflarestream.com") ||
     props.video.url.includes("videodelivery.net")
   ) {
-    // Cloudflare Video
     liveURL = liveURL.replaceAll("/manifest/video.m3u8", "/iframe");
   } else if (props.video.url.includes("vimeo")) {
-    // Vimeo Video
     const regex = /\/external\/(\d+)\.m3u8/;
     const match = liveURL.match(regex);
     if (match === null || match.length < 2) {
@@ -60,7 +54,7 @@ const Watch = (props: PageProps) => {
     liveURL = "https://player.vimeo.com/video/" + match![1];
   }
 
-  const [shareButtonText, updateShareButtonText] = useState("Share Video");
+  const [shareButtonText, setShareButtonText] = useState("Share");
   const [progress, setProgress] = useState(0);
   const [eta, setEta] = useState(0);
   const [downloadInProgress, setDownloadInProgress] = useState(false);
@@ -79,8 +73,19 @@ const Watch = (props: PageProps) => {
     recordView();
   }, [props.video.uuid]);
 
+  const recordDownload = async () => {
+    try {
+      await FetchAPI({
+        method: "POST",
+        url: `/video/v1.1/recordDownload/${props.video.uuid}`,
+      });
+    } catch (error) {
+      console.error("Error recording download:", error);
+    }
+  };
+
   const handleDownload = async (url: string) => {
-    if (url === undefined) return;
+    if (!url) return;
     recordDownload();
     if (url.includes("customer-nakrsdfbtn3mdz5z.cloudflarestream.com")) {
       window.open(url, "_blank");
@@ -94,21 +99,17 @@ const Watch = (props: PageProps) => {
     try {
       const response = await axios.get(url, {
         responseType: "blob",
-        headers: {
-          Accept: "video/mp4",
-          "Content-Type": "video/mp4",
-        },
+        headers: { Accept: "video/mp4", "Content-Type": "video/mp4" },
         onDownloadProgress: (progressEvent) => {
           const total = progressEvent.total ?? 0;
           if (total === 0) return;
-          const progress = Math.round((progressEvent.loaded / total) * 100);
-          setProgress(progress);
-          if (progress !== lastProgress) {
-            const elapsedTime = Date.now() - startTime!;
-            const remainingTime = (elapsedTime / progress) * (100 - progress);
-            setEta(remainingTime);
+          const pct = Math.round((progressEvent.loaded / total) * 100);
+          setProgress(pct);
+          if (pct !== lastProgress) {
+            const elapsed = Date.now() - startTime;
+            setEta((elapsed / pct) * (100 - pct));
           }
-          lastProgress = progress;
+          lastProgress = pct;
         },
       });
 
@@ -129,207 +130,170 @@ const Watch = (props: PageProps) => {
     }
   };
 
-  const formatTime = (milliseconds: number) => {
-    const seconds = Math.round(milliseconds / 1000);
+  const formatEta = (ms: number) => {
+    if (progress === 0) return "Calculating…";
+    const seconds = Math.round(ms / 1000);
     const minutes = Math.floor(seconds / 60);
-    const remainingSeconds = seconds % 60;
-    if (progress === 0) {
-      return "Calculating...";
-    }
-    if (minutes === 0) {
-      if (remainingSeconds < 30) {
-        return `Less than a minute remaining...`;
-      }
-      return `About ${remainingSeconds} seconds remaining...`;
-    }
-    return `About ${minutes} minutes remaining...`;
-  };
-
-  // Record a download when the download button is clicked
-  const recordDownload = async () => {
-    try {
-      await FetchAPI({
-        method: "POST",
-        url: `/video/v1.1/recordDownload/${props.video.uuid}`,
-      });
-    } catch (error) {
-      console.error("Error recording download:", error);
-    }
+    const remaining = seconds % 60;
+    if (minutes === 0) return remaining < 30 ? "Less than a minute remaining" : `About ${remaining} seconds remaining`;
+    return `About ${minutes} minute${minutes !== 1 ? "s" : ""} remaining`;
   };
 
   const shareLink = () => {
-    const fullUrl = window.location.href;
-    navigator.clipboard.writeText(fullUrl);
-    updateShareButtonText("Link Copied!");
-
-    setTimeout(() => {
-      updateShareButtonText("Share Video");
-    }, 3000);
+    navigator.clipboard.writeText(window.location.href);
+    setShareButtonText("Copied!");
+    setTimeout(() => setShareButtonText("Share"), 3000);
   };
-
-  useEffect(() => {
-    const progressBar = document.getElementById("progress-bar");
-    if (progressBar) {
-      progressBar.style.width = `${progress}%`;
-    }
-  }, [progress]);
 
   return (
     <Layout>
-      {downloadInProgress ? (
-        <div className="pointer-events-none fixed left-0 top-0 z-10 flex h-screen w-full items-end justify-center">
-          <div className="mb-10 flex w-4/5 max-w-[700px] flex-col gap-1 rounded-md border-[1px] border-slate-100 bg-white px-6 py-5 shadow-lg">
-            <h2 className="font-semibold text-slate-900">
-              Downloading Video...
-            </h2>
-            <p className="font-light text-slate-500">
-              We are currently exporting your video. This can take some time as
-              we try to give you the highest quality possible.
+      {/* ── Download progress overlay ── */}
+      {downloadInProgress && (
+        <div className="pointer-events-none fixed inset-0 z-50 flex items-end justify-center p-6">
+          <div className="w-full max-w-md rounded-xl border border-neutral-150 bg-white p-6 shadow-xl">
+            <p className="text-sm font-semibold text-header-100">Downloading video…</p>
+            <p className="mt-1 text-xs leading-relaxed text-neutral-400">
+              Exporting at the highest quality available. This may take a moment.
             </p>
-            <div className="mt-3 flex items-center gap-3">
-              <div className="relative h-[30px] w-full overflow-hidden rounded-md border-2 border-[#739dd8]">
-                <div
-                  id="progress-bar"
-                  className={`absolute left-0 top-0 z-10 h-full bg-primary-100`}
-                ></div>
-              </div>
-              <p className="font-semibold">{progress}%</p>
+            <div className="mt-4 overflow-hidden rounded-full bg-neutral-100" style={{ height: 6 }}>
+              <div
+                className="h-full rounded-full bg-primary-100 transition-all duration-300"
+                style={{ width: `${progress}%` }}
+              />
             </div>
-            <p className="whitespace-nowrap text-slate-700">
-              {formatTime(eta)}
-            </p>
-          </div>
-        </div>
-      ) : null}
-      {!props.video ? (
-        ""
-      ) : (
-        <div className="watch-page flex h-fit w-full items-center justify-center">
-          <div className="h-fit w-11/12 max-w-screen-xl">
-            {/* Header Breadcrumbs */}
-            <div className="breadcrumb-container flex h-[100px] w-full items-center">
-              <button
-                type="button"
-                aria-label="Go back"
-                onClick={() => router.back()}
-                className="back-btn relative flex h-[50px] w-[50px] items-center justify-center rounded-xl border-2 border-neutral-150 bg-white"
-              >
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  width="24"
-                  height="24"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth={2}
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  aria-hidden="true"
-                >
-                  <polyline
-                    _ngcontent-waj-c10=""
-                    points="15 18 9 12 15 6"
-                  ></polyline>
-                </svg>
-              </button>
-              <p className="text-lg">
-                <Link
-                  href="/content"
-                  className="cursor-pointer pl-3 font-semibold text-primary-100"
-                >
-                  Videos
-                </Link>{" "}
-                → {props.video.title}
-              </p>
-            </div>
-
-            {/* Video Container */}
-            <div className="video-container h-fit w-full">
-              {/* <VideoPlayer url={props.video.url} /> */}
-              <div className="relative pt-[56.25%]">
-                <iframe
-                  src={
-                    liveURL +
-                    "?preload=auto&poster=" +
-                    props.video.thumbnail +
-                    "&fit=clip&width=1280&height=720"
-                  }
-                  className="absolute top-0 h-full w-full border-none"
-                  allow="accelerometer; gyroscope; autoplay; encrypted-media; picture-in-picture;"
-                  allowFullScreen={true}
-                ></iframe>
-              </div>
-            </div>
-
-            {/* Title & Video info Container */}
-            <div className="title-container mt-10 h-fit w-full">
-              <div className="title-info-container relative h-fit w-full">
-                <h1 className="w-full pr-0 text-3xl font-medium sm:pr-[150px] sm:text-5xl">
-                  {props.video.title}
-                </h1>
-                <div className="title-runner mb-6 mt-1 flex flex-col items-start gap-3 sm:h-[60px] sm:flex-row sm:items-center sm:gap-0">
-                  <div className="flex items-center">
-                    <div className="avatar h-[30px] w-[30px] rounded-full bg-[url(https://content.hillview.tv/images/mobile/default.jpg)] bg-cover bg-center bg-no-repeat"></div>
-                    <p className="ml-3 font-medium text-neutral-800">
-                      HillviewTV Team
-                    </p>
-                    <p className="ml-6 font-light text-neutral-600">
-                      {props.video.ft}
-                    </p>
-                  </div>
-                  <div className="flex items-center gap-4 sm:absolute sm:right-0">
-                  {props.video.allow_downloads && props.video.download_url ? (
-                    <div
-                      className="group h-[20px] w-[20px] cursor-pointer"
-                      onClick={async () => {
-                        try {
-                          handleDownload(props.video.download_url!);
-                        } catch (error) {
-                          console.error(
-                            "Error downloading the MP4 file:",
-                            error,
-                          );
-                        }
-                      }}
-                    >
-                      <FontAwesomeIcon
-                        icon={faDownload}
-                        className="cursor-pointer text-xl text-neutral-600 transition group-hover:text-neutral-900"
-                      />
-                    </div>
-                  ) : null}
-                  <button
-                    onClick={() => {
-                      shareLink();
-                    }}
-                    className="hidden h-[45px] w-[150px] rounded-lg bg-primary-100 text-white duration-200 hover:bg-[#2b55c5] sm:block"
-                  >
-                    {shareButtonText}
-                  </button>
-                  </div>
-                </div>
-              </div>
-              <div className="hr h-[2px] w-full bg-neutral-200"></div>
-              <div className="h-fit w-full whitespace-pre-wrap py-10">
-                <p>{props.video.description}</p>
-              </div>
+            <div className="mt-2 flex items-center justify-between">
+              <p className="text-xs text-neutral-400">{formatEta(eta)}</p>
+              <p className="text-xs font-semibold text-header-100">{progress}%</p>
             </div>
           </div>
         </div>
       )}
+
+      <div className="mx-auto w-full max-w-screen-xl px-6 pb-20 pt-8 sm:pt-10">
+        {/* ── Back link ── */}
+        <div className="mb-6">
+          <button
+            type="button"
+            onClick={() => router.back()}
+            className="inline-flex items-center gap-1.5 text-sm font-medium text-neutral-500 transition-colors duration-150 hover:text-neutral-900"
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              className="h-4 w-4"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+              strokeWidth={2.5}
+              aria-hidden="true"
+            >
+              <path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7" />
+            </svg>
+            Back
+          </button>
+        </div>
+
+        {/* ── Video player ── */}
+        <div className="overflow-hidden rounded-xl shadow-sm ring-1 ring-neutral-150">
+          <div className="relative pt-[56.25%]">
+            <iframe
+              src={
+                liveURL +
+                "?preload=auto&poster=" +
+                props.video.thumbnail +
+                "&fit=clip&width=1280&height=720"
+              }
+              className="absolute inset-0 h-full w-full border-none"
+              allow="accelerometer; gyroscope; autoplay; encrypted-media; picture-in-picture"
+              allowFullScreen
+            />
+          </div>
+        </div>
+
+        {/* ── Title & meta ── */}
+        <div className="mt-6">
+          <div className="flex flex-wrap items-start justify-between gap-4">
+            {/* Title */}
+            <h1 className="text-2xl font-bold tracking-tight text-header-100 sm:text-3xl lg:text-4xl">
+              {props.video.title}
+            </h1>
+
+            {/* Action buttons */}
+            <div className="flex shrink-0 items-center gap-2">
+              {props.video.allow_downloads && props.video.download_url && (
+                <button
+                  onClick={() => handleDownload(props.video.download_url!)}
+                  className="inline-flex items-center gap-2 rounded-lg border border-neutral-200 bg-white px-4 py-2 text-sm font-medium text-neutral-700 transition-colors duration-150 hover:bg-neutral-50"
+                >
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    className="h-4 w-4"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                    strokeWidth={2}
+                    aria-hidden="true"
+                  >
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+                  </svg>
+                  Download
+                </button>
+              )}
+              <button
+                onClick={shareLink}
+                className="inline-flex items-center gap-2 rounded-lg bg-primary-100 px-4 py-2 text-sm font-medium text-white transition-colors duration-150 hover:bg-[#0d6efd]"
+              >
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  className="h-4 w-4"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                  strokeWidth={2}
+                  aria-hidden="true"
+                >
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z" />
+                </svg>
+                {shareButtonText}
+              </button>
+            </div>
+          </div>
+
+          {/* Meta row */}
+          <div className="mt-4 flex items-center gap-3">
+            <div
+              className="h-7 w-7 shrink-0 rounded-full bg-cover bg-center bg-no-repeat ring-1 ring-neutral-150"
+              style={{ backgroundImage: "url(https://content.hillview.tv/images/mobile/default.jpg)" }}
+              aria-hidden="true"
+            />
+            <span className="text-sm font-medium text-neutral-700">HillviewTV Team</span>
+            <span className="text-neutral-300" aria-hidden="true">·</span>
+            <span className="text-sm text-neutral-400">{props.video.ft}</span>
+          </div>
+
+          {/* Divider */}
+          <div className="mt-5 border-t border-neutral-150" />
+
+          {/* Description */}
+          {props.video.description && (
+            <p className="mt-5 whitespace-pre-wrap text-sm leading-relaxed text-neutral-500">
+              {props.video.description}
+            </p>
+          )}
+        </div>
+      </div>
     </Layout>
   );
 };
 
-export const getServerSideProps: GetServerSideProps = async (context: GetServerSidePropsContext) => {
+export const getServerSideProps: GetServerSideProps = async (
+  context: GetServerSidePropsContext,
+) => {
   try {
     const q = context.query.v as string;
     const data = await QueryVideo(q);
 
     if (data) {
-      data.ft = DateTime.fromISO(data.inserted_at.toString()).toFormat(
-        "MMMM dd, yyyy",
-      );
+      data.ft = DateTime.fromISO(data.inserted_at.toString()).toFormat("MMMM dd, yyyy");
       return {
         props: {
           title: data.title,
@@ -340,10 +304,7 @@ export const getServerSideProps: GetServerSideProps = async (context: GetServerS
       };
     } else {
       return {
-        redirect: {
-          destination: "/content",
-          permanent: false,
-        },
+        redirect: { destination: "/content", permanent: false },
       };
     }
   } catch (error) {
