@@ -1,13 +1,13 @@
-import { Rank } from "../pages/content";
+import { Spotlight } from "../pages/content";
 import { FetchAPI } from "../services/http/requestHandler";
 
 const QuerySpotlight = async (
   limit?: number,
   offset?: number,
-): Promise<Rank[]> => {
+): Promise<Spotlight[]> => {
   if (!limit) limit = 24;
   if (!offset) offset = 0;
-  const response = await FetchAPI<Rank[]>({
+  const response = await FetchAPI<Spotlight[]>({
     url: `/video/v1.1/spotlight`,
     method: "GET",
     params: {

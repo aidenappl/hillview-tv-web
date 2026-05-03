@@ -29,14 +29,14 @@ export interface Video {
   ft?: string; // Formatted time
 }
 
-export interface Rank {
-  rank: number;
+export interface Spotlight {
+  position: number;
   video: Video;
 }
 
 interface ContentPageProps {
   videos: Video[];
-  highlightedVideos: Rank[];
+  highlightedVideos: Spotlight[];
 }
 
 const SectionLabel = ({ title }: { title: string }) => (
