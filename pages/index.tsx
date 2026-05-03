@@ -1,14 +1,59 @@
-import type { NextPage } from "next";
+import type { NextPage, GetServerSideProps, GetServerSidePropsContext } from "next";
 import Link from "next/link";
 import Image from "next/image";
 import Layout from "../components/Layout";
 import Spinner from "../components/Spinner";
+import VideoPreview from "../components/ContentPage/VideoPreview";
 import { useState } from "react";
 import Joi from "joi";
 import toast from "react-hot-toast";
 import { FetchAPI } from "../services/http/requestHandler";
+import QuerySpotlight from "../hooks/QuerySpotlight";
+import QueryVideos from "../hooks/QueryVideos";
+import ContentImage from "../components/ContentImage";
+import { Rank, Video } from "./content";
 
-const Home: NextPage = () => {
+interface HomeProps {
+  spotlight: Rank[];
+  latestVideos: Video[];
+}
+
+const LatestCard = ({ video }: { video: Video }) => (
+  <Link href={`/watch?v=${video.uuid}`}>
+    <div className="group flex gap-4 rounded-xl border border-transparent p-3 transition-all duration-200 hover:border-neutral-200 hover:bg-white hover:shadow-sm">
+      {/* Thumbnail */}
+      <div className="relative aspect-video w-40 shrink-0 overflow-hidden rounded-lg sm:w-44">
+        <ContentImage image={video.thumbnail} alt={video.title} />
+        {/* Play overlay */}
+        <div className="absolute inset-0 flex items-center justify-center bg-black/0 transition-colors duration-200 group-hover:bg-black/20">
+          <div className="flex h-8 w-8 items-center justify-center rounded-full bg-white/0 opacity-0 shadow-lg transition-all duration-200 group-hover:bg-white/90 group-hover:opacity-100">
+            <svg xmlns="http://www.w3.org/2000/svg" className="h-3.5 w-3.5 translate-x-px text-header-100" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+              <path d="M8 5v14l11-7z" />
+            </svg>
+          </div>
+        </div>
+      </div>
+      {/* Text */}
+      <div className="flex min-w-0 flex-col justify-center gap-1">
+        {video.ft && (
+          <p className="text-[0.62rem] font-medium uppercase tracking-wider text-neutral-400">
+            {video.ft}
+          </p>
+        )}
+        <h3 className="line-clamp-2 text-sm font-semibold leading-snug text-header-100 transition-colors duration-150 group-hover:text-primary-100">
+          {video.title}
+        </h3>
+        {video.description && (
+          <p className="mt-0.5 line-clamp-2 text-xs leading-relaxed text-neutral-400">
+            {video.description}
+          </p>
+        )}
+      </div>
+    </div>
+  </Link>
+);
+
+const Home: NextPage<HomeProps> = ({ spotlight, latestVideos }) => {
   const [loadingNewsletter, setLoadingNewsletter] = useState<boolean>(false);
   const [newsletterEmail, setNewsletterEmail] = useState<string>("");
 
@@ -172,8 +217,112 @@ const Home: NextPage = () => {
         </div>
       </section>
 
+      {/* ── Spotlight ── */}
+      {spotlight.length > 0 && (
+        <section className="border-b border-neutral-150 px-6 py-16 sm:py-20">
+          <div className="mx-auto max-w-screen-xl">
+            {/* Section header */}
+            <div className="mb-10 flex items-end justify-between gap-6">
+              <div>
+                <h2 className="text-3xl font-bold tracking-tight text-header-100 sm:text-4xl">
+                  Spotlight
+                </h2>
+                <p className="mt-1.5 text-sm text-neutral-400">
+                  Highlighted productions from the HillviewTV team
+                </p>
+              </div>
+              <Link
+                href="/content"
+                className="inline-flex shrink-0 items-center gap-1.5 rounded-lg border border-neutral-200 bg-white px-5 py-2.5 text-sm font-semibold text-neutral-700 shadow-sm transition-colors duration-150 hover:bg-neutral-50 hover:border-neutral-300"
+              >
+                See all content
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  className="h-4 w-4"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                  strokeWidth={2.5}
+                  aria-hidden="true"
+                >
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
+                </svg>
+              </Link>
+            </div>
+
+            {/* Video grid */}
+            {spotlight.length === 1 ? (
+              <VideoPreview video={spotlight[0].video} featured />
+            ) : spotlight.length >= 4 ? (
+              /* 4+ videos: full-width featured hero, then rest in 3-col grid */
+              <>
+                <VideoPreview video={spotlight[0].video} featured />
+                <div className="mt-2 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
+                  {spotlight.slice(1).map((item) => (
+                    <VideoPreview key={item.video.id} video={item.video} />
+                  ))}
+                </div>
+              </>
+            ) : (
+              /* 2–3 videos: featured spans 2 cols, rest fill the right column */
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
+                <div className="lg:col-span-2">
+                  <VideoPreview video={spotlight[0].video} featured />
+                </div>
+                {spotlight.slice(1).map((item) => (
+                  <VideoPreview key={item.video.id} video={item.video} />
+                ))}
+              </div>
+            )}
+          </div>
+        </section>
+      )}
+
+      {/* ── Latest Content ── */}
+      {latestVideos.length > 0 && (
+        <section className="bg-neutral-50 px-6 py-16 sm:py-20">
+          <div className="mx-auto max-w-screen-xl">
+            {/* Section header */}
+            <div className="mb-10 flex items-end justify-between gap-6">
+              <div>
+                <h2 className="text-3xl font-bold tracking-tight text-header-100 sm:text-4xl">
+                  Latest
+                </h2>
+                <p className="mt-1.5 text-sm text-neutral-400">
+                  The most recently posted productions
+                </p>
+              </div>
+              <Link
+                href="/content"
+                className="inline-flex shrink-0 items-center gap-1.5 rounded-lg border border-neutral-200 bg-white px-5 py-2.5 text-sm font-semibold text-neutral-700 shadow-sm transition-colors duration-150 hover:border-neutral-300 hover:bg-neutral-50"
+              >
+                See all content
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  className="h-4 w-4"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                  strokeWidth={2.5}
+                  aria-hidden="true"
+                >
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
+                </svg>
+              </Link>
+            </div>
+
+            {/* 2-column horizontal card grid */}
+            <div className="grid grid-cols-1 gap-2 md:grid-cols-2">
+              {latestVideos.map((vid) => (
+                <LatestCard key={vid.id} video={vid} />
+              ))}
+            </div>
+          </div>
+        </section>
+      )}
+
       {/* ── Newsletter ── */}
-      <section className="border-t border-neutral-150 bg-neutral-50 px-6 py-16 sm:py-20">
+      <section className="border-t border-neutral-200 px-6 py-16 sm:py-20">
         <div className="mx-auto max-w-lg text-center">
           <h2 className="text-2xl font-bold tracking-tight text-header-100 sm:text-3xl">
             Stay in the loop
@@ -218,12 +367,20 @@ const Home: NextPage = () => {
   );
 };
 
-export async function getStaticProps() {
+export const getServerSideProps: GetServerSideProps = async (
+  _context: GetServerSidePropsContext,
+) => {
+  const [spotlight, latestVideos] = await Promise.all([
+    QuerySpotlight(24, 0),
+    QueryVideos("", 4, 0),
+  ]);
   return {
     props: {
       title: "HillviewTV - Home",
+      spotlight,
+      latestVideos,
     },
   };
-}
+};
 
 export default Home;
