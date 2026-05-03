@@ -57,7 +57,7 @@ const Home: NextPage = () => {
       <div className="border-b border-primary-100/20 bg-primary-100 px-4 py-3">
         <div className="mx-auto flex max-w-screen-xl flex-wrap items-center justify-center gap-x-6 gap-y-2.5 sm:flex-nowrap">
           <p className="text-center text-sm font-medium text-white sm:text-left">
-            Get notified when new productions drop —
+            Get notified when new productions are posted —
           </p>
           <div className="flex gap-2">
             <label htmlFor="email-top" className="sr-only">
@@ -101,11 +101,18 @@ const Home: NextPage = () => {
             className="relative h-[520px] w-[520px]"
             style={{
               opacity: 0.18,
-              maskImage: "radial-gradient(ellipse at center, black 20%, transparent 65%)",
-              WebkitMaskImage: "radial-gradient(ellipse at center, black 20%, transparent 65%)",
+              maskImage:
+                "radial-gradient(ellipse at center, black 20%, transparent 65%)",
+              WebkitMaskImage:
+                "radial-gradient(ellipse at center, black 20%, transparent 65%)",
             }}
           >
-            <Image src="/assets/logos/sun.png" alt="" fill style={{ objectFit: "contain" }} />
+            <Image
+              src="/assets/logos/sun.png"
+              alt=""
+              fill
+              style={{ objectFit: "contain" }}
+            />
           </div>
         </div>
 
@@ -121,9 +128,8 @@ const Home: NextPage = () => {
 
             {/* Headline */}
             <h1 className="text-[3rem] font-black leading-[1.05] tracking-tight text-header-100 sm:text-6xl lg:text-[5rem]">
-              Putting the{" "}
-              <span className="text-primary-100">spotlight</span>{" "}
-              on the stories that matter.
+              Putting the <span className="text-primary-100">spotlight</span> on
+              the stories that matter.
             </h1>
 
             {/* Subline */}
@@ -148,7 +154,11 @@ const Home: NextPage = () => {
                   strokeWidth={2.5}
                   aria-hidden="true"
                 >
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    d="M9 5l7 7-7 7"
+                  />
                 </svg>
               </Link>
               <Link
