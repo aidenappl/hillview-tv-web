@@ -376,7 +376,11 @@ export const getServerSideProps: GetServerSideProps = async (
   ]);
   return {
     props: {
-      title: "HillviewTV - Home",
+      title: "HillviewTV - Watch Announcements & Broadcasts",
+      description:
+        "Watch daily announcements, PAC Broadcasts, and the latest productions from Hillview Middle School's student-run TV station.",
+      image: "https://content.hillview.tv/thumbnails/default.jpg",
+      url: "https://hillview.tv/",
       spotlight,
       latestVideos,
     },

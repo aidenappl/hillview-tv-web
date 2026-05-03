@@ -11,6 +11,9 @@ function HillviewWeb({ Component, pageProps }: AppProps) {
         title={pageProps.title}
         description={pageProps.description}
         image={pageProps.image}
+        url={pageProps.url}
+        ogType={pageProps.ogType}
+        noindex={pageProps.noindex}
       />
       <Toaster
         position="top-center"

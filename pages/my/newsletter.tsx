@@ -82,4 +82,13 @@ const MyNewsletter: NextPage = () => {
   );
 };
 
+export function getStaticProps() {
+  return {
+    props: {
+      title: "Newsletter - HillviewTV",
+      noindex: true,
+    },
+  };
+}
+
 export default MyNewsletter;

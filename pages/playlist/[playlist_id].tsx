@@ -1,4 +1,5 @@
 import type { GetServerSideProps, GetServerSidePropsContext } from "next";
+import Head from "next/head";
 import Image from "next/image";
 import Layout from "../../components/Layout";
 import Link from "next/link";
@@ -8,6 +9,7 @@ import VideoPreview from "../../components/ContentPage/VideoPreview";
 
 interface PlaylistPageProps {
   playlist: Playlist;
+  canonicalUrl: string;
 }
 
 interface Playlist {
@@ -21,8 +23,28 @@ interface Playlist {
 }
 
 const Playlist = (props: PlaylistPageProps) => {
+  const jsonLd = {
+    "@context": "https://schema.org",
+    "@type": "ItemList",
+    name: props.playlist.name,
+    description: props.playlist.description,
+    url: props.canonicalUrl,
+    itemListElement: props.playlist.videos.map((v, i) => ({
+      "@type": "ListItem",
+      position: i + 1,
+      url: `https://hillview.tv/watch?v=${v.uuid}`,
+      name: v.title,
+    })),
+  };
+
   return (
     <Layout>
+      <Head>
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+        />
+      </Head>
       <div className="flex w-full flex-col items-center">
         <div className="w-full max-w-screen-2xl px-4 pb-24 sm:px-6 md:px-8">
 
@@ -116,12 +138,15 @@ export const getServerSideProps: GetServerSideProps = async (
       return { notFound: true };
     }
 
+    const canonicalUrl = `https://hillview.tv/playlist/${response.route}`;
     return {
       props: {
         playlist: response,
-        title: response.name,
+        title: response.name + " - HillviewTV",
         description: response.description,
         image: response.banner_image,
+        url: canonicalUrl,
+        canonicalUrl,
       },
     };
   } catch (error) {

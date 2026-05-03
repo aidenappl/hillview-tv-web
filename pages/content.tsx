@@ -252,7 +252,11 @@ export const getServerSideProps: GetServerSideProps = async (
 
     return {
       props: {
-        title: "HillviewTV - Content",
+        title: "HillviewTV - All Videos",
+        description:
+          "Browse all videos from HillviewTV — daily announcements, PAC Broadcasts, and more from Hillview Middle School.",
+        image: "https://content.hillview.tv/thumbnails/default.jpg",
+        url: "https://hillview.tv/content",
         videos: videos,
         highlightedVideos: spotlight,
       },

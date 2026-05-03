@@ -1,4 +1,5 @@
 import type { GetServerSideProps, GetServerSidePropsContext } from "next";
+import Head from "next/head";
 import Layout from "../components/Layout";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
@@ -32,10 +33,27 @@ interface Video {
 
 interface PageProps {
   video: Video;
+  canonicalUrl: string;
 }
 
 const Watch = (props: PageProps) => {
   const router = useRouter();
+
+  const jsonLd = {
+    "@context": "https://schema.org",
+    "@type": "VideoObject",
+    name: props.video.title,
+    description: props.video.description,
+    thumbnailUrl: props.video.thumbnail,
+    uploadDate: new Date(props.video.inserted_at).toISOString(),
+    url: props.canonicalUrl,
+    publisher: {
+      "@type": "Organization",
+      name: "HillviewTV",
+      url: "https://hillview.tv",
+    },
+  };
+
 
   let liveURL = props.video.url;
 
@@ -147,6 +165,12 @@ const Watch = (props: PageProps) => {
 
   return (
     <Layout>
+      <Head>
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+        />
+      </Head>
       {/* ── Download progress overlay ── */}
       {downloadInProgress && (
         <div className="pointer-events-none fixed inset-0 z-50 flex items-end justify-center p-6">
@@ -294,12 +318,16 @@ export const getServerSideProps: GetServerSideProps = async (
 
     if (data) {
       data.ft = DateTime.fromISO(data.inserted_at.toString()).toFormat("MMMM dd, yyyy");
+      const canonicalUrl = `https://hillview.tv/watch?v=${data.uuid}`;
       return {
         props: {
-          title: data.title,
+          title: data.title + " - HillviewTV",
           image: data.thumbnail,
           description: data.description,
+          url: canonicalUrl,
+          ogType: "video.other",
           video: data,
+          canonicalUrl,
         },
       };
     } else {
