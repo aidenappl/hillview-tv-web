@@ -1,4 +1,4 @@
-import type { GetServerSideProps } from "next";
+import type { GetServerSideProps, GetServerSidePropsContext } from "next";
 import Layout from "../../components/Layout";
 import Link from "next/link";
 import { Video } from "../content";
@@ -39,7 +39,7 @@ const Playlist = (props: PlaylistPageProps) => {
           </div>
 
           {/* Video List */}
-          <div className="video-list flex h-fit w-full flex-wrap justify-around gap-12 pb-10 sm:gap-10">
+          <div className="video-list grid h-fit w-full grid-cols-1 gap-10 pb-10 md:grid-cols-2 lg:grid-cols-3">
             {props.playlist.videos.map((i) => {
               return <VideoPreview key={i.id} video={i} />;
             })}
@@ -50,9 +50,9 @@ const Playlist = (props: PlaylistPageProps) => {
   );
 };
 
-export const getServerSideProps: GetServerSideProps = async (context: any) => {
+export const getServerSideProps: GetServerSideProps = async (context: GetServerSidePropsContext) => {
   try {
-    const route = context.params.playlist_id;
+    const route = context.params!.playlist_id as string;
 
     const response = await QueryPlaylist(route);
 

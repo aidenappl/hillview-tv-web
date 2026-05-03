@@ -28,15 +28,6 @@ const axios_api = axios.create({
   timeout: 10000,
 });
 
-// Basic fetch instance for non-API requests
-const fetch = axios.create({
-  headers: {
-    "Content-Type": "application/json",
-  },
-  validateStatus: () => true,
-  timeout: 10000,
-});
-
 // Fetch API instance for making API requests
 const FetchAPI = async <T>(
   config: AxiosRequestConfig,
@@ -78,4 +69,4 @@ const FetchAPI = async <T>(
   }
 };
 
-export { FetchAPI, fetch };
+export { FetchAPI };

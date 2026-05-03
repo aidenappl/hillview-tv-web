@@ -54,13 +54,13 @@ const PageHead = ({
       <meta itemProp="description" content={description} />
       <meta itemProp="image" content={image} />
 
-      <meta name="og:title" content={title} />
-      <meta name="og:description" content={description} />
-      <meta name="og:image" content={image} />
+      <meta property="og:title" content={title} />
+      <meta property="og:description" content={description} />
+      <meta property="og:image" content={image} />
 
-      <meta name="og:site_name" content={title} />
-      <meta name="og:locale" content="en_US" />
-      <meta name="og:type" content="website" />
+      <meta property="og:site_name" content={title} />
+      <meta property="og:locale" content="en_US" />
+      <meta property="og:type" content="website" />
 
       <base href="/" />
       <meta name="viewport" content="width=device-width, initial-scale=1" />

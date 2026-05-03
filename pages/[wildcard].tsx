@@ -1,12 +1,12 @@
-import type { NextPage } from "next";
+import type { GetServerSidePropsContext, NextPage } from "next";
 import QueryRoute from "../hooks/QueryRoute";
 
 const WildcardHandler: NextPage = () => {
   return <></>;
 };
 
-export const getServerSideProps = async (context: any) => {
-  const lookup = context.params.wildcard;
+export const getServerSideProps = async (context: GetServerSidePropsContext) => {
+  const lookup = context.params!.wildcard as string;
 
   try {
     const response = await QueryRoute(lookup);

@@ -1,7 +1,8 @@
+import React from "react";
 import Navbar from "./Navbar/Navbar";
 
 interface LayoutProps {
-  children: any;
+  children: React.ReactNode;
 }
 
 const Layout = (props: LayoutProps) => {
@@ -10,7 +11,7 @@ const Layout = (props: LayoutProps) => {
   return (
     <div className="primary-container">
       <Navbar hideLinks={false} />
-      {children}
+      <div id="main-content">{children}</div>
     </div>
   );
 };

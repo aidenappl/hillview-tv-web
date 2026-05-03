@@ -121,6 +121,14 @@ a {
   animation: live-pulse 1.5s ease-in-out infinite;
 }
 
+a:focus-visible,
+button:focus-visible,
+input:focus-visible,
+[role="button"]:focus-visible {
+  outline: 2px solid #197bff;
+  outline-offset: 2px;
+}
+
 .vjs-big-play-button {
   height: 50px !important;
   border-radius: 4px !important;

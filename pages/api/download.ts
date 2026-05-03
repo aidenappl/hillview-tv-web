@@ -1,11 +1,12 @@
+import type { NextApiRequest, NextApiResponse } from "next";
 import axios from "axios";
 import { promisify } from "util";
 import { pipeline } from "stream";
 
-const downloadFile = async (req, res) => {
+const downloadFile = async (req: NextApiRequest, res: NextApiResponse) => {
   const { url } = req.query;
 
-  if (!url) {
+  if (!url || typeof url !== "string") {
     res.status(400).send("URL is required");
     return;
   }
@@ -13,12 +14,6 @@ const downloadFile = async (req, res) => {
   try {
     const response = await axios.get(url, {
       responseType: "stream",
-      onDownloadProgress: (progressEvent) => {
-        const progress = Math.round(
-          (progressEvent.loaded / progressEvent.total) * 100,
-        );
-        req.query.onProgress(progress);
-      },
     });
 
     res.setHeader("Content-Type", response.headers["content-type"]);
@@ -27,8 +22,9 @@ const downloadFile = async (req, res) => {
 
     const streamPipeline = promisify(pipeline);
     await streamPipeline(response.data, res);
-  } catch (error) {
-    console.error("Error downloading file:", error.message);
+  } catch (error: unknown) {
+    const message = error instanceof Error ? error.message : "Unknown error";
+    console.error("Error downloading file:", message);
     res.status(500).send("Error downloading file");
   }
 };

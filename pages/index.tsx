@@ -14,7 +14,7 @@ const Home: NextPage = () => {
   const submitNewsletterForm = async () => {
     // Base checks
     if (loadingNewsletter) return;
-    if (newsletterEmail == "") return;
+    if (newsletterEmail === "") return;
 
     // Set loading newsletter
     setLoadingNewsletter(true);
@@ -77,7 +77,7 @@ const Home: NextPage = () => {
               setNewsletterEmail(e.target.value.trim());
             }}
             onKeyUp={(e) => {
-              if (e.key == "Enter") {
+              if (e.key === "Enter") {
                 submitNewsletterForm();
               }
             }}
@@ -86,7 +86,7 @@ const Home: NextPage = () => {
           />
           <button
             type="submit"
-            className="hover:bg-indigo-400 focus-visible:outline-indigo-500 flex w-[94px] flex-none items-center justify-center rounded-md bg-primary-550 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-[#181542] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2"
+            className="hover:bg-indigo-400 focus-visible:outline-indigo-500 flex w-[94px] flex-none items-center justify-center rounded-md bg-primary-550 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-primary-550 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2"
             disabled={loadingNewsletter}
             onClick={() => {
               submitNewsletterForm();

@@ -1,5 +1,7 @@
-import type { GetServerSideProps } from "next";
-import { useState } from "react";
+import type { GetServerSideProps, GetServerSidePropsContext } from "next";
+import React, { useState } from "react";
+import clsx from "clsx";
+import toast from "react-hot-toast";
 import Layout from "../components/Layout";
 
 import VideoPreview from "../components/ContentPage/VideoPreview";
@@ -37,6 +39,15 @@ interface ContentPageProps {
   highlightedVideos: Rank[];
 }
 
+const SectionLabel = ({ title }: { title: string }) => (
+  <div className="mb-5 flex items-center gap-4">
+    <span className="shrink-0 text-[0.65rem] font-bold uppercase tracking-widest text-neutral-400">
+      {title}
+    </span>
+    <div className="h-px w-full bg-neutral-150" />
+  </div>
+);
+
 const Content = (props: ContentPageProps) => {
   const [videos, setVideos] = useState(props.videos);
   const [highlightedVideos, _setHighlightedVideos] = useState(
@@ -45,7 +56,9 @@ const Content = (props: ContentPageProps) => {
 
   const [searching, setSearching] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
-  const [timeout, setTimer] = useState(null as any);
+  const [timeout, setTimer] = useState<
+    ReturnType<typeof setTimeout> | undefined
+  >(undefined);
   const [showLoadBtn, setShowLoadBtn] = useState(true);
 
   const resetSearch = () => {
@@ -64,7 +77,7 @@ const Content = (props: ContentPageProps) => {
     }
   };
 
-  const handleSearch = async (e: any) => {
+  const handleSearch = async (e: React.ChangeEvent<HTMLInputElement>) => {
     try {
       setSearchQuery(e.target.value);
       const value = e.target.value.trim();
@@ -83,93 +96,146 @@ const Content = (props: ContentPageProps) => {
       }
     } catch (error) {
       console.error(error);
+      toast.error("Search failed. Please try again.");
+      setSearching(false);
     }
   };
 
+  const isSearching = searchQuery.length > 0;
+  const showHighlighted =
+    !isSearching && highlightedVideos?.length > 0;
+
   return (
     <Layout>
-      <div className="content-page flex h-fit w-full items-center justify-center">
-        <div className="h-fit w-11/12 max-w-screen-2xl">
-          {/* Header */}
-          <div className="header mt-10 flex w-full items-center justify-center md:mt-14">
-            <div className="center-object">
-              <h1 className="text-center text-4xl font-semibold sm:text-5xl md:text-6xl">
-                Our Content
-              </h1>
+      <div className="flex w-full flex-col items-center">
+        <div className="w-full max-w-screen-2xl px-4 pb-24 sm:px-6 md:px-8">
+
+          {/* Page header */}
+          <div className="pb-10 pt-12 text-center md:pb-12 md:pt-16">
+            <h1 className="text-4xl font-bold tracking-tight text-header-100 sm:text-5xl md:text-6xl">
+              Our Content
+            </h1>
+            <p className="mt-3 text-sm text-neutral-400 sm:text-base">
+              Every production from the HillviewTV team
+            </p>
+
+            {/* Search */}
+            <div className="relative mx-auto mt-8 w-full max-w-md md:mt-10">
+              <label htmlFor="search-videos" className="sr-only">
+                Search videos
+              </label>
+              <div className="pointer-events-none absolute inset-y-0 left-4 flex items-center text-neutral-400">
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  className="h-4 w-4"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                  strokeWidth={2}
+                  aria-hidden="true"
+                >
+                  <circle cx="11" cy="11" r="8" />
+                  <path strokeLinecap="round" d="m21 21-4.35-4.35" />
+                </svg>
+              </div>
               <input
+                id="search-videos"
                 type="text"
-                className="mt-8 h-12 w-[320px] rounded-md bg-neutral-100 pl-5 outline outline-neutral-150 sm:w-[450px] md:mt-10 md:w-[550px]"
-                placeholder="Search"
+                className="h-12 w-full rounded-full border border-neutral-200 bg-white pl-11 pr-10 text-sm shadow-sm placeholder:text-neutral-400 transition"
+                placeholder="Search productions…"
                 value={searchQuery}
-                onChange={(e) => {
-                  handleSearch(e);
-                }}
+                onChange={handleSearch}
               />
+              {searchQuery && (
+                <button
+                  onClick={resetSearch}
+                  className="absolute inset-y-0 right-0 flex items-center pr-4 text-neutral-400 transition hover:text-neutral-700"
+                  aria-label="Clear search"
+                >
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    className="h-4 w-4"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                    strokeWidth={2.5}
+                    aria-hidden="true"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      d="M6 18L18 6M6 6l12 12"
+                    />
+                  </svg>
+                </button>
+              )}
             </div>
           </div>
 
-          {/* Highlighted List */}
-          <h1
-            className="py-16 text-center text-2xl font-semibold text-slate-600 sm:text-3xl md:text-4xl"
-            hidden={searchQuery.length > 0 || highlightedVideos == null}
-          >
-            Highlighted Content
-          </h1>
-          <div
-            className="video-list flex h-fit w-full flex-wrap justify-around gap-12 pb-10 sm:gap-10"
-            hidden={searchQuery.length > 0 || highlightedVideos == null}
-          >
-            <>
-              {searchQuery.length == 0 &&
-              highlightedVideos != null &&
-              highlightedVideos.length > 0
-                ? highlightedVideos.map((i) => {
-                    return <VideoPreview key={i.video.id} video={i.video} />;
-                  })
-                : null}
-            </>
-          </div>
+          {/* Highlighted Content */}
+          {showHighlighted && (
+            <section className="mb-14">
+              <SectionLabel title="Highlighted" />
+              {highlightedVideos.length === 1 ? (
+                <VideoPreview video={highlightedVideos[0].video} featured />
+              ) : (
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
+                  <div className={clsx(highlightedVideos.length > 1 && "lg:col-span-2")}>
+                    <VideoPreview video={highlightedVideos[0].video} featured />
+                  </div>
+                  {highlightedVideos.slice(1).map((i) => (
+                    <VideoPreview key={i.video.id} video={i.video} />
+                  ))}
+                </div>
+              )}
+            </section>
+          )}
+
           {/* All Videos */}
-          <h1
-            className="pb-14 pt-6 text-center text-2xl font-semibold text-slate-600 sm:text-3xl md:text-4xl"
-            hidden={searchQuery.length > 0 || highlightedVideos == null}
-          >
-            All Videos
-          </h1>
-          <div className="video-list flex h-fit w-full flex-wrap justify-around gap-12 pb-10 sm:gap-10">
-            {searching ? (
-              <SearchSpinner />
-            ) : (
-              <>
-                {videos.map((vid) => {
-                  return <VideoPreview key={vid.id} video={vid} />;
-                })}
-              </>
-            )}
-          </div>
-          <div
-            className={
-              "flex h-full w-full items-center justify-center py-20" +
-              (showLoadBtn ? "" : " hidden") +
-              (searching || videos.length < 24 ? " hidden" : "")
-            }
-          >
-            <button
-              onClick={() => {
-                loadMoreVideos();
-              }}
-              className="mb-20 h-[42px] w-[150px] cursor-pointer rounded-md bg-primary-100 text-white outline-none"
-            >
-              Load More
-            </button>
-          </div>
+          <section>
+            <SectionLabel
+              title={
+                isSearching ? `Results for "${searchQuery}"` : "All Videos"
+              }
+            />
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
+              {searching ? (
+                <div className="col-span-full flex justify-center py-20">
+                  <SearchSpinner />
+                </div>
+              ) : videos.length === 0 ? (
+                <div className="col-span-full py-20 text-center">
+                  <p className="text-sm text-neutral-400">
+                    No videos found for &ldquo;{searchQuery}&rdquo;
+                  </p>
+                </div>
+              ) : (
+                videos.map((vid) => <VideoPreview key={vid.id} video={vid} />)
+              )}
+            </div>
+          </section>
+
+          {/* Load more */}
+          {showLoadBtn && !searching && videos.length >= 24 && (
+            <div className="mt-12 flex justify-center">
+              <button
+                onClick={loadMoreVideos}
+                className="rounded-full border border-neutral-200 bg-white px-8 py-3 text-sm font-medium text-neutral-600 shadow-sm transition hover:border-neutral-300 hover:bg-neutral-50 hover:text-neutral-900 hover:shadow"
+              >
+                Load more videos
+              </button>
+            </div>
+          )}
+
         </div>
       </div>
     </Layout>
   );
 };
 
-export const getServerSideProps: GetServerSideProps = async (_context: any) => {
+export const getServerSideProps: GetServerSideProps = async (
+  _context: GetServerSidePropsContext,
+) => {
   try {
     const videos = await QueryVideos();
 

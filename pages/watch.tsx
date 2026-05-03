@@ -1,4 +1,4 @@
-import type { GetServerSideProps } from "next";
+import type { GetServerSideProps, GetServerSidePropsContext } from "next";
 import Layout from "../components/Layout";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
@@ -6,6 +6,7 @@ import { DateTime } from "luxon";
 import Link from "next/link";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faDownload } from "@fortawesome/free-solid-svg-icons";
+import toast from "react-hot-toast";
 
 import QueryVideo from "../hooks/QueryVideo";
 import { FetchAPI } from "../services/http/requestHandler";
@@ -69,7 +70,7 @@ const Watch = (props: PageProps) => {
       try {
         await FetchAPI({
           method: "POST",
-          url: `https://api.hillview.tv/video/v1.1/recordView/${props.video.uuid}`,
+          url: `/video/v1.1/recordView/${props.video.uuid}`,
         });
       } catch (error) {
         console.error("Error recording view:", error);
@@ -102,7 +103,7 @@ const Watch = (props: PageProps) => {
           if (total === 0) return;
           const progress = Math.round((progressEvent.loaded / total) * 100);
           setProgress(progress);
-          if (progress != lastProgress) {
+          if (progress !== lastProgress) {
             const elapsedTime = Date.now() - startTime!;
             const remainingTime = (elapsedTime / progress) * (100 - progress);
             setEta(remainingTime);
@@ -119,13 +120,16 @@ const Watch = (props: PageProps) => {
       document.body.appendChild(link);
       link.click();
       link.remove();
+      URL.revokeObjectURL(urlObject);
       setDownloadInProgress(false);
     } catch (error) {
       console.error("Error downloading file:", error);
+      toast.error("Download failed. Please try again.");
+      setDownloadInProgress(false);
     }
   };
 
-  const formatTime = (milliseconds: any) => {
+  const formatTime = (milliseconds: number) => {
     const seconds = Math.round(milliseconds / 1000);
     const minutes = Math.floor(seconds / 60);
     const remainingSeconds = seconds % 60;
@@ -146,7 +150,7 @@ const Watch = (props: PageProps) => {
     try {
       await FetchAPI({
         method: "POST",
-        url: `https://api.hillview.tv/video/v1.1/recordDownload/${props.video.uuid}`,
+        url: `/video/v1.1/recordDownload/${props.video.uuid}`,
       });
     } catch (error) {
       console.error("Error recording download:", error);
@@ -204,9 +208,11 @@ const Watch = (props: PageProps) => {
           <div className="h-fit w-11/12 max-w-screen-xl">
             {/* Header Breadcrumbs */}
             <div className="breadcrumb-container flex h-[100px] w-full items-center">
-              <div
+              <button
+                type="button"
+                aria-label="Go back"
                 onClick={() => router.back()}
-                className="back-btn relative flex h-[50px] w-[50px] cursor-pointer items-center justify-center rounded-[15px] border-2 border-neutral-150 bg-white"
+                className="back-btn relative flex h-[50px] w-[50px] items-center justify-center rounded-xl border-2 border-neutral-150 bg-white"
               >
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
@@ -218,13 +224,14 @@ const Watch = (props: PageProps) => {
                   strokeWidth={2}
                   strokeLinecap="round"
                   strokeLinejoin="round"
+                  aria-hidden="true"
                 >
                   <polyline
                     _ngcontent-waj-c10=""
                     points="15 18 9 12 15 6"
                   ></polyline>
                 </svg>
-              </div>
+              </button>
               <p className="text-lg">
                 <Link
                   href="/content"
@@ -257,19 +264,20 @@ const Watch = (props: PageProps) => {
             {/* Title & Video info Container */}
             <div className="title-container mt-10 h-fit w-full">
               <div className="title-info-container relative h-fit w-full">
-                <h1 className="w-full pr-[150px] text-3xl font-medium sm:text-5xl">
+                <h1 className="w-full pr-0 text-3xl font-medium sm:pr-[150px] sm:text-5xl">
                   {props.video.title}
                 </h1>
-                <div className="title-runner mb-6 mt-1 flex h-[60px] w-fit items-center">
-                  <div className="avatar h-[30px] w-[30px] rounded-full bg-[url(https://content.hillview.tv/images/mobile/default.jpg)] bg-cover bg-center bg-no-repeat"></div>
-                  <p className="ml-3 font-medium text-neutral-800">
-                    HillviewTV Team
-                  </p>
-                  <p className="ml-6 font-light text-neutral-600">
-                    {props.video.ft}
-                  </p>
-                </div>
-                <div className="full-vertical absolute right-0 flex items-center gap-4">
+                <div className="title-runner mb-6 mt-1 flex flex-col items-start gap-3 sm:h-[60px] sm:flex-row sm:items-center sm:gap-0">
+                  <div className="flex items-center">
+                    <div className="avatar h-[30px] w-[30px] rounded-full bg-[url(https://content.hillview.tv/images/mobile/default.jpg)] bg-cover bg-center bg-no-repeat"></div>
+                    <p className="ml-3 font-medium text-neutral-800">
+                      HillviewTV Team
+                    </p>
+                    <p className="ml-6 font-light text-neutral-600">
+                      {props.video.ft}
+                    </p>
+                  </div>
+                  <div className="flex items-center gap-4 sm:absolute sm:right-0">
                   {props.video.allow_downloads && props.video.download_url ? (
                     <div
                       className="group h-[20px] w-[20px] cursor-pointer"
@@ -294,10 +302,11 @@ const Watch = (props: PageProps) => {
                     onClick={() => {
                       shareLink();
                     }}
-                    className="hidden h-[45px] w-[150px] rounded-sm bg-primary-100 text-white duration-200 hover:bg-[#2b55c5] sm:block"
+                    className="hidden h-[45px] w-[150px] rounded-lg bg-primary-100 text-white duration-200 hover:bg-[#2b55c5] sm:block"
                   >
                     {shareButtonText}
                   </button>
+                  </div>
                 </div>
               </div>
               <div className="hr h-[2px] w-full bg-neutral-200"></div>
@@ -312,9 +321,9 @@ const Watch = (props: PageProps) => {
   );
 };
 
-export const getServerSideProps: GetServerSideProps = async (context: any) => {
+export const getServerSideProps: GetServerSideProps = async (context: GetServerSidePropsContext) => {
   try {
-    const q = context.query.v;
+    const q = context.query.v as string;
     const data = await QueryVideo(q);
 
     if (data) {

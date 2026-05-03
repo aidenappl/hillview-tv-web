@@ -1,11 +1,11 @@
-import type { GetServerSideProps, NextPage } from "next";
+import type { GetServerSideProps, GetServerSidePropsContext, NextPage } from "next";
 
 const OldVideo: NextPage = () => {
   return <></>;
 };
 
-export const getServerSideProps: GetServerSideProps = async (context: any) => {
-  const id = context.params.video;
+export const getServerSideProps: GetServerSideProps = async (context: GetServerSidePropsContext) => {
+  const id = context.params!.video as string;
   return {
     redirect: {
       destination: "/watch?v=" + id,
