@@ -1,5 +1,6 @@
 import type { NextPage } from "next";
 import Link from "next/link";
+import Image from "next/image";
 import Layout from "../components/Layout";
 import Spinner from "../components/Spinner";
 import { useState } from "react";
@@ -12,39 +13,30 @@ const Home: NextPage = () => {
   const [newsletterEmail, setNewsletterEmail] = useState<string>("");
 
   const submitNewsletterForm = async () => {
-    // Base checks
     if (loadingNewsletter) return;
     if (newsletterEmail === "") return;
 
-    // Set loading newsletter
     setLoadingNewsletter(true);
 
-    // Validate email
     const schema = Joi.object({
       email: Joi.string()
         .email({ tlds: { allow: false } })
         .required(),
     });
-    const response = schema.validate({ email: newsletterEmail.trim() });
-    if (response.error) {
-      // Error handle bad email & exit flow
+    const result = schema.validate({ email: newsletterEmail.trim() });
+    if (result.error) {
       toast.error("Must have a valid email address");
       setLoadingNewsletter(false);
       return;
     }
 
-    // Submit to hillviewtv API
     const request = await FetchAPI({
       url: "/video/v1.1/newsletter",
       method: "POST",
-      data: {
-        email: newsletterEmail,
-      },
+      data: { email: newsletterEmail },
     });
 
-    // Validate response from API
     if (!request.success) {
-      // handle bad response & exit flow
       if (request.error_code === 1000) {
         toast.error("This email has already been registered");
       } else {
@@ -61,68 +53,157 @@ const Home: NextPage = () => {
 
   return (
     <Layout>
-      <div className="z-20 flex h-fit w-full flex-wrap items-center justify-center gap-4 bg-primary-500 px-6 py-5 md:absolute md:h-[90px] md:flex-nowrap md:gap-12">
-        <h5 className="sm:text-md text-center text-sm font-semibold text-white md:text-left md:text-lg lg:text-xl">
-          Want to be notified when a new production is uploaded?
-        </h5>
-        <div className="flex w-full max-w-[500px] gap-3 md:w-1/3">
-          <input
-            id="email-address"
-            name="email"
-            type="email"
-            autoComplete="email"
-            required
-            value={newsletterEmail}
-            onChange={(e) => {
-              setNewsletterEmail(e.target.value.trim());
-            }}
-            onKeyUp={(e) => {
-              if (e.key === "Enter") {
-                submitNewsletterForm();
-              }
-            }}
-            className="focus:ring-indigo-500 min-w-0 flex-auto rounded-md border-0 bg-white/5 px-3.5 py-2 text-sm text-white shadow-sm ring-1 ring-inset ring-white/30 focus:ring-2 focus:ring-inset sm:text-sm sm:leading-6"
-            placeholder="Enter your email"
-          />
-          <button
-            type="submit"
-            className="hover:bg-indigo-400 focus-visible:outline-indigo-500 flex w-[94px] flex-none items-center justify-center rounded-md bg-primary-550 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-primary-550 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2"
-            disabled={loadingNewsletter}
-            onClick={() => {
-              submitNewsletterForm();
+      {/* ── Top newsletter banner ── */}
+      <div className="border-b border-primary-100/20 bg-primary-100 px-4 py-3">
+        <div className="mx-auto flex max-w-screen-xl flex-wrap items-center justify-center gap-x-6 gap-y-2.5 sm:flex-nowrap">
+          <p className="text-center text-sm font-medium text-white sm:text-left">
+            Get notified when new productions drop —
+          </p>
+          <div className="flex gap-2">
+            <label htmlFor="email-top" className="sr-only">
+              Email address
+            </label>
+            <input
+              id="email-top"
+              type="email"
+              autoComplete="email"
+              value={newsletterEmail}
+              onChange={(e) => setNewsletterEmail(e.target.value.trim())}
+              onKeyUp={(e) => {
+                if (e.key === "Enter") submitNewsletterForm();
+              }}
+              placeholder="your@email.com"
+              className="h-8 w-44 rounded-full border border-white/25 bg-white/15 px-4 text-xs text-white placeholder:text-white/55 focus:bg-white/20 focus:outline-none sm:w-52"
+            />
+            <button
+              onClick={submitNewsletterForm}
+              disabled={loadingNewsletter}
+              className="flex h-8 w-20 items-center justify-center rounded-full bg-white text-xs font-bold text-primary-100 transition-colors hover:bg-white/90 disabled:opacity-60"
+            >
+              {loadingNewsletter ? (
+                <Spinner style="default" size={14} />
+              ) : (
+                "Sign up"
+              )}
+            </button>
+          </div>
+        </div>
+      </div>
+
+      {/* ── Hero ── */}
+      <section className="relative overflow-hidden border-b border-neutral-150 px-6 py-24 sm:py-32 lg:py-40">
+        {/* Sun — right side */}
+        <div
+          className="pointer-events-none absolute right-[-4%] top-1/2 hidden -translate-y-1/2 select-none lg:block"
+          aria-hidden="true"
+        >
+          <div
+            className="relative h-[520px] w-[520px]"
+            style={{
+              opacity: 0.18,
+              maskImage: "radial-gradient(ellipse at center, black 20%, transparent 65%)",
+              WebkitMaskImage: "radial-gradient(ellipse at center, black 20%, transparent 65%)",
             }}
           >
-            <>
-              {!loadingNewsletter ? (
-                <span>Notify me</span>
+            <Image src="/assets/logos/sun.png" alt="" fill style={{ objectFit: "contain" }} />
+          </div>
+        </div>
+
+        <div className="relative z-10 mx-auto max-w-screen-xl">
+          <div className="max-w-3xl">
+            {/* Eyebrow */}
+            <div className="mb-6 flex items-center gap-3">
+              <div className="h-px w-6 bg-primary-100" aria-hidden="true" />
+              <span className="text-xs font-semibold uppercase tracking-[0.14em] text-primary-100">
+                Hillview Middle School &middot; Student Broadcast Network
+              </span>
+            </div>
+
+            {/* Headline */}
+            <h1 className="text-[3rem] font-black leading-[1.05] tracking-tight text-header-100 sm:text-6xl lg:text-[5rem]">
+              Putting the{" "}
+              <span className="text-primary-100">spotlight</span>{" "}
+              on the stories that matter.
+            </h1>
+
+            {/* Subline */}
+            <p className="mt-6 max-w-xl text-base leading-relaxed text-neutral-400 sm:text-lg">
+              Watch our latest productions, explore curated playlists, and tune
+              in live from Hillview&apos;s student-run broadcast network.
+            </p>
+
+            {/* CTAs */}
+            <div className="mt-10 flex flex-wrap gap-3">
+              <Link
+                href="/content"
+                className="inline-flex items-center gap-2 rounded-lg bg-primary-100 px-7 py-3.5 text-sm font-bold text-white transition-colors duration-150 hover:bg-[#0d6efd]"
+              >
+                Browse Content
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  className="h-4 w-4"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                  strokeWidth={2.5}
+                  aria-hidden="true"
+                >
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
+                </svg>
+              </Link>
+              <Link
+                href="/playlists"
+                className="inline-flex items-center rounded-lg border border-neutral-200 bg-white px-7 py-3.5 text-sm font-semibold text-neutral-700 transition-colors duration-150 hover:bg-neutral-50"
+              >
+                View Playlists
+              </Link>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* ── Newsletter ── */}
+      <section className="border-t border-neutral-150 bg-neutral-50 px-6 py-16 sm:py-20">
+        <div className="mx-auto max-w-lg text-center">
+          <h2 className="text-2xl font-bold tracking-tight text-header-100 sm:text-3xl">
+            Stay in the loop
+          </h2>
+          <p className="mt-3 text-sm leading-relaxed text-neutral-400 sm:text-base">
+            Get notified whenever a new production is uploaded.
+          </p>
+          <div className="mt-8 flex gap-2.5 sm:gap-3">
+            <label htmlFor="email-bottom" className="sr-only">
+              Email address
+            </label>
+            <input
+              id="email-bottom"
+              name="email"
+              type="email"
+              autoComplete="email"
+              required
+              value={newsletterEmail}
+              onChange={(e) => setNewsletterEmail(e.target.value.trim())}
+              onKeyUp={(e) => {
+                if (e.key === "Enter") submitNewsletterForm();
+              }}
+              className="h-11 min-w-0 flex-1 rounded-full border border-neutral-200 bg-white px-5 text-sm shadow-sm placeholder:text-neutral-400 focus:outline-none"
+              placeholder="your@email.com"
+            />
+            <button
+              type="submit"
+              disabled={loadingNewsletter}
+              onClick={submitNewsletterForm}
+              className="flex h-11 w-28 shrink-0 items-center justify-center rounded-full bg-primary-100 text-sm font-bold text-white shadow-[0_2px_8px_rgba(25,123,255,0.25)] transition-all duration-200 hover:bg-[#0d6efd] hover:shadow-[0_4px_12px_rgba(25,123,255,0.35)] disabled:opacity-60"
+            >
+              {loadingNewsletter ? (
+                <Spinner style="light" size={18} />
               ) : (
-                <Spinner style="light" size={20} />
+                "Notify me"
               )}
-            </>
-          </button>
-        </div>
-      </div>
-      <div className="z-5 absolute h-[calc(100%-300px)] w-full md:h-[calc(100%-100px)]">
-        <div className="lander-content full-center flex h-fit w-11/12 max-w-screen-2xl justify-between">
-          <div className="w-fit max-w-[50%]">
-            <p className="text-5xl font-semibold text-header-100 sm:whitespace-nowrap sm:text-8xl 2xl:text-9xl">
-              Good Morning <br></br>
-              <b className="header-stroke font-bold text-white">Hillview</b>
-            </p>
-            <p className="text-md my-5 whitespace-nowrap text-header-200 sm:text-2xl">
-              Putting the spotlight on the stories <br></br>that matter.
-            </p>
-            <Link href="/content">
-              <button className="sm:text-md my-4 rounded-full bg-primary-100 px-7 py-2.5 text-sm font-semibold text-white shadow-[0_2px_8px_rgba(25,123,255,0.25)] transition-all duration-200 hover:bg-[#0d6efd] hover:shadow-[0_4px_16px_rgba(25,123,255,0.35)] 2xl:my-10">
-                The Latest
-              </button>
-            </Link>
-          </div>
-          <div className="hidden w-fit max-w-[50%] lg:block">
-            <div className="full-vertical sun relative h-[20rem] w-[20rem] bg-[url('/assets/logos/sun.png')] bg-cover bg-center bg-no-repeat 2xl:h-[30rem] 2xl:w-[30rem]"></div>
+            </button>
           </div>
         </div>
-      </div>
+      </section>
     </Layout>
   );
 };

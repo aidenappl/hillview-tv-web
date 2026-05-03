@@ -19,8 +19,9 @@ export default async function handler(
 
     const isLive =
       html.includes('"live_event"') &&
-      !html.includes("ended") &&
-      !html.includes("not_started");
+      html.includes('"streaming"') &&
+      !html.includes('"ended"') &&
+      !html.includes('"scheduled"');
 
     res.setHeader("Cache-Control", "s-maxage=30, stale-while-revalidate");
     return res.json({ live: isLive });

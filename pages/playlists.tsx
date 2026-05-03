@@ -3,9 +3,6 @@ import Link from "next/link";
 import Layout from "../components/Layout";
 import ContentImage from "../components/ContentImage";
 import QueryPlaylists from "../hooks/QueryPlaylists";
-interface PlaylistsPageProps {
-  playlists: Playlist[];
-}
 
 export interface Playlist {
   id: number;
@@ -33,49 +30,112 @@ interface Video {
   inserted_at: Date;
 }
 
+interface PlaylistsPageProps {
+  playlists: Playlist[];
+}
+
+const PlaylistCard = ({ playlist }: { playlist: Playlist }) => (
+  <Link href={"/playlist/" + playlist.route}>
+    <div className="group relative p-3">
+      {/* Blue background — scales out on hover */}
+      <div className="absolute inset-0 scale-95 rounded-2xl bg-primary-100/10 opacity-0 transition-all duration-300 ease-out group-hover:scale-100 group-hover:opacity-100" />
+
+      {/* Horizontal card */}
+      <div className="relative flex items-center gap-4 rounded-xl border border-neutral-150 bg-white p-3 shadow-sm transition-all duration-300 group-hover:border-primary-100/30 group-hover:shadow-md sm:gap-5">
+        {/* Thumbnail */}
+        <div className="relative aspect-video w-36 shrink-0 overflow-hidden rounded-lg transition-all duration-300 group-hover:shadow-sm sm:w-44 md:w-52">
+          <div className="absolute inset-0 transition-transform duration-500 ease-out group-hover:scale-105">
+            <ContentImage image={playlist.banner_image} alt={playlist.name} />
+          </div>
+        </div>
+
+        {/* Content */}
+        <div className="min-w-0 flex-1 py-1">
+          <div className="flex items-start justify-between gap-3">
+            <h3 className="line-clamp-2 text-base font-semibold leading-snug text-header-100 transition-colors duration-200 group-hover:text-primary-100 sm:text-lg">
+              {playlist.name}
+            </h3>
+            <span className="mt-0.5 shrink-0 rounded-full bg-neutral-100 px-2.5 py-0.5 text-[0.65rem] font-semibold text-neutral-500">
+              {playlist.videos.length}{" "}
+              {playlist.videos.length === 1 ? "video" : "videos"}
+            </span>
+          </div>
+
+          {playlist.description && (
+            <p className="mt-1.5 line-clamp-2 text-sm leading-relaxed text-neutral-400">
+              {playlist.description}
+            </p>
+          )}
+
+          <div className="mt-3 flex items-center gap-1 text-sm font-medium text-primary-100 opacity-0 transition-opacity duration-200 group-hover:opacity-100">
+            View Playlist
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              className="h-4 w-4"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+              strokeWidth={2}
+              aria-hidden="true"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                d="M9 5l7 7-7 7"
+              />
+            </svg>
+          </div>
+        </div>
+      </div>
+    </div>
+  </Link>
+);
+
 const Playlists = (props: PlaylistsPageProps) => {
+  const totalVideos = props.playlists.reduce(
+    (sum, p) => sum + p.videos.length,
+    0,
+  );
+
   return (
     <Layout>
-      <div className="playlist-page relative flex h-fit w-full items-center justify-center">
-        <div className="h-fit w-11/12 max-w-screen-2xl">
-          {/* Header */}
-          <div className="header flex h-[150px] w-full items-center justify-center md:h-[350px]">
-            <div className="center-object">
-              <h1 className="text-center text-4xl font-semibold sm:text-5xl md:text-6xl">
-                Playlists
-              </h1>
-              <p className="pt-2 text-neutral-400 md:pt-4 md:text-xl">
-                A more curated look at our content
-              </p>
-            </div>
+      <div className="flex w-full flex-col items-center">
+        <div className="w-full max-w-screen-2xl px-4 pb-24 sm:px-6 md:px-8">
+
+          {/* Page header */}
+          <div className="pb-10 pt-12 text-center md:pb-12 md:pt-16">
+            <h1 className="text-4xl font-bold tracking-tight text-header-100 sm:text-5xl md:text-6xl">
+              Playlists
+            </h1>
+            <p className="mt-3 text-sm text-neutral-400 sm:text-base">
+              {props.playlists.length} playlists &middot; {totalVideos} videos
+            </p>
           </div>
-          {/* Content */}
-          <div className="content flex h-fit w-full justify-center">
-            <div className="flex h-fit w-full max-w-[900px] flex-col gap-4 pb-[100px]">
-              {props.playlists.map((i) => {
-                return (
-                  <Link href={"/playlist/" + i.route} key={i.id} className="relative flex w-full items-center rounded-lg border-2 border-neutral-100 bg-neutral-50 p-3 shadow-md">
-                      <div className="avatar relative block h-[65px] w-[80px] flex-shrink-0 overflow-hidden rounded-lg sm:w-[100px]">
-                        <ContentImage image={i.banner_image} alt={i.name} />
-                      </div>
-                      <h1 className="ml-5 line-clamp-1 w-[calc(100%-100px)] max-w-full overflow-ellipsis pr-2 text-lg font-medium sm:text-xl">
-                        {i.name}
-                      </h1>
-                      <span className="hidden whitespace-nowrap rounded-md bg-primary-100 px-5 py-2 font-normal text-white sm:block">
-                        View Playlist
-                      </span>
-                  </Link>
-                );
-              })}
-            </div>
+
+          {/* Section label */}
+          <div className="mb-1 flex items-center gap-4">
+            <span className="shrink-0 text-[0.65rem] font-bold uppercase tracking-widest text-neutral-400">
+              All Playlists
+            </span>
+            <div className="h-px w-full bg-neutral-150" />
           </div>
+
+          {/* Horizontal list — 1 col on mobile, 2 cols on md+ */}
+          <div className="grid grid-cols-1 md:grid-cols-2">
+            {props.playlists.map((playlist) => (
+              <PlaylistCard key={playlist.id} playlist={playlist} />
+            ))}
+          </div>
+
         </div>
       </div>
     </Layout>
   );
 };
 
-export const getServerSideProps: GetServerSideProps = async (_context: GetServerSidePropsContext) => {
+export const getServerSideProps: GetServerSideProps = async (
+  _context: GetServerSidePropsContext,
+) => {
   try {
     const response = await QueryPlaylists();
 
