@@ -36,7 +36,11 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 		changefreq: "weekly",
 	}));
 
-	const allPages = [...staticPages, ...videoPages, ...playlistPages];
+	const allPages: Array<{ loc: string; priority: string; changefreq: string; lastmod?: string }> = [
+		...staticPages,
+		...videoPages,
+		...playlistPages,
+	];
 
 	const urls = allPages
 		.map(

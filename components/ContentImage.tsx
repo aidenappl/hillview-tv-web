@@ -32,10 +32,9 @@ const ContentImage = (props: Props) => {
         <Image
           src={props.image}
           alt={props.alt}
-          fill
-          sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
-          style={{ objectFit: "cover" }}
-          onLoad={(_e) => {
+          layout="fill"
+          objectFit="cover"
+          onLoadingComplete={() => {
             setLoaded(true);
           }}
         />

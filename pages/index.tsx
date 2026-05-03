@@ -11,10 +11,10 @@ import { FetchAPI } from "../services/http/requestHandler";
 import QuerySpotlight from "../hooks/QuerySpotlight";
 import QueryVideos from "../hooks/QueryVideos";
 import ContentImage from "../components/ContentImage";
-import { Rank, Video } from "./content";
+import { Spotlight, Video } from "./content";
 
 interface HomeProps {
-  spotlight: Rank[];
+  spotlight: Spotlight[];
   latestVideos: Video[];
 }
 
