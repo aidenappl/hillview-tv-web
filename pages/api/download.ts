@@ -3,11 +3,33 @@ import axios from "axios";
 import { promisify } from "util";
 import { pipeline } from "stream";
 
+const ALLOWED_HOSTS = [
+  "content.hillview.tv",
+  "customer-nakrsdfbtn3mdz5z.cloudflarestream.com",
+];
+
+const isAllowedUrl = (raw: string): boolean => {
+  try {
+    const parsed = new URL(raw);
+    return (
+      (parsed.protocol === "https:" || parsed.protocol === "http:") &&
+      ALLOWED_HOSTS.includes(parsed.hostname)
+    );
+  } catch {
+    return false;
+  }
+};
+
 const downloadFile = async (req: NextApiRequest, res: NextApiResponse) => {
   const { url } = req.query;
 
   if (!url || typeof url !== "string") {
     res.status(400).send("URL is required");
+    return;
+  }
+
+  if (!isAllowedUrl(url)) {
+    res.status(400).send("Invalid download URL");
     return;
   }
 
