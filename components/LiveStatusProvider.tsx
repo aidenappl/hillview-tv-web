@@ -2,7 +2,11 @@ import React, { createContext, useContext, useEffect, useState } from "react";
 
 const LiveStatusContext = createContext<boolean>(false);
 
-export function LiveStatusProvider({ children }: { children: React.ReactNode }) {
+export function LiveStatusProvider({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
   const [isLive, setIsLive] = useState(false);
 
   useEffect(() => {

@@ -47,7 +47,6 @@ const Playlist = (props: PlaylistPageProps) => {
       </Head>
       <div className="flex w-full flex-col items-center">
         <div className="w-full max-w-screen-2xl px-4 pb-24 sm:px-6 md:px-8">
-
           {/* Hero banner */}
           <div className="relative mt-8 overflow-hidden rounded-2xl md:mt-10">
             {/* Banner image */}
@@ -82,7 +81,11 @@ const Playlist = (props: PlaylistPageProps) => {
                     strokeWidth={2.5}
                     aria-hidden="true"
                   >
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7" />
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      d="M15 19l-7-7 7-7"
+                    />
                   </svg>
                   All Playlists
                 </Link>
@@ -120,7 +123,6 @@ const Playlist = (props: PlaylistPageProps) => {
               <VideoPreview key={video.id} video={video} />
             ))}
           </div>
-
         </div>
       </div>
     </Layout>

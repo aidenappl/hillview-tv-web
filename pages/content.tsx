@@ -1,5 +1,5 @@
 import type { GetServerSideProps, GetServerSidePropsContext } from "next";
-import React, { useState } from "react";
+import React, { useRef, useState } from "react";
 import clsx from "clsx";
 import toast from "react-hot-toast";
 import Layout from "../components/Layout";
@@ -56,12 +56,13 @@ const Content = (props: ContentPageProps) => {
 
   const [searching, setSearching] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
-  const [timeout, setTimer] = useState<
-    ReturnType<typeof setTimeout> | undefined
-  >(undefined);
+  const timerRef = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
+  const searchSeqRef = useRef(0);
   const [showLoadBtn, setShowLoadBtn] = useState(true);
 
   const resetSearch = () => {
+    clearTimeout(timerRef.current);
+    searchSeqRef.current++;
     setSearchQuery("");
     setSearching(false);
     setVideos(props.videos);
@@ -71,45 +72,51 @@ const Content = (props: ContentPageProps) => {
     try {
       const response = await QueryVideos("", 24, videos.length);
       if (response.length < 24) setShowLoadBtn(false);
-      setVideos([...videos, ...response]);
+      const seen = new Set(videos.map((v) => v.id));
+      setVideos([...videos, ...response.filter((v) => !seen.has(v.id))]);
     } catch (error) {
       console.error("Error loading more videos:", error);
     }
   };
 
-  const handleSearch = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    try {
-      const value = e.target.value.trim();
-      setSearchQuery(value);
+  const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value;
+    const trimmed = value.trim();
+    setSearchQuery(value);
 
-      if (value.length > 0) {
-        setSearching(true);
-        clearTimeout(timeout);
-        const newTimer = setTimeout(async () => {
-          const response: Video[] = await QueryVideos(value, 24, 0);
+    if (trimmed.length > 0) {
+      setSearching(true);
+      clearTimeout(timerRef.current);
+      const seq = ++searchSeqRef.current;
+      timerRef.current = setTimeout(async () => {
+        try {
+          const response: Video[] = await QueryVideos(trimmed, 24, 0);
+          if (seq !== searchSeqRef.current) return; // stale response
           setVideos(response);
           setSearching(false);
-        }, 500);
-        setTimer(newTimer);
-      } else {
-        resetSearch();
-      }
-    } catch (error) {
-      console.error(error);
-      toast.error("Search failed. Please try again.");
+        } catch (error) {
+          if (seq !== searchSeqRef.current) return;
+          console.error(error);
+          toast.error("Search failed. Please try again.");
+          setSearching(false);
+        }
+      }, 500);
+    } else {
+      // Whitespace-only / cleared input: cancel any pending search and restore
+      clearTimeout(timerRef.current);
+      searchSeqRef.current++;
       setSearching(false);
+      setVideos(props.videos);
     }
   };
 
-  const isSearching = searchQuery.length > 0;
-  const showHighlighted =
-    !isSearching && highlightedVideos?.length > 0;
+  const isSearching = searchQuery.trim().length > 0;
+  const showHighlighted = !isSearching && highlightedVideos?.length > 0;
 
   return (
     <Layout>
       <div className="flex w-full flex-col items-center">
         <div className="w-full max-w-screen-2xl px-4 pb-24 sm:px-6 md:px-8">
-
           {/* Page header */}
           <div className="pb-10 pt-12 text-center md:pb-12 md:pt-16">
             <h1 className="text-4xl font-bold tracking-tight text-header-100 sm:text-5xl md:text-6xl">
@@ -141,7 +148,7 @@ const Content = (props: ContentPageProps) => {
               <input
                 id="search-videos"
                 type="text"
-                className="h-12 w-full rounded-full border border-neutral-200 bg-white pl-11 pr-10 text-sm shadow-sm placeholder:text-neutral-400 transition"
+                className="h-12 w-full rounded-full border border-neutral-200 bg-white pl-11 pr-10 text-sm shadow-sm transition placeholder:text-neutral-400"
                 placeholder="Search productions…"
                 value={searchQuery}
                 onChange={handleSearch}
@@ -180,7 +187,11 @@ const Content = (props: ContentPageProps) => {
                 <VideoPreview video={highlightedVideos[0].video} featured />
               ) : (
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
-                  <div className={clsx(highlightedVideos.length > 1 && "lg:col-span-2")}>
+                  <div
+                    className={clsx(
+                      highlightedVideos.length > 1 && "lg:col-span-2",
+                    )}
+                  >
                     <VideoPreview video={highlightedVideos[0].video} featured />
                   </div>
                   {highlightedVideos.slice(1).map((i) => (
@@ -216,7 +227,7 @@ const Content = (props: ContentPageProps) => {
           </section>
 
           {/* Load more */}
-          {showLoadBtn && !searching && videos.length >= 24 && (
+          {showLoadBtn && !isSearching && !searching && videos.length >= 24 && (
             <div className="mt-12 flex justify-center">
               <button
                 onClick={loadMoreVideos}
@@ -226,7 +237,6 @@ const Content = (props: ContentPageProps) => {
               </button>
             </div>
           )}
-
         </div>
       </div>
     </Layout>

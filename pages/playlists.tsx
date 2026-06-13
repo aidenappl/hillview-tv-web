@@ -101,7 +101,6 @@ const Playlists = (props: PlaylistsPageProps) => {
     <Layout>
       <div className="flex w-full flex-col items-center">
         <div className="w-full max-w-screen-2xl px-4 pb-24 sm:px-6 md:px-8">
-
           {/* Page header */}
           <div className="pb-10 pt-12 text-center md:pb-12 md:pt-16">
             <h1 className="text-4xl font-bold tracking-tight text-header-100 sm:text-5xl md:text-6xl">
@@ -126,7 +125,6 @@ const Playlists = (props: PlaylistsPageProps) => {
               <PlaylistCard key={playlist.id} playlist={playlist} />
             ))}
           </div>
-
         </div>
       </div>
     </Layout>

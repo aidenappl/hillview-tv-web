@@ -4,7 +4,7 @@ const STATUS_URL = "https://vimeo.com/live_event/1646883/status?h=d175f00f9b";
 
 export default async function handler(
   _req: NextApiRequest,
-  res: NextApiResponse
+  res: NextApiResponse,
 ) {
   try {
     const response = await fetch(STATUS_URL, {

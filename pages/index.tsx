@@ -1,4 +1,8 @@
-import type { NextPage, GetServerSideProps, GetServerSidePropsContext } from "next";
+import type {
+  NextPage,
+  GetServerSideProps,
+  GetServerSidePropsContext,
+} from "next";
 import Link from "next/link";
 import Image from "next/image";
 import Layout from "../components/Layout";
@@ -27,7 +31,13 @@ const LatestCard = ({ video }: { video: Video }) => (
         {/* Play overlay */}
         <div className="absolute inset-0 flex items-center justify-center bg-black/0 transition-colors duration-200 group-hover:bg-black/20">
           <div className="flex h-8 w-8 items-center justify-center rounded-full bg-white/0 opacity-0 shadow-lg transition-all duration-200 group-hover:bg-white/90 group-hover:opacity-100">
-            <svg xmlns="http://www.w3.org/2000/svg" className="h-3.5 w-3.5 translate-x-px text-header-100" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              className="h-3.5 w-3.5 translate-x-px text-header-100"
+              viewBox="0 0 24 24"
+              fill="currentColor"
+              aria-hidden="true"
+            >
               <path d="M8 5v14l11-7z" />
             </svg>
           </div>
@@ -59,7 +69,7 @@ const Home: NextPage<HomeProps> = ({ spotlight, latestVideos }) => {
 
   const submitNewsletterForm = async () => {
     if (loadingNewsletter) return;
-    if (newsletterEmail === "") return;
+    if (newsletterEmail.trim() === "") return;
 
     setLoadingNewsletter(true);
 
@@ -113,7 +123,8 @@ const Home: NextPage<HomeProps> = ({ spotlight, latestVideos }) => {
               type="email"
               autoComplete="email"
               value={newsletterEmail}
-              onChange={(e) => setNewsletterEmail(e.target.value.trim())}
+              onChange={(e) => setNewsletterEmail(e.target.value)}
+              maxLength={254}
               onKeyUp={(e) => {
                 if (e.key === "Enter") submitNewsletterForm();
               }}
@@ -234,7 +245,7 @@ const Home: NextPage<HomeProps> = ({ spotlight, latestVideos }) => {
               </div>
               <Link
                 href="/content"
-                className="inline-flex shrink-0 items-center gap-1.5 rounded-lg border border-neutral-200 bg-white px-5 py-2.5 text-sm font-semibold text-neutral-700 shadow-sm transition-colors duration-150 hover:bg-neutral-50 hover:border-neutral-300"
+                className="inline-flex shrink-0 items-center gap-1.5 rounded-lg border border-neutral-200 bg-white px-5 py-2.5 text-sm font-semibold text-neutral-700 shadow-sm transition-colors duration-150 hover:border-neutral-300 hover:bg-neutral-50"
               >
                 See all content
                 <svg
@@ -246,7 +257,11 @@ const Home: NextPage<HomeProps> = ({ spotlight, latestVideos }) => {
                   strokeWidth={2.5}
                   aria-hidden="true"
                 >
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    d="M9 5l7 7-7 7"
+                  />
                 </svg>
               </Link>
             </div>
@@ -307,7 +322,11 @@ const Home: NextPage<HomeProps> = ({ spotlight, latestVideos }) => {
                   strokeWidth={2.5}
                   aria-hidden="true"
                 >
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    d="M9 5l7 7-7 7"
+                  />
                 </svg>
               </Link>
             </div>
@@ -342,7 +361,8 @@ const Home: NextPage<HomeProps> = ({ spotlight, latestVideos }) => {
               autoComplete="email"
               required
               value={newsletterEmail}
-              onChange={(e) => setNewsletterEmail(e.target.value.trim())}
+              onChange={(e) => setNewsletterEmail(e.target.value)}
+              maxLength={254}
               onKeyUp={(e) => {
                 if (e.key === "Enter") submitNewsletterForm();
               }}

@@ -17,7 +17,7 @@ const QueryRoute = async (path: string): Promise<RouteRedirect | null> => {
 
   // Fetching playlist
   const response = await FetchAPI<RouteRedirect>({
-    url: `/links/v1.1/check/${path}`,
+    url: `/links/v1.1/check/${encodeURIComponent(path)}`,
     method: "GET",
     params: {
       recordClick: true,

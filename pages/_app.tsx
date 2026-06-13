@@ -21,6 +21,10 @@ class ErrorBoundary extends React.Component<
     if (this.state.hasError) {
       return (
         <div className="flex min-h-screen flex-col items-center justify-center gap-6 px-6 text-center">
+          {/* Hard navigation (not next/link) — the ErrorBoundary lives in _app
+              and persists across client routing, so only a full reload clears
+              the error state. */}
+          {/* eslint-disable-next-line @next/next/no-html-link-for-pages */}
           <a href="/" className="group inline-flex items-center gap-2.5">
             <Image
               src="/assets/logos/sun.png"
@@ -49,6 +53,7 @@ class ErrorBoundary extends React.Component<
             home while we sort things out.
           </p>
           <div className="flex flex-wrap items-center justify-center gap-3">
+            {/* eslint-disable-next-line @next/next/no-html-link-for-pages */}
             <a
               href="/"
               className="inline-flex items-center rounded-lg bg-primary-100 px-6 py-3 text-sm font-bold text-white transition-colors duration-150 hover:bg-[#0d6efd]"

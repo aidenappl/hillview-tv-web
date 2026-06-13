@@ -1,67 +1,91 @@
 import Head from "next/head";
 
 interface HeadProps {
-	title?: string;
-	description?: string;
-	image?: string;
-	url?: string;
-	ogType?: string;
-	noindex?: boolean;
+  title?: string;
+  description?: string;
+  image?: string;
+  url?: string;
+  ogType?: string;
+  noindex?: boolean;
 }
 
 const DEFAULT_DESC =
-	'Watch daily announcements, PAC Broadcasts, and the latest productions from Hillview Middle School\'s student-run TV station.';
-const DEFAULT_IMAGE = 'https://content.hillview.tv/thumbnails/default.jpg';
-const SITE_NAME = 'HillviewTV';
+  "Watch daily announcements, PAC Broadcasts, and the latest productions from Hillview Middle School's student-run TV station.";
+const DEFAULT_IMAGE = "https://content.hillview.tv/thumbnails/default.jpg";
+const SITE_NAME = "HillviewTV";
 
 const PageHead = ({
-	title = SITE_NAME,
-	image = DEFAULT_IMAGE,
-	description = DEFAULT_DESC,
-	url = 'https://hillview.tv/',
-	ogType = 'website',
-	noindex = false,
+  title = SITE_NAME,
+  image = DEFAULT_IMAGE,
+  description = DEFAULT_DESC,
+  url = "https://hillview.tv/",
+  ogType = "website",
+  noindex = false,
 }: HeadProps) => {
-	return (
-		<Head>
-			<title>{title}</title>
-			<meta charSet="utf-8" />
-			<meta name="viewport" content="width=device-width, initial-scale=1" />
-			<meta name="robots" content={noindex ? 'noindex, nofollow' : 'index, follow'} />
+  return (
+    <Head>
+      <title>{title}</title>
+      <meta charSet="utf-8" />
+      <meta name="viewport" content="width=device-width, initial-scale=1" />
+      <meta
+        name="robots"
+        content={noindex ? "noindex, nofollow" : "index, follow"}
+      />
 
-			{/* Canonical */}
-			<link rel="canonical" href={url} />
+      {/* Canonical */}
+      <link rel="canonical" href={url} />
 
-			{/* Primary */}
-			<meta name="description" content={description} />
+      {/* Primary */}
+      <meta name="description" content={description} />
 
-			{/* Open Graph */}
-			<meta property="og:title" content={title} />
-			<meta property="og:description" content={description} />
-			<meta property="og:image" content={image} />
-			<meta property="og:url" content={url} />
-			<meta property="og:site_name" content={SITE_NAME} />
-			<meta property="og:locale" content="en_US" />
-			<meta property="og:type" content={ogType} />
+      {/* Open Graph */}
+      <meta property="og:title" content={title} />
+      <meta property="og:description" content={description} />
+      <meta property="og:image" content={image} />
+      <meta property="og:url" content={url} />
+      <meta property="og:site_name" content={SITE_NAME} />
+      <meta property="og:locale" content="en_US" />
+      <meta property="og:type" content={ogType} />
 
-			{/* Twitter Card */}
-			<meta name="twitter:card" content="summary_large_image" />
-			<meta name="twitter:title" content={title} />
-			<meta name="twitter:description" content={description} />
-			<meta name="twitter:image" content={image} />
+      {/* Twitter Card */}
+      <meta name="twitter:card" content="summary_large_image" />
+      <meta name="twitter:title" content={title} />
+      <meta name="twitter:description" content={description} />
+      <meta name="twitter:image" content={image} />
 
-			{/* Favicons */}
-			<link rel="apple-touch-icon" sizes="180x180" href="/assets/favicons/apple-touch-icon.png" />
-			<link rel="icon" type="image/png" sizes="32x32" href="/assets/favicons/favicon-32x32.png" />
-			<link rel="icon" type="image/png" sizes="16x16" href="/assets/favicons/favicon-16x16.png" />
-			<link rel="manifest" href="/assets/favicons/site.webmanifest" />
-			<link rel="mask-icon" href="/assets/favicons/safari-pinned-tab.svg" color="#5bbad5" />
-			<link rel="shortcut icon" href="/assets/favicons/favicon.ico" />
-			<meta name="msapplication-TileColor" content="#ffffff" />
-			<meta name="msapplication-config" content="/assets/favicons/browserconfig.xml" />
-			<meta name="theme-color" content="#ffffff" />
-		</Head>
-	);
+      {/* Favicons */}
+      <link
+        rel="apple-touch-icon"
+        sizes="180x180"
+        href="/assets/favicons/apple-touch-icon.png"
+      />
+      <link
+        rel="icon"
+        type="image/png"
+        sizes="32x32"
+        href="/assets/favicons/favicon-32x32.png"
+      />
+      <link
+        rel="icon"
+        type="image/png"
+        sizes="16x16"
+        href="/assets/favicons/favicon-16x16.png"
+      />
+      <link rel="manifest" href="/assets/favicons/site.webmanifest" />
+      <link
+        rel="mask-icon"
+        href="/assets/favicons/safari-pinned-tab.svg"
+        color="#5bbad5"
+      />
+      <link rel="shortcut icon" href="/assets/favicons/favicon.ico" />
+      <meta name="msapplication-TileColor" content="#ffffff" />
+      <meta
+        name="msapplication-config"
+        content="/assets/favicons/browserconfig.xml"
+      />
+      <meta name="theme-color" content="#ffffff" />
+    </Head>
+  );
 };
 
 export default PageHead;

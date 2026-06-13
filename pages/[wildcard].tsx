@@ -5,7 +5,9 @@ const WildcardHandler: NextPage = () => {
   return <></>;
 };
 
-export const getServerSideProps = async (context: GetServerSidePropsContext) => {
+export const getServerSideProps = async (
+  context: GetServerSidePropsContext,
+) => {
   const lookup = context.params!.wildcard as string;
 
   try {
@@ -21,7 +23,8 @@ export const getServerSideProps = async (context: GetServerSidePropsContext) => 
       return {
         redirect: {
           destination: response.destination,
-          permanent: true,
+          // Short links are editable — never permanent (browsers cache 308s forever)
+          permanent: false,
         },
       };
     } else {

@@ -2,6 +2,7 @@ import { NextPage } from "next";
 import { useEffect, useState } from "react";
 import Spinner from "../../components/Spinner";
 import Link from "next/link";
+import toast from "react-hot-toast";
 import { FetchAPI } from "../../services/http/requestHandler";
 
 const MyNewsletter: NextPage = () => {
@@ -25,17 +26,25 @@ const MyNewsletter: NextPage = () => {
         </h1>
         {!success ? (
           <>
-            <p className="py-4">
-              Manage your HillviewTV newsletter, if you want to unsubscribe{" "}
-              <i>{email}</i> from all future notifications please select
-              unsubscribe. You can return to this page or resubscribe on the
-              home page to restart your HillviewTV Newsletter.
-            </p>
+            {email ? (
+              <p className="py-4">
+                Manage your HillviewTV newsletter, if you want to unsubscribe{" "}
+                <i>{email}</i> from all future notifications please select
+                unsubscribe. You can return to this page or resubscribe on the
+                home page to restart your HillviewTV Newsletter.
+              </p>
+            ) : (
+              <p className="py-4">
+                No email address provided — please use the unsubscribe link from
+                your newsletter email.
+              </p>
+            )}
             <button
-              className="flex w-[140px] items-center justify-center rounded-md bg-primary-100 px-3.5 py-2.5 text-sm font-semibold text-white shadow"
+              className="flex w-[140px] items-center justify-center rounded-md bg-primary-100 px-3.5 py-2.5 text-sm font-semibold text-white shadow disabled:opacity-60"
+              disabled={!email}
               onClick={async () => {
                 // handle unsubscribe
-                if (loadingNewsletter) return;
+                if (loadingNewsletter || !email) return;
                 setLoadingNewsletter(true);
 
                 // Submit to hillviewtv API
@@ -48,6 +57,7 @@ const MyNewsletter: NextPage = () => {
                 });
                 if (!response.success) {
                   // handle bad response & exit flow
+                  toast.error("Couldn't unsubscribe — please try again.");
                   setLoadingNewsletter(false);
                   return;
                 }

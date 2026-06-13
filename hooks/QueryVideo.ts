@@ -6,7 +6,7 @@ const QueryVideo = async (query?: string): Promise<Video | null> => {
     return null;
   }
   const response = await FetchAPI<Video>({
-    url: `/video/v1.1/video/${query}`,
+    url: `/video/v1.1/video/${encodeURIComponent(query)}`,
     method: "GET",
   });
 

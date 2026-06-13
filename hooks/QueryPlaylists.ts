@@ -13,7 +13,8 @@ const QueryPlaylists = async (): Promise<Playlist[]> => {
 
   //   Validating response
   if (response.success) {
-    return response.data ?? [];
+    // Go marshals nil slices as null — normalize so pages never see null videos
+    return (response.data ?? []).map((p) => ({ ...p, videos: p.videos ?? [] }));
   } else {
     console.error("Error fetching playlists:", response.error);
     return [];

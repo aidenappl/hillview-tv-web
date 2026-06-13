@@ -18,7 +18,9 @@ const QueryPlaylist = async (route: string): Promise<Playlist | null> => {
 
   //   Validating response
   if (response.success) {
-    return response.data;
+    if (!response.data) return null;
+    // Go marshals nil slices as null — normalize so pages never see null videos
+    return { ...response.data, videos: response.data.videos ?? [] };
   } else {
     console.error("Error fetching playlist:", response.error);
     return null;
