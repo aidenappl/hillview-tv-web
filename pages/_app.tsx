@@ -83,6 +83,9 @@ function HillviewWeb({ Component, pageProps }: AppProps) {
         image={pageProps.image}
         imageWidth={pageProps.imageWidth}
         imageHeight={pageProps.imageHeight}
+        videoUrl={pageProps.videoUrl}
+        videoWidth={pageProps.videoWidth}
+        videoHeight={pageProps.videoHeight}
         url={pageProps.url}
         ogType={pageProps.ogType}
         noindex={pageProps.noindex}

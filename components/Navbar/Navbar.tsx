@@ -29,7 +29,7 @@ const Navbar = (props: NavbarProps) => {
   }, [router.pathname]);
 
   return (
-    <div className="z-20 h-[56px] w-screen shrink-0 sm:h-[64px] md:h-[72px]">
+    <header className="z-20 h-[56px] w-screen shrink-0 sm:h-[64px] md:h-[72px]">
       <a
         href="#main-content"
         className="sr-only focus:not-sr-only focus:absolute focus:z-50 focus:bg-white focus:px-4 focus:py-2 focus:text-primary-100"
@@ -119,7 +119,7 @@ const Navbar = (props: NavbarProps) => {
               </div>
 
               {/* Desktop nav */}
-              <div className="hidden items-center gap-1 md:flex">
+              <nav aria-label="Primary" className="hidden items-center gap-1 md:flex">
                 {navButtons.map((i) => (
                   <Link
                     href={i.url}
@@ -145,7 +145,7 @@ const Navbar = (props: NavbarProps) => {
                     We&apos;re Live
                   </a>
                 )}
-              </div>
+              </nav>
             </>
           )}
         </div>
@@ -158,7 +158,7 @@ const Navbar = (props: NavbarProps) => {
           showMobileNav ? "shadow-lg" : "hidden",
         )}
       >
-        <div className="flex flex-col px-4 pb-3 pt-1">
+        <nav aria-label="Mobile" className="flex flex-col px-4 pb-3 pt-1">
           {navButtons.map((i) => (
             <Link
               href={i.url}
@@ -174,7 +174,7 @@ const Navbar = (props: NavbarProps) => {
               {i.title}
             </Link>
           ))}
-        </div>
+        </nav>
       </div>
 
       {/* Mobile backdrop */}
@@ -186,7 +186,7 @@ const Navbar = (props: NavbarProps) => {
         )}
         onClick={() => setShowMobileNav(false)}
       />
-    </div>
+    </header>
   );
 };
 

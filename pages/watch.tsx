@@ -34,6 +34,7 @@ interface Video {
   download_url?: string;
   allow_downloads: boolean;
   duration?: number;
+  views?: number;
   status: GeneralNSM;
   inserted_at: Date;
 }
@@ -113,6 +114,15 @@ const Watch = (props: PageProps) => {
     ...(embedUrl ? { embedUrl } : {}),
     ...(contentUrl ? { contentUrl } : {}),
     ...(isoDuration ? { duration: isoDuration } : {}),
+    ...(props.video.views && props.video.views > 0
+      ? {
+          interactionStatistic: {
+            "@type": "InteractionCounter",
+            interactionType: { "@type": "https://schema.org/WatchAction" },
+            userInteractionCount: props.video.views,
+          },
+        }
+      : {}),
     url: props.canonicalUrl,
     publisher: {
       "@type": "Organization",
@@ -365,12 +375,16 @@ export const getServerSideProps: GetServerSideProps = async (
       const inserted = DateTime.fromISO(data.inserted_at.toString());
       data.ft = inserted.isValid ? inserted.toFormat("MMMM dd, yyyy") : "";
       const canonicalUrl = `https://hillview.tv/watch?v=${data.uuid}`;
+      const embedUrl = getEmbedUrl(data);
       return {
         props: {
           title: data.title + " - HillviewTV",
           image: data.thumbnail,
           imageWidth: 1280,
           imageHeight: 720,
+          ...(embedUrl
+            ? { videoUrl: embedUrl, videoWidth: 1280, videoHeight: 720 }
+            : {}),
           description: data.description,
           url: canonicalUrl,
           ogType: "video.other",

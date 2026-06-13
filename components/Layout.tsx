@@ -12,9 +12,9 @@ const Layout = (props: LayoutProps) => {
   return (
     <div className="primary-container flex min-h-screen flex-col">
       <Navbar hideLinks={false} />
-      <div id="main-content" className="flex-1">
+      <main id="main-content" className="flex-1">
         {children}
-      </div>
+      </main>
       <Footer />
     </div>
   );

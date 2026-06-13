@@ -6,6 +6,9 @@ interface HeadProps {
   image?: string;
   imageWidth?: number;
   imageHeight?: number;
+  videoUrl?: string;
+  videoWidth?: number;
+  videoHeight?: number;
   url?: string;
   ogType?: string;
   noindex?: boolean;
@@ -28,6 +31,9 @@ const PageHead = ({
   image = DEFAULT_IMAGE,
   imageWidth,
   imageHeight,
+  videoUrl,
+  videoWidth,
+  videoHeight,
   description = DEFAULT_DESC,
   url = "https://hillview.tv/",
   ogType = "website",
@@ -59,6 +65,19 @@ const PageHead = ({
       ) : null}
       {imageHeight ? (
         <meta property="og:image:height" content={String(imageHeight)} />
+      ) : null}
+      {videoUrl ? (
+        <>
+          <meta property="og:video" content={videoUrl} />
+          <meta property="og:video:secure_url" content={videoUrl} />
+          <meta property="og:video:type" content="text/html" />
+          {videoWidth ? (
+            <meta property="og:video:width" content={String(videoWidth)} />
+          ) : null}
+          {videoHeight ? (
+            <meta property="og:video:height" content={String(videoHeight)} />
+          ) : null}
+        </>
       ) : null}
       <meta property="og:url" content={url} />
       <meta property="og:site_name" content={SITE_NAME} />
