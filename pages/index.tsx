@@ -260,7 +260,7 @@ const Home: NextPage<HomeProps> = ({ spotlight, latestVideos }) => {
                 <VideoPreview video={spotlight[0].video} featured />
                 <div className="mt-2 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
                   {spotlight.slice(1).map((item) => (
-                    <VideoPreview key={item.video.id} video={item.video} />
+                    <VideoPreview key={item.position} video={item.video} />
                   ))}
                 </div>
               </>
@@ -271,7 +271,7 @@ const Home: NextPage<HomeProps> = ({ spotlight, latestVideos }) => {
                   <VideoPreview video={spotlight[0].video} featured />
                 </div>
                 {spotlight.slice(1).map((item) => (
-                  <VideoPreview key={item.video.id} video={item.video} />
+                  <VideoPreview key={item.position} video={item.video} />
                 ))}
               </div>
             )}

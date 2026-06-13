@@ -184,7 +184,7 @@ const Content = (props: ContentPageProps) => {
                     <VideoPreview video={highlightedVideos[0].video} featured />
                   </div>
                   {highlightedVideos.slice(1).map((i) => (
-                    <VideoPreview key={i.video.id} video={i.video} />
+                    <VideoPreview key={i.position} video={i.video} />
                   ))}
                 </div>
               )}
