@@ -79,8 +79,8 @@ const Content = (props: ContentPageProps) => {
 
   const handleSearch = async (e: React.ChangeEvent<HTMLInputElement>) => {
     try {
-      setSearchQuery(e.target.value);
       const value = e.target.value.trim();
+      setSearchQuery(value);
 
       if (value.length > 0) {
         setSearching(true);

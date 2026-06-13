@@ -8,7 +8,7 @@ export const getServerSideProps: GetServerSideProps = async (context: GetServerS
   const id = context.params!.video as string;
   return {
     redirect: {
-      destination: "/watch?v=" + id,
+      destination: "/watch?v=" + encodeURIComponent(id),
       permanent: true,
     },
   };

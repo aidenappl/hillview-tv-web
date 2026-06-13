@@ -78,7 +78,7 @@ const Home: NextPage<HomeProps> = ({ spotlight, latestVideos }) => {
     const request = await FetchAPI({
       url: "/video/v1.1/newsletter",
       method: "POST",
-      data: { email: newsletterEmail },
+      data: { email: newsletterEmail.trim() },
     });
 
     if (!request.success) {
@@ -370,21 +370,22 @@ const Home: NextPage<HomeProps> = ({ spotlight, latestVideos }) => {
 export const getServerSideProps: GetServerSideProps = async (
   _context: GetServerSidePropsContext,
 ) => {
-  const [spotlight, latestVideos] = await Promise.all([
-    QuerySpotlight(24, 0),
-    QueryVideos("", 4, 0),
-  ]);
-  return {
-    props: {
-      title: "HillviewTV - Watch Announcements & Broadcasts",
-      description:
-        "Watch daily announcements, PAC Broadcasts, and the latest productions from Hillview Middle School's student-run TV station.",
-      image: "https://content.hillview.tv/thumbnails/default.jpg",
-      url: "https://hillview.tv/",
-      spotlight,
-      latestVideos,
-    },
+  const baseProps = {
+    title: "HillviewTV - Watch Announcements & Broadcasts",
+    description:
+      "Watch daily announcements, PAC Broadcasts, and the latest productions from Hillview Middle School's student-run TV station.",
+    image: "https://content.hillview.tv/thumbnails/default.jpg",
+    url: "https://hillview.tv/",
   };
+  try {
+    const [spotlight, latestVideos] = await Promise.all([
+      QuerySpotlight(24, 0),
+      QueryVideos("", 4, 0),
+    ]);
+    return { props: { ...baseProps, spotlight, latestVideos } };
+  } catch {
+    return { props: { ...baseProps, spotlight: [], latestVideos: [] } };
+  }
 };
 
 export default Home;

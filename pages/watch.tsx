@@ -64,12 +64,12 @@ const Watch = (props: PageProps) => {
   ) {
     liveURL = liveURL.replaceAll("/manifest/video.m3u8", "/iframe");
   } else if (props.video.url.includes("vimeo")) {
-    const regex = /\/external\/(\d+)\.m3u8/;
-    const match = liveURL.match(regex);
-    if (match === null || match.length < 2) {
-      console.error("Vimeo URL not found");
+    const match = liveURL.match(/\/external\/(\d+)\.m3u8/);
+    if (match && match.length >= 2) {
+      liveURL = "https://player.vimeo.com/video/" + match[1];
+    } else {
+      console.error("Vimeo URL not parseable:", liveURL);
     }
-    liveURL = "https://player.vimeo.com/video/" + match![1];
   }
 
   const [shareButtonText, setShareButtonText] = useState("Share");
@@ -313,7 +313,8 @@ export const getServerSideProps: GetServerSideProps = async (
   context: GetServerSidePropsContext,
 ) => {
   try {
-    const q = context.query.v as string;
+    const raw = context.query.v;
+    const q = Array.isArray(raw) ? raw[0] : raw;
     const data = await QueryVideo(q);
 
     if (data) {
