@@ -13,7 +13,7 @@ const QueryPlaylists = async (): Promise<Playlist[]> => {
 
   //   Validating response
   if (response.success) {
-    return response.data;
+    return response.data ?? [];
   } else {
     console.error("Error fetching playlists:", response.error);
     return [];

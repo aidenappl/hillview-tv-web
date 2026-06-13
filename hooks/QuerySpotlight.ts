@@ -18,7 +18,7 @@ const QuerySpotlight = async (
 
   //   Validating response
   if (response.success) {
-    return response.data;
+    return response.data ?? [];
   } else {
     console.error("Error fetching videos:", response.error);
     return [];
