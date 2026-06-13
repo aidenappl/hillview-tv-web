@@ -10,22 +10,26 @@ import toast from "react-hot-toast";
 import QueryVideo from "../hooks/QueryVideo";
 import { FetchAPI } from "../services/http/requestHandler";
 import JsonLd from "../components/JsonLd";
+import Transcript from "../components/Transcript";
 import {
   getEmbedUrl,
   getContentUrl,
   toIso8601Duration,
   formatDuration,
-  formatTimestamp,
   parseVtt,
+  findActiveCueIndex,
 } from "../lib/video";
 
-// Cloudflare Stream Player SDK shape (only what we use to seek).
+// Cloudflare Stream Player SDK shape (only what we use).
+interface StreamPlayer {
+  currentTime: number;
+  play: () => void;
+  addEventListener: (event: string, handler: () => void) => void;
+  removeEventListener: (event: string, handler: () => void) => void;
+}
 declare global {
   interface Window {
-    Stream?: (iframe: HTMLIFrameElement) => {
-      currentTime: number;
-      play: () => void;
-    };
+    Stream?: (iframe: HTMLIFrameElement) => StreamPlayer;
   }
 }
 
@@ -170,18 +174,37 @@ const Watch = (props: PageProps) => {
     player.type === "iframe" && player.src.includes("cloudflarestream.com");
 
   const iframeRef = useRef<HTMLIFrameElement | null>(null);
-  const streamPlayerRef = useRef<{ currentTime: number; play: () => void } | null>(null);
+  const streamPlayerRef = useRef<StreamPlayer | null>(null);
+  const [sdkReady, setSdkReady] = useState(
+    typeof window !== "undefined" && !!window.Stream,
+  );
+  const [activeCue, setActiveCue] = useState(-1);
+
+  // Attach to the Cloudflare Stream player once its SDK is ready, and track the
+  // playback position to highlight the active transcript cue.
+  useEffect(() => {
+    if (!isCloudflarePlayer || !sdkReady || !iframeRef.current || !window.Stream) {
+      return;
+    }
+    const sp = window.Stream(iframeRef.current);
+    streamPlayerRef.current = sp;
+    if (cues.length === 0) return;
+    const onTime = () => {
+      const idx = findActiveCueIndex(cues, sp.currentTime);
+      setActiveCue((prev) => (prev === idx ? prev : idx));
+    };
+    sp.addEventListener("timeupdate", onTime);
+    return () => sp.removeEventListener("timeupdate", onTime);
+  }, [isCloudflarePlayer, sdkReady, cues]);
 
   // Seek the Cloudflare Stream player to a transcript cue's timestamp.
   const seekTo = (seconds: number) => {
-    if (!isCloudflarePlayer || !iframeRef.current || !window.Stream) return;
+    const sp = streamPlayerRef.current;
+    if (!sp) return;
     try {
-      if (!streamPlayerRef.current) {
-        streamPlayerRef.current = window.Stream(iframeRef.current);
-      }
-      streamPlayerRef.current.currentTime = seconds;
-      streamPlayerRef.current.play();
-      iframeRef.current.scrollIntoView({ behavior: "smooth", block: "start" });
+      sp.currentTime = seconds;
+      sp.play();
+      iframeRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
     } catch (error) {
       console.error("Seek failed:", error);
     }
@@ -249,6 +272,7 @@ const Watch = (props: PageProps) => {
         <Script
           src="https://embed.cloudflarestream.com/embed/sdk.latest.js"
           strategy="afterInteractive"
+          onLoad={() => setSdkReady(true)}
         />
       )}
 
@@ -423,32 +447,11 @@ const Watch = (props: PageProps) => {
                   <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" />
                 </svg>
               </summary>
-              <div className="max-h-[28rem] space-y-1 overflow-y-auto px-3 pb-4 pt-1 sm:px-4">
-                {cues.map((cue, i) => (
-                  <div
-                    key={i}
-                    className="flex gap-3 rounded-lg px-2 py-1.5 transition-colors hover:bg-white"
-                  >
-                    {isCloudflarePlayer ? (
-                      <button
-                        type="button"
-                        onClick={() => seekTo(cue.start)}
-                        className="shrink-0 pt-0.5 font-mono text-xs font-semibold tabular-nums text-primary-100 hover:underline"
-                        aria-label={`Jump to ${formatTimestamp(cue.start)}`}
-                      >
-                        {formatTimestamp(cue.start)}
-                      </button>
-                    ) : (
-                      <span className="shrink-0 pt-0.5 font-mono text-xs font-semibold tabular-nums text-neutral-400">
-                        {formatTimestamp(cue.start)}
-                      </span>
-                    )}
-                    <p className="text-sm leading-relaxed text-neutral-600">
-                      {cue.text}
-                    </p>
-                  </div>
-                ))}
-              </div>
+              <Transcript
+                cues={cues}
+                activeIndex={activeCue}
+                onSeek={isCloudflarePlayer ? seekTo : undefined}
+              />
             </details>
           )}
         </div>

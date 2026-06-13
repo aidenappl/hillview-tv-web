@@ -47,10 +47,132 @@ export const formatDuration = (seconds: number | null | undefined): string => {
   return h > 0 ? `${h}:${pad(m)}:${pad(s)}` : `${m}:${pad(s)}`;
 };
 
+// A parsed WebVTT cue payload node: either plain text or a markup tag with
+// children (voice/class/b/i/u/lang/ruby). On-video-only features (positioning,
+// regions, ::cue STYLE) are intentionally not modeled — irrelevant to a transcript.
+export type VttNode =
+  | { type: "text"; value: string }
+  | {
+      type: "tag";
+      tag: string;
+      classes: string[];
+      annotation?: string;
+      children: VttNode[];
+    };
+
 export interface Cue {
   start: number; // seconds
-  text: string;
+  end: number; // seconds
+  voice?: string; // speaker from <v Speaker>
+  nodes: VttNode[]; // styled payload tree
+  text: string; // plain text (transcript / JSON-LD / search)
 }
+
+const NAMED_ENTITIES: Record<string, string> = {
+  amp: "&",
+  lt: "<",
+  gt: ">",
+  quot: '"',
+  apos: "'",
+  nbsp: " ",
+  lrm: "‎",
+  rlm: "‏",
+};
+
+const decodeEntities = (s: string): string =>
+  s.replace(/&(#x?[0-9a-fA-F]+|[a-zA-Z]+);/g, (m, e: string) => {
+    if (e[0] === "#") {
+      const code =
+        e[1] === "x" || e[1] === "X"
+          ? parseInt(e.slice(2), 16)
+          : parseInt(e.slice(1), 10);
+      return Number.isNaN(code) ? m : String.fromCodePoint(code);
+    }
+    return NAMED_ENTITIES[e] ?? m;
+  });
+
+// Tokenize a cue payload into a node tree. Unclosed tags (common for <v>) stay
+// open to end-of-cue; inline timestamp tags (<00:00:01.000>) are dropped since
+// we highlight at cue granularity.
+const tokenizePayload = (payload: string): VttNode[] => {
+  const root: Extract<VttNode, { type: "tag" }> = {
+    type: "tag",
+    tag: "root",
+    classes: [],
+    children: [],
+  };
+  const stack: Extract<VttNode, { type: "tag" }>[] = [root];
+  const top = () => stack[stack.length - 1];
+  const pushText = (t: string) => {
+    if (t) top().children.push({ type: "text", value: decodeEntities(t) });
+  };
+
+  const re = /<([^>]*)>/g;
+  let last = 0;
+  let m: RegExpExecArray | null;
+  while ((m = re.exec(payload))) {
+    pushText(payload.slice(last, m.index));
+    last = re.lastIndex;
+    const raw = m[1].trim();
+    if (raw === "") continue;
+    if (raw.startsWith("/")) {
+      if (stack.length > 1) stack.pop();
+      continue;
+    }
+    // Inline timestamp tag — ignore (cue-level highlighting).
+    if (/^\d{1,2}:\d{2}/.test(raw) || /^\d+(\.\d+)?$/.test(raw)) continue;
+    const spaceIdx = raw.indexOf(" ");
+    const namePart = spaceIdx === -1 ? raw : raw.slice(0, spaceIdx);
+    const annotation =
+      spaceIdx === -1 ? undefined : raw.slice(spaceIdx + 1).trim();
+    const dotParts = namePart.split(".");
+    const node: Extract<VttNode, { type: "tag" }> = {
+      type: "tag",
+      tag: dotParts[0].toLowerCase(),
+      classes: dotParts.slice(1),
+      annotation,
+      children: [],
+    };
+    top().children.push(node);
+    stack.push(node);
+  }
+  pushText(payload.slice(last));
+  return root.children;
+};
+
+const collectText = (nodes: VttNode[]): string =>
+  nodes
+    .map((n) => (n.type === "text" ? n.value : collectText(n.children)))
+    .join("");
+
+const findVoice = (nodes: VttNode[]): string | undefined => {
+  for (const n of nodes) {
+    if (n.type === "tag") {
+      if (n.tag === "v" && n.annotation) return n.annotation;
+      const nested = findVoice(n.children);
+      if (nested) return nested;
+    }
+  }
+  return undefined;
+};
+
+// Binary search for the index of the latest cue whose start <= t (keeps the last
+// line highlighted through inter-cue gaps). Returns -1 before the first cue.
+export const findActiveCueIndex = (cues: Cue[], t: number): number => {
+  let lo = 0;
+  let hi = cues.length - 1;
+  let ans = -1;
+  while (lo <= hi) {
+    const mid = (lo + hi) >> 1;
+    if (cues[mid].start <= t) {
+      ans = mid;
+      lo = mid + 1;
+    } else {
+      hi = mid - 1;
+    }
+  }
+  return ans;
+};
 
 // Seconds -> clock for a transcript timestamp; unlike formatDuration, 0 -> "0:00".
 export const formatTimestamp = (seconds: number): string => {
@@ -72,24 +194,43 @@ const parseTimestamp = (ts: string): number => {
   return hours * 3600 + mins * 60 + secs;
 };
 
-// Parse WebVTT into cues (start time + text), collapsing consecutive duplicate
-// lines that auto-generated captions often emit.
+// Parse WebVTT into styled cues, collapsing consecutive duplicate lines that
+// auto-generated rolling captions often emit. Skips header/NOTE/STYLE/REGION.
 export const parseVtt = (vtt: string | null | undefined): Cue[] => {
   if (!vtt) return [];
-  const blocks = vtt.replace(/\r\n/g, "\n").split("\n\n");
+  const blocks = vtt.replace(/\r\n/g, "\n").replace(/\r/g, "\n").split(/\n\n+/);
   const cues: Cue[] = [];
   let lastText = "";
   for (const block of blocks) {
-    const lines = block.split("\n").map((l) => l.trim()).filter(Boolean);
+    const lines = block.split("\n");
+    const head = (lines[0] ?? "").trim();
+    if (
+      head.startsWith("WEBVTT") ||
+      head.startsWith("NOTE") ||
+      head.startsWith("STYLE") ||
+      head.startsWith("REGION")
+    ) {
+      continue;
+    }
     const timingIdx = lines.findIndex((l) => l.includes("-->"));
     if (timingIdx === -1) continue;
-    const start = parseTimestamp(lines[timingIdx].split("-->")[0]);
-    const text = lines
+    const [startRaw, restRaw = ""] = lines[timingIdx].split("-->");
+    const endRaw = restRaw.trim().split(/\s+/)[0]; // drop cue settings
+    const payload = lines
       .slice(timingIdx + 1)
-      .join(" ")
+      .join("\n")
       .trim();
+    if (!payload) continue;
+    const nodes = tokenizePayload(payload);
+    const text = collectText(nodes).replace(/\s+/g, " ").trim();
     if (!text || text === lastText) continue;
-    cues.push({ start, text });
+    cues.push({
+      start: parseTimestamp(startRaw),
+      end: parseTimestamp(endRaw),
+      voice: findVoice(nodes),
+      nodes,
+      text,
+    });
     lastText = text;
   }
   return cues;
