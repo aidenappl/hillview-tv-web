@@ -35,6 +35,7 @@ interface Video {
   allow_downloads: boolean;
   duration?: number;
   views?: number;
+  transcript?: string;
   status: GeneralNSM;
   inserted_at: Date;
 }
@@ -123,6 +124,7 @@ const Watch = (props: PageProps) => {
           },
         }
       : {}),
+    ...(props.video.transcript ? { transcript: props.video.transcript } : {}),
     url: props.canonicalUrl,
     publisher: {
       "@type": "Organization",
@@ -352,6 +354,30 @@ const Watch = (props: PageProps) => {
             <p className="mt-5 whitespace-pre-wrap text-sm leading-relaxed text-neutral-500">
               {props.video.description}
             </p>
+          )}
+
+          {/* Transcript — native <details> keeps text in the DOM (crawlable) while
+              collapsed by default for a tidy UI */}
+          {props.video.transcript && (
+            <details className="group mt-6 rounded-xl border border-neutral-150 bg-neutral-50/60">
+              <summary className="flex cursor-pointer list-none items-center justify-between gap-2 px-5 py-3.5 text-sm font-semibold text-header-100">
+                Transcript
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  className="h-4 w-4 text-neutral-400 transition-transform duration-200 group-open:rotate-180"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                  strokeWidth={2}
+                  aria-hidden="true"
+                >
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" />
+                </svg>
+              </summary>
+              <p className="whitespace-pre-wrap px-5 pb-5 text-sm leading-relaxed text-neutral-500">
+                {props.video.transcript}
+              </p>
+            </details>
           )}
         </div>
       </div>
