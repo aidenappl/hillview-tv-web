@@ -1,9 +1,10 @@
 import type { GetServerSideProps, GetServerSidePropsContext } from "next";
 import Layout from "../components/Layout";
 import { useRouter } from "next/router";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { DateTime } from "luxon";
 import Link from "next/link";
+import Script from "next/script";
 import toast from "react-hot-toast";
 
 import QueryVideo from "../hooks/QueryVideo";
@@ -14,7 +15,19 @@ import {
   getContentUrl,
   toIso8601Duration,
   formatDuration,
+  formatTimestamp,
+  parseVtt,
 } from "../lib/video";
+
+// Cloudflare Stream Player SDK shape (only what we use to seek).
+declare global {
+  interface Window {
+    Stream?: (iframe: HTMLIFrameElement) => {
+      currentTime: number;
+      play: () => void;
+    };
+  }
+}
 
 interface GeneralNSM {
   id: number;
@@ -35,7 +48,7 @@ interface Video {
   allow_downloads: boolean;
   duration?: number;
   views?: number;
-  transcript?: string;
+  captions_vtt?: string;
   status: GeneralNSM;
   inserted_at: Date;
 }
@@ -99,6 +112,15 @@ const copyToClipboard = async (text: string): Promise<boolean> => {
 const Watch = (props: PageProps) => {
   const router = useRouter();
 
+  const cues = useMemo(
+    () => parseVtt(props.video.captions_vtt),
+    [props.video.captions_vtt],
+  );
+  const transcriptText = useMemo(
+    () => cues.map((c) => c.text).join(" "),
+    [cues],
+  );
+
   const uploadDate = new Date(props.video.inserted_at);
   const embedUrl = getEmbedUrl(props.video);
   const contentUrl = getContentUrl(props.video);
@@ -124,7 +146,7 @@ const Watch = (props: PageProps) => {
           },
         }
       : {}),
-    ...(props.video.transcript ? { transcript: props.video.transcript } : {}),
+    ...(transcriptText ? { transcript: transcriptText } : {}),
     url: props.canonicalUrl,
     publisher: {
       "@type": "Organization",
@@ -144,6 +166,26 @@ const Watch = (props: PageProps) => {
   };
 
   const player = resolvePlayerSource(props.video);
+  const isCloudflarePlayer =
+    player.type === "iframe" && player.src.includes("cloudflarestream.com");
+
+  const iframeRef = useRef<HTMLIFrameElement | null>(null);
+  const streamPlayerRef = useRef<{ currentTime: number; play: () => void } | null>(null);
+
+  // Seek the Cloudflare Stream player to a transcript cue's timestamp.
+  const seekTo = (seconds: number) => {
+    if (!isCloudflarePlayer || !iframeRef.current || !window.Stream) return;
+    try {
+      if (!streamPlayerRef.current) {
+        streamPlayerRef.current = window.Stream(iframeRef.current);
+      }
+      streamPlayerRef.current.currentTime = seconds;
+      streamPlayerRef.current.play();
+      iframeRef.current.scrollIntoView({ behavior: "smooth", block: "start" });
+    } catch (error) {
+      console.error("Seek failed:", error);
+    }
+  };
 
   const [shareButtonText, setShareButtonText] = useState("Share");
 
@@ -203,6 +245,12 @@ const Watch = (props: PageProps) => {
   return (
     <Layout>
       <JsonLd data={[videoJsonLd, breadcrumbJsonLd]} />
+      {isCloudflarePlayer && cues.length > 0 && (
+        <Script
+          src="https://embed.cloudflarestream.com/embed/sdk.latest.js"
+          strategy="afterInteractive"
+        />
+      )}
 
       <div className="mx-auto w-full max-w-screen-xl px-6 pb-20 pt-8 sm:pt-10">
         {/* ── Back link ── */}
@@ -236,6 +284,7 @@ const Watch = (props: PageProps) => {
           <div className="overflow-hidden rounded-xl shadow-sm ring-1 ring-neutral-150">
             <div className="relative pt-[56.25%]">
               <iframe
+                ref={iframeRef}
                 src={player.src}
                 className="absolute inset-0 h-full w-full border-none"
                 allow="accelerometer; gyroscope; autoplay; encrypted-media; picture-in-picture"
@@ -356,9 +405,9 @@ const Watch = (props: PageProps) => {
             </p>
           )}
 
-          {/* Transcript — native <details> keeps text in the DOM (crawlable) while
-              collapsed by default for a tidy UI */}
-          {props.video.transcript && (
+          {/* Transcript — timestamped cues; full text stays in the DOM (crawlable)
+              while collapsed. On Cloudflare videos, timestamps seek the player. */}
+          {cues.length > 0 && (
             <details className="group mt-6 rounded-xl border border-neutral-150 bg-neutral-50/60">
               <summary className="flex cursor-pointer list-none items-center justify-between gap-2 px-5 py-3.5 text-sm font-semibold text-header-100">
                 Transcript
@@ -374,9 +423,32 @@ const Watch = (props: PageProps) => {
                   <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" />
                 </svg>
               </summary>
-              <p className="whitespace-pre-wrap px-5 pb-5 text-sm leading-relaxed text-neutral-500">
-                {props.video.transcript}
-              </p>
+              <div className="max-h-[28rem] space-y-1 overflow-y-auto px-3 pb-4 pt-1 sm:px-4">
+                {cues.map((cue, i) => (
+                  <div
+                    key={i}
+                    className="flex gap-3 rounded-lg px-2 py-1.5 transition-colors hover:bg-white"
+                  >
+                    {isCloudflarePlayer ? (
+                      <button
+                        type="button"
+                        onClick={() => seekTo(cue.start)}
+                        className="shrink-0 pt-0.5 font-mono text-xs font-semibold tabular-nums text-primary-100 hover:underline"
+                        aria-label={`Jump to ${formatTimestamp(cue.start)}`}
+                      >
+                        {formatTimestamp(cue.start)}
+                      </button>
+                    ) : (
+                      <span className="shrink-0 pt-0.5 font-mono text-xs font-semibold tabular-nums text-neutral-400">
+                        {formatTimestamp(cue.start)}
+                      </span>
+                    )}
+                    <p className="text-sm leading-relaxed text-neutral-600">
+                      {cue.text}
+                    </p>
+                  </div>
+                ))}
+              </div>
             </details>
           )}
         </div>
