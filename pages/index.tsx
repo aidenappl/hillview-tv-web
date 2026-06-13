@@ -15,6 +15,8 @@ import { FetchAPI } from "../services/http/requestHandler";
 import QuerySpotlight from "../hooks/QuerySpotlight";
 import QueryVideos from "../hooks/QueryVideos";
 import ContentImage from "../components/ContentImage";
+import JsonLd from "../components/JsonLd";
+import { formatDuration } from "../lib/video";
 import { Spotlight, Video } from "./content";
 
 interface HomeProps {
@@ -22,12 +24,43 @@ interface HomeProps {
   latestVideos: Video[];
 }
 
+const siteJsonLd = [
+  {
+    "@context": "https://schema.org",
+    "@type": "WebSite",
+    name: "HillviewTV",
+    url: "https://hillview.tv",
+    potentialAction: {
+      "@type": "SearchAction",
+      target: {
+        "@type": "EntryPoint",
+        urlTemplate: "https://hillview.tv/content?search={search_term_string}",
+      },
+      "query-input": "required name=search_term_string",
+    },
+  },
+  {
+    "@context": "https://schema.org",
+    "@type": "Organization",
+    name: "HillviewTV",
+    url: "https://hillview.tv",
+    logo: "https://hillview.tv/assets/logos/sun.png",
+    description:
+      "Hillview Middle School's student-run broadcast network.",
+  },
+];
+
 const LatestCard = ({ video }: { video: Video }) => (
   <Link href={`/watch?v=${video.uuid}`}>
     <div className="group flex gap-4 rounded-xl border border-transparent p-3 transition-all duration-200 hover:border-neutral-200 hover:bg-white hover:shadow-sm">
       {/* Thumbnail */}
       <div className="relative aspect-video w-40 shrink-0 overflow-hidden rounded-lg sm:w-44">
         <ContentImage image={video.thumbnail} alt={video.title} />
+        {formatDuration(video.duration) && (
+          <span className="absolute bottom-1.5 right-1.5 z-10 rounded bg-black/75 px-1.5 py-0.5 text-[0.6rem] font-semibold tabular-nums text-white">
+            {formatDuration(video.duration)}
+          </span>
+        )}
         {/* Play overlay */}
         <div className="absolute inset-0 flex items-center justify-center bg-black/0 transition-colors duration-200 group-hover:bg-black/20">
           <div className="flex h-8 w-8 items-center justify-center rounded-full bg-white/0 opacity-0 shadow-lg transition-all duration-200 group-hover:bg-white/90 group-hover:opacity-100">
@@ -108,6 +141,7 @@ const Home: NextPage<HomeProps> = ({ spotlight, latestVideos }) => {
 
   return (
     <Layout>
+      <JsonLd data={siteJsonLd} />
       {/* ── Top newsletter banner ── */}
       <div className="border-b border-primary-100/20 bg-primary-100 px-4 py-3">
         <div className="mx-auto flex max-w-screen-xl flex-wrap items-center justify-center gap-x-6 gap-y-2.5 sm:flex-nowrap">
@@ -167,6 +201,7 @@ const Home: NextPage<HomeProps> = ({ spotlight, latestVideos }) => {
               src="/assets/logos/sun.png"
               alt=""
               fill
+              priority
               sizes="520px"
               style={{ objectFit: "contain" }}
             />
@@ -389,8 +424,12 @@ const Home: NextPage<HomeProps> = ({ spotlight, latestVideos }) => {
 };
 
 export const getServerSideProps: GetServerSideProps = async (
-  _context: GetServerSidePropsContext,
+  context: GetServerSidePropsContext,
 ) => {
+  context.res.setHeader(
+    "Cache-Control",
+    "public, s-maxage=300, stale-while-revalidate=86400",
+  );
   const baseProps = {
     title: "HillviewTV - Watch Announcements & Broadcasts",
     description:

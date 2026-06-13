@@ -2,7 +2,17 @@ import type { GetServerSideProps, GetServerSidePropsContext } from "next";
 import Link from "next/link";
 import Layout from "../components/Layout";
 import ContentImage from "../components/ContentImage";
+import JsonLd from "../components/JsonLd";
 import QueryPlaylists from "../hooks/QueryPlaylists";
+
+const breadcrumbJsonLd = {
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  itemListElement: [
+    { "@type": "ListItem", position: 1, name: "Home", item: "https://hillview.tv" },
+    { "@type": "ListItem", position: 2, name: "Playlists", item: "https://hillview.tv/playlists" },
+  ],
+};
 
 export interface Playlist {
   id: number;
@@ -26,6 +36,7 @@ interface Video {
   description: string;
   thumbnail: string;
   url: string;
+  duration?: number;
   status: GeneralNSM;
   inserted_at: Date;
 }
@@ -34,7 +45,13 @@ interface PlaylistsPageProps {
   playlists: Playlist[];
 }
 
-const PlaylistCard = ({ playlist }: { playlist: Playlist }) => (
+const PlaylistCard = ({
+  playlist,
+  priority = false,
+}: {
+  playlist: Playlist;
+  priority?: boolean;
+}) => (
   <Link href={"/playlist/" + playlist.route}>
     <div className="group relative p-3">
       {/* Blue background — scales out on hover */}
@@ -45,7 +62,11 @@ const PlaylistCard = ({ playlist }: { playlist: Playlist }) => (
         {/* Thumbnail */}
         <div className="relative aspect-video w-36 shrink-0 overflow-hidden rounded-lg transition-all duration-300 group-hover:shadow-sm sm:w-44 md:w-52">
           <div className="absolute inset-0 transition-transform duration-500 ease-out group-hover:scale-105">
-            <ContentImage image={playlist.banner_image} alt={playlist.name} />
+            <ContentImage
+              image={playlist.banner_image}
+              alt={playlist.name}
+              priority={priority}
+            />
           </div>
         </div>
 
@@ -99,6 +120,7 @@ const Playlists = (props: PlaylistsPageProps) => {
 
   return (
     <Layout>
+      <JsonLd data={breadcrumbJsonLd} />
       <div className="flex w-full flex-col items-center">
         <div className="w-full max-w-screen-2xl px-4 pb-24 sm:px-6 md:px-8">
           {/* Page header */}
@@ -121,8 +143,12 @@ const Playlists = (props: PlaylistsPageProps) => {
 
           {/* Horizontal list — 1 col on mobile, 2 cols on md+ */}
           <div className="grid grid-cols-1 md:grid-cols-2">
-            {props.playlists.map((playlist) => (
-              <PlaylistCard key={playlist.id} playlist={playlist} />
+            {props.playlists.map((playlist, index) => (
+              <PlaylistCard
+                key={playlist.id}
+                playlist={playlist}
+                priority={index === 0}
+              />
             ))}
           </div>
         </div>
@@ -132,8 +158,12 @@ const Playlists = (props: PlaylistsPageProps) => {
 };
 
 export const getServerSideProps: GetServerSideProps = async (
-  _context: GetServerSidePropsContext,
+  context: GetServerSidePropsContext,
 ) => {
+  context.res.setHeader(
+    "Cache-Control",
+    "public, s-maxage=300, stale-while-revalidate=86400",
+  );
   try {
     const response = await QueryPlaylists();
 

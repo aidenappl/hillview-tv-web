@@ -4,6 +4,7 @@ import { useState } from "react";
 interface Props {
   image: string;
   alt: string;
+  priority?: boolean;
 }
 
 const ContentImage = (props: Props) => {
@@ -33,6 +34,7 @@ const ContentImage = (props: Props) => {
           src={props.image}
           alt={props.alt}
           fill
+          priority={props.priority}
           sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
           className="object-cover"
           onLoad={() => {

@@ -2,6 +2,7 @@ import Link from "next/link";
 import clsx from "clsx";
 import { Video } from "../../pages/content";
 import ContentImage from "../ContentImage";
+import { formatDuration } from "../../lib/video";
 
 type VideoPreviewProps = {
   video: Video;
@@ -25,8 +26,19 @@ const VideoPreview = ({ video, featured = false }: VideoPreviewProps) => {
         >
           {/* Thumbnail */}
           <div className="absolute inset-0 transition-transform duration-500 ease-out group-hover:scale-105">
-            <ContentImage image={video.thumbnail} alt={video.title} />
+            <ContentImage
+              image={video.thumbnail}
+              alt={video.title}
+              priority={featured}
+            />
           </div>
+
+          {/* Duration badge */}
+          {formatDuration(video.duration) && (
+            <span className="absolute right-2 top-2 z-10 rounded bg-black/75 px-1.5 py-0.5 text-[0.65rem] font-semibold tabular-nums text-white">
+              {formatDuration(video.duration)}
+            </span>
+          )}
 
           {/* Gradient */}
           <div

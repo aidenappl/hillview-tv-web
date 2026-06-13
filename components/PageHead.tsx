@@ -4,6 +4,8 @@ interface HeadProps {
   title?: string;
   description?: string;
   image?: string;
+  imageWidth?: number;
+  imageHeight?: number;
   url?: string;
   ogType?: string;
   noindex?: boolean;
@@ -14,9 +16,18 @@ const DEFAULT_DESC =
 const DEFAULT_IMAGE = "https://content.hillview.tv/thumbnails/default.jpg";
 const SITE_NAME = "HillviewTV";
 
+const ogImageType = (src: string): string =>
+  /\.png(\?|$)/i.test(src)
+    ? "image/png"
+    : /\.webp(\?|$)/i.test(src)
+      ? "image/webp"
+      : "image/jpeg";
+
 const PageHead = ({
   title = SITE_NAME,
   image = DEFAULT_IMAGE,
+  imageWidth,
+  imageHeight,
   description = DEFAULT_DESC,
   url = "https://hillview.tv/",
   ogType = "website",
@@ -42,6 +53,13 @@ const PageHead = ({
       <meta property="og:title" content={title} />
       <meta property="og:description" content={description} />
       <meta property="og:image" content={image} />
+      <meta property="og:image:type" content={ogImageType(image)} />
+      {imageWidth ? (
+        <meta property="og:image:width" content={String(imageWidth)} />
+      ) : null}
+      {imageHeight ? (
+        <meta property="og:image:height" content={String(imageHeight)} />
+      ) : null}
       <meta property="og:url" content={url} />
       <meta property="og:site_name" content={SITE_NAME} />
       <meta property="og:locale" content="en_US" />

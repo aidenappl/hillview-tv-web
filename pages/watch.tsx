@@ -1,5 +1,4 @@
 import type { GetServerSideProps, GetServerSidePropsContext } from "next";
-import Head from "next/head";
 import Layout from "../components/Layout";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
@@ -9,6 +8,13 @@ import toast from "react-hot-toast";
 
 import QueryVideo from "../hooks/QueryVideo";
 import { FetchAPI } from "../services/http/requestHandler";
+import JsonLd from "../components/JsonLd";
+import {
+  getEmbedUrl,
+  getContentUrl,
+  toIso8601Duration,
+  formatDuration,
+} from "../lib/video";
 
 interface GeneralNSM {
   id: number;
@@ -24,8 +30,10 @@ interface Video {
   description: string;
   thumbnail: string;
   url: string;
+  cloudflare_id?: string;
   download_url?: string;
   allow_downloads: boolean;
+  duration?: number;
   status: GeneralNSM;
   inserted_at: Date;
 }
@@ -38,13 +46,17 @@ interface PageProps {
 type PlayerSource = { type: "iframe"; src: string } | { type: "unavailable" };
 
 const resolvePlayerSource = (video: Video): PlayerSource => {
-  const url = video.url ?? "";
+  const embed = getEmbedUrl(video);
+  if (!embed) {
+    console.error("Unrecognized video URL format:", video.url);
+    return { type: "unavailable" };
+  }
 
+  // Cloudflare's iframe player takes poster + sizing params; others embed clean.
   if (
-    url.includes("cloudflarestream.com") ||
-    url.includes("videodelivery.net")
+    embed.includes("cloudflarestream.com") ||
+    embed.includes("videodelivery.net")
   ) {
-    const base = url.replaceAll("/manifest/video.m3u8", "/iframe");
     const params = new URLSearchParams({
       preload: "auto",
       poster: video.thumbnail ?? "",
@@ -52,23 +64,10 @@ const resolvePlayerSource = (video: Video): PlayerSource => {
       width: "1280",
       height: "720",
     });
-    return { type: "iframe", src: `${base}?${params.toString()}` };
+    return { type: "iframe", src: `${embed}?${params.toString()}` };
   }
 
-  if (url.includes("vimeo")) {
-    const match = url.match(/\/external\/(\d+)\.m3u8/);
-    if (match) {
-      return {
-        type: "iframe",
-        src: `https://player.vimeo.com/video/${match[1]}`,
-      };
-    }
-    console.error("Vimeo URL not parseable:", url);
-    return { type: "unavailable" };
-  }
-
-  console.error("Unrecognized video URL format:", url);
-  return { type: "unavailable" };
+  return { type: "iframe", src: embed };
 };
 
 const copyToClipboard = async (text: string): Promise<boolean> => {
@@ -99,7 +98,10 @@ const Watch = (props: PageProps) => {
   const router = useRouter();
 
   const uploadDate = new Date(props.video.inserted_at);
-  const jsonLd = {
+  const embedUrl = getEmbedUrl(props.video);
+  const contentUrl = getContentUrl(props.video);
+  const isoDuration = toIso8601Duration(props.video.duration);
+  const videoJsonLd = {
     "@context": "https://schema.org",
     "@type": "VideoObject",
     name: props.video.title,
@@ -108,12 +110,25 @@ const Watch = (props: PageProps) => {
     ...(isNaN(uploadDate.getTime())
       ? {}
       : { uploadDate: uploadDate.toISOString() }),
+    ...(embedUrl ? { embedUrl } : {}),
+    ...(contentUrl ? { contentUrl } : {}),
+    ...(isoDuration ? { duration: isoDuration } : {}),
     url: props.canonicalUrl,
     publisher: {
       "@type": "Organization",
       name: "HillviewTV",
       url: "https://hillview.tv",
     },
+  };
+
+  const breadcrumbJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    itemListElement: [
+      { "@type": "ListItem", position: 1, name: "Home", item: "https://hillview.tv" },
+      { "@type": "ListItem", position: 2, name: "Content", item: "https://hillview.tv/content" },
+      { "@type": "ListItem", position: 3, name: props.video.title, item: props.canonicalUrl },
+    ],
   };
 
   const player = resolvePlayerSource(props.video);
@@ -175,12 +190,7 @@ const Watch = (props: PageProps) => {
 
   return (
     <Layout>
-      <Head>
-        <script
-          type="application/ld+json"
-          dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
-        />
-      </Head>
+      <JsonLd data={[videoJsonLd, breadcrumbJsonLd]} />
 
       <div className="mx-auto w-full max-w-screen-xl px-6 pb-20 pt-8 sm:pt-10">
         {/* ── Back link ── */}
@@ -312,6 +322,16 @@ const Watch = (props: PageProps) => {
               ·
             </span>
             <span className="text-sm text-neutral-400">{props.video.ft}</span>
+            {formatDuration(props.video.duration) && (
+              <>
+                <span className="text-neutral-300" aria-hidden="true">
+                  ·
+                </span>
+                <span className="text-sm tabular-nums text-neutral-400">
+                  {formatDuration(props.video.duration)}
+                </span>
+              </>
+            )}
           </div>
 
           {/* Divider */}
@@ -332,6 +352,10 @@ const Watch = (props: PageProps) => {
 export const getServerSideProps: GetServerSideProps = async (
   context: GetServerSidePropsContext,
 ) => {
+  context.res.setHeader(
+    "Cache-Control",
+    "public, s-maxage=300, stale-while-revalidate=86400",
+  );
   try {
     const raw = context.query.v;
     const q = Array.isArray(raw) ? raw[0] : raw;
@@ -345,6 +369,8 @@ export const getServerSideProps: GetServerSideProps = async (
         props: {
           title: data.title + " - HillviewTV",
           image: data.thumbnail,
+          imageWidth: 1280,
+          imageHeight: 720,
           description: data.description,
           url: canonicalUrl,
           ogType: "video.other",

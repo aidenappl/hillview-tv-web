@@ -1,11 +1,11 @@
 import type { GetServerSideProps, GetServerSidePropsContext } from "next";
-import Head from "next/head";
 import Image from "next/image";
 import Layout from "../../components/Layout";
 import Link from "next/link";
 import { Video } from "../content";
 import QueryPlaylist from "../../hooks/QueryPlaylist";
 import VideoPreview from "../../components/ContentPage/VideoPreview";
+import JsonLd from "../../components/JsonLd";
 
 interface PlaylistPageProps {
   playlist: Playlist;
@@ -23,7 +23,7 @@ interface Playlist {
 }
 
 const Playlist = (props: PlaylistPageProps) => {
-  const jsonLd = {
+  const itemListJsonLd = {
     "@context": "https://schema.org",
     "@type": "ItemList",
     name: props.playlist.name,
@@ -34,17 +34,23 @@ const Playlist = (props: PlaylistPageProps) => {
       position: i + 1,
       url: `https://hillview.tv/watch?v=${v.uuid}`,
       name: v.title,
+      ...(v.thumbnail ? { image: v.thumbnail } : {}),
     })),
+  };
+
+  const breadcrumbJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    itemListElement: [
+      { "@type": "ListItem", position: 1, name: "Home", item: "https://hillview.tv" },
+      { "@type": "ListItem", position: 2, name: "Playlists", item: "https://hillview.tv/playlists" },
+      { "@type": "ListItem", position: 3, name: props.playlist.name, item: props.canonicalUrl },
+    ],
   };
 
   return (
     <Layout>
-      <Head>
-        <script
-          type="application/ld+json"
-          dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
-        />
-      </Head>
+      <JsonLd data={[itemListJsonLd, breadcrumbJsonLd]} />
       <div className="flex w-full flex-col items-center">
         <div className="w-full max-w-screen-2xl px-4 pb-24 sm:px-6 md:px-8">
           {/* Hero banner */}
@@ -132,6 +138,10 @@ const Playlist = (props: PlaylistPageProps) => {
 export const getServerSideProps: GetServerSideProps = async (
   context: GetServerSidePropsContext,
 ) => {
+  context.res.setHeader(
+    "Cache-Control",
+    "public, s-maxage=300, stale-while-revalidate=86400",
+  );
   try {
     const route = context.params!.playlist_id as string;
     const response = await QueryPlaylist(route);

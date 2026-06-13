@@ -30,7 +30,6 @@ const isAllowedUrl = (raw: string): boolean => {
 // an ASCII-only fallback `filename` plus a UTF-8 `filename*`.
 const buildContentDisposition = (rawTitle: string): string => {
   const cleaned = rawTitle
-    // eslint-disable-next-line no-control-regex
     .replace(/[\x00-\x1f]/g, "")
     .replace(/[/\\"';%]/g, "")
     .replace(/\s+/g, " ")

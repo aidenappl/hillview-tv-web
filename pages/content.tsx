@@ -6,8 +6,18 @@ import Layout from "../components/Layout";
 
 import VideoPreview from "../components/ContentPage/VideoPreview";
 import SearchSpinner from "../components/ContentPage/Searching";
+import JsonLd from "../components/JsonLd";
 import QueryVideos from "../hooks/QueryVideos";
 import QuerySpotlight from "../hooks/QuerySpotlight";
+
+const breadcrumbJsonLd = {
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  itemListElement: [
+    { "@type": "ListItem", position: 1, name: "Home", item: "https://hillview.tv" },
+    { "@type": "ListItem", position: 2, name: "Content", item: "https://hillview.tv/content" },
+  ],
+};
 
 interface GeneralNSM {
   id: number;
@@ -22,6 +32,7 @@ export interface Video {
   description: string;
   thumbnail: string;
   url: string;
+  duration?: number;
   status: GeneralNSM;
   inserted_at: Date;
 
@@ -115,6 +126,7 @@ const Content = (props: ContentPageProps) => {
 
   return (
     <Layout>
+      <JsonLd data={breadcrumbJsonLd} />
       <div className="flex w-full flex-col items-center">
         <div className="w-full max-w-screen-2xl px-4 pb-24 sm:px-6 md:px-8">
           {/* Page header */}
@@ -244,8 +256,12 @@ const Content = (props: ContentPageProps) => {
 };
 
 export const getServerSideProps: GetServerSideProps = async (
-  _context: GetServerSidePropsContext,
+  context: GetServerSidePropsContext,
 ) => {
+  context.res.setHeader(
+    "Cache-Control",
+    "public, s-maxage=300, stale-while-revalidate=86400",
+  );
   try {
     const videos = await QueryVideos();
 
