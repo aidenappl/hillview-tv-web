@@ -156,6 +156,7 @@ const Home: NextPage<HomeProps> = ({ spotlight, latestVideos }) => {
               src="/assets/logos/sun.png"
               alt=""
               fill
+              sizes="520px"
               style={{ objectFit: "contain" }}
             />
           </div>
