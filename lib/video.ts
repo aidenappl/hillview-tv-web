@@ -13,7 +13,10 @@ export interface VideoUrlInput {
 export const getEmbedUrl = (video: VideoUrlInput): string | null => {
   const url = video.url ?? "";
 
-  if (url.includes("cloudflarestream.com") || url.includes("videodelivery.net")) {
+  if (
+    url.includes("cloudflarestream.com") ||
+    url.includes("videodelivery.net")
+  ) {
     return url.replaceAll("/manifest/video.m3u8", "/iframe");
   }
 
@@ -190,7 +193,8 @@ const parseTimestamp = (ts: string): number => {
   if (parts.length < 2) return 0;
   const secs = parseFloat(parts[parts.length - 1]) || 0;
   const mins = parseInt(parts[parts.length - 2], 10) || 0;
-  const hours = parts.length >= 3 ? parseInt(parts[parts.length - 3], 10) || 0 : 0;
+  const hours =
+    parts.length >= 3 ? parseInt(parts[parts.length - 3], 10) || 0 : 0;
   return hours * 3600 + mins * 60 + secs;
 };
 
@@ -245,5 +249,7 @@ export const toIso8601Duration = (
   const h = Math.floor(total / 3600);
   const m = Math.floor((total % 3600) / 60);
   const s = total % 60;
-  return `PT${h ? `${h}H` : ""}${m ? `${m}M` : ""}${s ? `${s}S` : ""}` || "PT0S";
+  return (
+    `PT${h ? `${h}H` : ""}${m ? `${m}M` : ""}${s ? `${s}S` : ""}` || "PT0S"
+  );
 };

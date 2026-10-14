@@ -9,7 +9,7 @@ on:
 jobs:
   lint-and-typecheck:
     name: Lint & Type Check
-    runs-on: ubuntu-latest
+    runs-on: [self-hosted, lattice-worker]
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -34,7 +34,7 @@ jobs:
 
   build:
     name: Build
-    runs-on: ubuntu-latest
+    runs-on: [self-hosted, lattice-worker]
     needs: lint-and-typecheck
     steps:
       - name: Checkout code

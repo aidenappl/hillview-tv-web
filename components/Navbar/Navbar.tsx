@@ -119,7 +119,10 @@ const Navbar = (props: NavbarProps) => {
               </div>
 
               {/* Desktop nav */}
-              <nav aria-label="Primary" className="hidden items-center gap-1 md:flex">
+              <nav
+                aria-label="Primary"
+                className="hidden items-center gap-1 md:flex"
+              >
                 {navButtons.map((i) => (
                   <Link
                     href={i.url}

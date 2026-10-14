@@ -42,9 +42,24 @@ const Playlist = (props: PlaylistPageProps) => {
     "@context": "https://schema.org",
     "@type": "BreadcrumbList",
     itemListElement: [
-      { "@type": "ListItem", position: 1, name: "Home", item: "https://hillview.tv" },
-      { "@type": "ListItem", position: 2, name: "Playlists", item: "https://hillview.tv/playlists" },
-      { "@type": "ListItem", position: 3, name: props.playlist.name, item: props.canonicalUrl },
+      {
+        "@type": "ListItem",
+        position: 1,
+        name: "Home",
+        item: "https://hillview.tv",
+      },
+      {
+        "@type": "ListItem",
+        position: 2,
+        name: "Playlists",
+        item: "https://hillview.tv/playlists",
+      },
+      {
+        "@type": "ListItem",
+        position: 3,
+        name: props.playlist.name,
+        item: props.canonicalUrl,
+      },
     ],
   };
 
