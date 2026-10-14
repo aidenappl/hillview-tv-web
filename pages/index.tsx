@@ -45,8 +45,7 @@ const siteJsonLd = [
     name: "HillviewTV",
     url: "https://hillview.tv",
     logo: "https://hillview.tv/assets/logos/sun.png",
-    description:
-      "Hillview Middle School's student-run broadcast network.",
+    description: "Hillview Middle School's student-run broadcast network.",
   },
 ];
 

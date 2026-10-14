@@ -21,7 +21,10 @@ const renderNodes = (nodes: VttNode[]): React.ReactNode =>
         );
       case "c":
         return (
-          <span key={i} className={node.classes.map((c) => `vtt-${c}`).join(" ")}>
+          <span
+            key={i}
+            className={node.classes.map((c) => `vtt-${c}`).join(" ")}
+          >
             {children}
           </span>
         );
@@ -104,7 +107,10 @@ const Transcript = ({ cues, activeIndex, onSeek }: TranscriptProps) => {
             key={i}
             ref={isActive ? activeRef : undefined}
             aria-current={isActive ? "true" : undefined}
-            style={{ contentVisibility: "auto", containIntrinsicSize: "auto 40px" }}
+            style={{
+              contentVisibility: "auto",
+              containIntrinsicSize: "auto 40px",
+            }}
             className={
               "rounded-lg transition-colors " +
               (isActive ? "bg-primary-100/10" : "")

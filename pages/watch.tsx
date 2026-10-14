@@ -163,9 +163,24 @@ const Watch = (props: PageProps) => {
     "@context": "https://schema.org",
     "@type": "BreadcrumbList",
     itemListElement: [
-      { "@type": "ListItem", position: 1, name: "Home", item: "https://hillview.tv" },
-      { "@type": "ListItem", position: 2, name: "Content", item: "https://hillview.tv/content" },
-      { "@type": "ListItem", position: 3, name: props.video.title, item: props.canonicalUrl },
+      {
+        "@type": "ListItem",
+        position: 1,
+        name: "Home",
+        item: "https://hillview.tv",
+      },
+      {
+        "@type": "ListItem",
+        position: 2,
+        name: "Content",
+        item: "https://hillview.tv/content",
+      },
+      {
+        "@type": "ListItem",
+        position: 3,
+        name: props.video.title,
+        item: props.canonicalUrl,
+      },
     ],
   };
 
@@ -183,7 +198,12 @@ const Watch = (props: PageProps) => {
   // Attach to the Cloudflare Stream player once its SDK is ready, and track the
   // playback position to highlight the active transcript cue.
   useEffect(() => {
-    if (!isCloudflarePlayer || !sdkReady || !iframeRef.current || !window.Stream) {
+    if (
+      !isCloudflarePlayer ||
+      !sdkReady ||
+      !iframeRef.current ||
+      !window.Stream
+    ) {
       return;
     }
     const sp = window.Stream(iframeRef.current);
@@ -444,7 +464,11 @@ const Watch = (props: PageProps) => {
                   strokeWidth={2}
                   aria-hidden="true"
                 >
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" />
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    d="M19 9l-7 7-7-7"
+                  />
                 </svg>
               </summary>
               <Transcript
