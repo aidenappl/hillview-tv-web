@@ -5,6 +5,7 @@ import type { AppProps } from "next/app";
 import PageHead from "../components/PageHead";
 import { Toaster } from "react-hot-toast";
 import { LiveStatusProvider } from "../components/LiveStatusProvider";
+import { reportError } from "../services/monitor.service";
 
 class ErrorBoundary extends React.Component<
   { children: React.ReactNode },
@@ -16,6 +17,13 @@ class ErrorBoundary extends React.Component<
   }
   static getDerivedStateFromError() {
     return { hasError: true };
+  }
+  componentDidCatch(error: Error, info: React.ErrorInfo) {
+    reportError("client.error.boundary", error, {
+      reason: "render_error",
+      component_stack: info.componentStack ?? undefined,
+      outcome: "the error page was shown; the user can reload",
+    });
   }
   render() {
     if (this.state.hasError) {

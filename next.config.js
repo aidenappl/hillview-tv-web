@@ -1,5 +1,7 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+  // Self-contained server for the Docker image (Lattice stack 38).
+  output: "standalone",
   reactStrictMode: true,
   poweredByHeader: false,
   images: {

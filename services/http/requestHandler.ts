@@ -1,4 +1,6 @@
 import axios, { AxiosError, AxiosRequestConfig } from "axios";
+import { attachAxiosMonitor } from "@aidenappleby/monitor-js";
+import { monitor } from "../monitor.service";
 
 // Generic success response
 type ApiSuccess<T> = {
@@ -27,6 +29,11 @@ const axios_api = axios.create({
   validateStatus: () => true,
   timeout: 10000,
 });
+
+// In the browser, failed API calls (4xx/5xx/network) go to Monitor with the
+// API's X-Request-ID, so they join to the API's own http.request.end event.
+// Server-side (getServerSideProps) failures surface through onRequestError.
+if (monitor) attachAxiosMonitor(axios_api, monitor);
 
 // Fetch API instance for making API requests
 const FetchAPI = async <T>(

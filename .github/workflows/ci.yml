@@ -19,7 +19,7 @@ jobs:
         with:
           # Self-hosted runners share ~/.npm; GitHub's cache upload is slow and useless here.
           package-manager-cache: false
-          node-version: "20"
+          node-version: "24"
           cache: "npm"
 
       - name: Install dependencies
@@ -47,7 +47,7 @@ jobs:
         with:
           # Self-hosted runners share ~/.npm; GitHub's cache upload is slow and useless here.
           package-manager-cache: false
-          node-version: "20"
+          node-version: "24"
           cache: "npm"
 
       - name: Install dependencies
