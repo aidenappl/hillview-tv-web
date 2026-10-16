@@ -257,14 +257,11 @@ const Watch = (props: PageProps) => {
     }
   };
 
-  const handleDownload = (url: string) => {
-    if (!url) return;
+  // The video API answers with a 302 to a named, time-limited link straight
+  // to S3 or Cloudflare Stream, so the file never passes through this server.
+  const handleDownload = () => {
     recordDownload();
-    const href =
-      "/api/download?url=" +
-      encodeURIComponent(url) +
-      "&filename=" +
-      encodeURIComponent(props.video.title);
+    const href = `${process.env.NEXT_PUBLIC_API_URL}/video/v1.1/download/${encodeURIComponent(props.video.uuid)}`;
     const link = document.createElement("a");
     link.href = href;
     document.body.appendChild(link);
@@ -365,7 +362,7 @@ const Watch = (props: PageProps) => {
             <div className="flex shrink-0 items-center gap-2">
               {props.video.allow_downloads && props.video.download_url && (
                 <button
-                  onClick={() => handleDownload(props.video.download_url!)}
+                  onClick={handleDownload}
                   className="inline-flex items-center gap-2 rounded-lg border border-neutral-200 bg-white px-4 py-2 text-sm font-medium text-neutral-700 transition-colors duration-150 hover:bg-neutral-50"
                 >
                   <svg
