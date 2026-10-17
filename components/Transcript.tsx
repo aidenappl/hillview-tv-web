@@ -77,7 +77,7 @@ const Transcript = ({ cues, activeIndex, onSeek }: TranscriptProps) => {
     <ol
       ref={scrollRef}
       onScroll={onScroll}
-      className="max-h-[28rem] space-y-0.5 overflow-y-auto px-2 pb-4 pt-1 sm:px-3"
+      className="max-h-112 space-y-0.5 overflow-y-auto px-2 pt-1 pb-4 sm:px-3"
     >
       {cues.map((cue, i) => {
         const isActive = i === activeIndex;
@@ -94,7 +94,7 @@ const Transcript = ({ cues, activeIndex, onSeek }: TranscriptProps) => {
             </span>
             <span className="min-w-0 text-left text-sm leading-relaxed text-neutral-600">
               {showSpeaker && (
-                <span className="mr-1 font-semibold text-header-100">
+                <span className="text-header-100 mr-1 font-semibold">
                   {cue.voice}:
                 </span>
               )}

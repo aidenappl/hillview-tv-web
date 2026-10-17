@@ -15,9 +15,9 @@ const ContentImage = (props: Props) => {
         {!loaded ? (
           <div
             role="status"
-            className="absolute top-0 z-10 h-full w-full animate-pulse space-y-8 md:flex md:items-center md:space-x-8 md:space-y-0"
+            className="absolute top-0 z-10 h-full w-full animate-pulse space-y-8 md:flex md:items-center md:space-y-0 md:space-x-8"
           >
-            <div className="flex h-full w-full items-center justify-center rounded bg-neutral-300 dark:bg-neutral-300">
+            <div className="flex h-full w-full items-center justify-center rounded-sm bg-neutral-300 dark:bg-neutral-300">
               <svg
                 className="h-12 w-12 text-neutral-400"
                 xmlns="http://www.w3.org/2000/svg"

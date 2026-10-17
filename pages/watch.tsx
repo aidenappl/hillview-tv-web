@@ -293,7 +293,7 @@ const Watch = (props: PageProps) => {
         />
       )}
 
-      <div className="mx-auto w-full max-w-screen-xl px-6 pb-20 pt-8 sm:pt-10">
+      <div className="mx-auto w-full max-w-(--breakpoint-xl) px-6 pt-8 pb-20 sm:pt-10">
         {/* ── Back link ── */}
         <div className="mb-6">
           <button
@@ -322,7 +322,7 @@ const Watch = (props: PageProps) => {
 
         {/* ── Video player ── */}
         {player.type === "iframe" ? (
-          <div className="overflow-hidden rounded-xl shadow-sm ring-1 ring-neutral-150">
+          <div className="ring-neutral-150 overflow-hidden rounded-xl shadow-sm ring-1">
             <div className="relative pt-[56.25%]">
               <iframe
                 ref={iframeRef}
@@ -334,8 +334,8 @@ const Watch = (props: PageProps) => {
             </div>
           </div>
         ) : (
-          <div className="flex flex-col items-center justify-center gap-3 rounded-xl border border-neutral-150 bg-neutral-50 px-6 py-24 text-center">
-            <p className="text-base font-semibold text-header-100">
+          <div className="border-neutral-150 flex flex-col items-center justify-center gap-3 rounded-xl border bg-neutral-50 px-6 py-24 text-center">
+            <p className="text-header-100 text-base font-semibold">
               This video is currently unavailable
             </p>
             <p className="text-sm text-neutral-400">
@@ -343,7 +343,7 @@ const Watch = (props: PageProps) => {
             </p>
             <Link
               href="/content"
-              className="mt-2 inline-flex items-center gap-2 rounded-lg bg-primary-100 px-5 py-2.5 text-sm font-bold text-white transition-colors duration-150 hover:bg-[#0d6efd]"
+              className="bg-primary-100 mt-2 inline-flex items-center gap-2 rounded-lg px-5 py-2.5 text-sm font-bold text-white transition-colors duration-150 hover:bg-[#0d6efd]"
             >
               Browse Content
             </Link>
@@ -354,7 +354,7 @@ const Watch = (props: PageProps) => {
         <div className="mt-6">
           <div className="flex flex-wrap items-start justify-between gap-4">
             {/* Title */}
-            <h1 className="text-2xl font-bold tracking-tight text-header-100 sm:text-3xl lg:text-4xl">
+            <h1 className="text-header-100 text-2xl font-bold tracking-tight sm:text-3xl lg:text-4xl">
               {props.video.title}
             </h1>
 
@@ -385,7 +385,7 @@ const Watch = (props: PageProps) => {
               )}
               <button
                 onClick={shareLink}
-                className="inline-flex items-center gap-2 rounded-lg bg-primary-100 px-4 py-2 text-sm font-medium text-white transition-colors duration-150 hover:bg-[#0d6efd]"
+                className="bg-primary-100 inline-flex items-center gap-2 rounded-lg px-4 py-2 text-sm font-medium text-white transition-colors duration-150 hover:bg-[#0d6efd]"
               >
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
@@ -410,7 +410,7 @@ const Watch = (props: PageProps) => {
           {/* Meta row */}
           <div className="mt-4 flex items-center gap-3">
             <div
-              className="h-7 w-7 shrink-0 rounded-full bg-cover bg-center bg-no-repeat ring-1 ring-neutral-150"
+              className="ring-neutral-150 h-7 w-7 shrink-0 rounded-full bg-cover bg-center bg-no-repeat ring-1"
               style={{
                 backgroundImage:
                   "url(https://content.hillview.tv/images/mobile/default.jpg)",
@@ -429,7 +429,7 @@ const Watch = (props: PageProps) => {
                 <span className="text-neutral-300" aria-hidden="true">
                   ·
                 </span>
-                <span className="text-sm tabular-nums text-neutral-400">
+                <span className="text-sm text-neutral-400 tabular-nums">
                   {formatDuration(props.video.duration)}
                 </span>
               </>
@@ -437,11 +437,11 @@ const Watch = (props: PageProps) => {
           </div>
 
           {/* Divider */}
-          <div className="mt-5 border-t border-neutral-150" />
+          <div className="border-neutral-150 mt-5 border-t" />
 
           {/* Description */}
           {props.video.description && (
-            <p className="mt-5 whitespace-pre-wrap text-sm leading-relaxed text-neutral-500">
+            <p className="mt-5 text-sm leading-relaxed whitespace-pre-wrap text-neutral-500">
               {props.video.description}
             </p>
           )}
@@ -449,8 +449,8 @@ const Watch = (props: PageProps) => {
           {/* Transcript — timestamped cues; full text stays in the DOM (crawlable)
               while collapsed. On Cloudflare videos, timestamps seek the player. */}
           {cues.length > 0 && (
-            <details className="group mt-6 rounded-xl border border-neutral-150 bg-neutral-50/60">
-              <summary className="flex cursor-pointer list-none items-center justify-between gap-2 px-5 py-3.5 text-sm font-semibold text-header-100">
+            <details className="group border-neutral-150 mt-6 rounded-xl border bg-neutral-50/60">
+              <summary className="text-header-100 flex cursor-pointer list-none items-center justify-between gap-2 px-5 py-3.5 text-sm font-semibold">
                 Transcript
                 <svg
                   xmlns="http://www.w3.org/2000/svg"

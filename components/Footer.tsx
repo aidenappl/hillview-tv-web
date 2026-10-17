@@ -12,8 +12,8 @@ const Footer = () => {
   const year = new Date().getFullYear();
 
   return (
-    <footer className="border-t border-neutral-150 bg-white">
-      <div className="mx-auto w-full max-w-screen-xl px-6 py-12 md:py-16">
+    <footer className="border-neutral-150 border-t bg-white">
+      <div className="mx-auto w-full max-w-(--breakpoint-xl) px-6 py-12 md:py-16">
         <div className="flex flex-col gap-10 sm:flex-row sm:items-start sm:justify-between">
           {/* Brand */}
           <div className="flex flex-col gap-4">
@@ -25,7 +25,7 @@ const Footer = () => {
                 height={36}
                 className="h-8 w-8 transition-transform duration-300 group-hover:scale-110"
               />
-              <span className="text-lg font-semibold tracking-[-0.01em] text-header-100">
+              <span className="text-header-100 text-lg font-semibold tracking-[-0.01em]">
                 Hillview<span className="text-primary-100">TV</span>
               </span>
             </Link>
@@ -36,7 +36,7 @@ const Footer = () => {
 
           {/* Sitemap */}
           <div className="flex flex-col gap-3">
-            <span className="text-[0.65rem] font-bold uppercase tracking-[0.12em] text-neutral-400">
+            <span className="text-[0.65rem] font-bold tracking-[0.12em] text-neutral-400 uppercase">
               Navigate
             </span>
             <ul className="flex flex-col gap-2.5">
@@ -47,7 +47,7 @@ const Footer = () => {
                     {...(l.external
                       ? { target: "_blank", rel: "noopener noreferrer" }
                       : {})}
-                    className="text-sm text-neutral-500 transition-colors duration-150 hover:text-header-100"
+                    className="hover:text-header-100 text-sm text-neutral-500 transition-colors duration-150"
                   >
                     {l.label}
                   </Link>
@@ -58,7 +58,7 @@ const Footer = () => {
         </div>
 
         {/* Bottom bar */}
-        <div className="mt-12 flex flex-col gap-1 border-t border-neutral-150 pt-6 sm:flex-row sm:items-center sm:justify-between">
+        <div className="border-neutral-150 mt-12 flex flex-col gap-1 border-t pt-6 sm:flex-row sm:items-center sm:justify-between">
           <span className="text-xs text-neutral-400">
             © {year} HillviewTV. All rights reserved.
           </span>

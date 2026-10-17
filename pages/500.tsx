@@ -9,7 +9,7 @@ const ServerError: NextPage = () => {
       <section className="relative flex flex-1 items-center overflow-hidden px-6 py-24 sm:py-32">
         {/* Sun — right side */}
         <div
-          className="pointer-events-none absolute right-[-4%] top-1/2 hidden -translate-y-1/2 select-none lg:block"
+          className="pointer-events-none absolute top-1/2 right-[-4%] hidden -translate-y-1/2 select-none lg:block"
           aria-hidden="true"
         >
           <div
@@ -32,18 +32,18 @@ const ServerError: NextPage = () => {
           </div>
         </div>
 
-        <div className="relative z-10 mx-auto w-full max-w-screen-xl">
+        <div className="relative z-10 mx-auto w-full max-w-(--breakpoint-xl)">
           <div className="max-w-2xl">
             {/* Eyebrow */}
             <div className="mb-6 flex items-center gap-3">
-              <div className="h-px w-6 bg-primary-100" aria-hidden="true" />
-              <span className="text-xs font-semibold uppercase tracking-[0.14em] text-primary-100">
+              <div className="bg-primary-100 h-px w-6" aria-hidden="true" />
+              <span className="text-primary-100 text-xs font-semibold tracking-[0.14em] uppercase">
                 Error 500 &middot; Something Went Wrong
               </span>
             </div>
 
             {/* Headline */}
-            <h1 className="text-[3rem] font-black leading-[1.05] tracking-tight text-header-100 sm:text-6xl lg:text-[5rem]">
+            <h1 className="text-header-100 text-[3rem] leading-[1.05] font-black tracking-tight sm:text-6xl lg:text-[5rem]">
               We hit some
               <span className="text-primary-100"> technical difficulties.</span>
             </h1>
@@ -59,7 +59,7 @@ const ServerError: NextPage = () => {
             <div className="mt-10 flex flex-wrap gap-3">
               <Link
                 href="/"
-                className="inline-flex items-center gap-2 rounded-lg bg-primary-100 px-7 py-3.5 text-sm font-bold text-white transition-colors duration-150 hover:bg-[#0d6efd]"
+                className="bg-primary-100 inline-flex items-center gap-2 rounded-lg px-7 py-3.5 text-sm font-bold text-white transition-colors duration-150 hover:bg-[#0d6efd]"
               >
                 Back to Home
                 <svg

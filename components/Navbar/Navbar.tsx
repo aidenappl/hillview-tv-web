@@ -32,14 +32,14 @@ const Navbar = (props: NavbarProps) => {
     <header className="z-20 h-[56px] w-screen shrink-0 sm:h-[64px] md:h-[72px]">
       <a
         href="#main-content"
-        className="sr-only focus:not-sr-only focus:absolute focus:z-50 focus:bg-white focus:px-4 focus:py-2 focus:text-primary-100"
+        className="focus:text-primary-100 sr-only focus:not-sr-only focus:absolute focus:z-50 focus:bg-white focus:px-4 focus:py-2"
       >
         Skip to content
       </a>
 
       {/* Main bar */}
-      <div className="relative z-20 flex h-full w-full items-center border-b border-neutral-150 bg-white/80 backdrop-blur-md">
-        <div className="mx-auto flex w-full max-w-screen-xl items-center justify-between px-6">
+      <div className="border-neutral-150 relative z-20 flex h-full w-full items-center border-b bg-white/80 backdrop-blur-md">
+        <div className="mx-auto flex w-full max-w-(--breakpoint-xl) items-center justify-between px-6">
           {/* Logo */}
           <Link href="/" className="group flex items-center gap-2 sm:gap-2.5">
             <Image
@@ -49,11 +49,11 @@ const Navbar = (props: NavbarProps) => {
               height={44}
               className="h-8 w-8 transition-transform duration-300 group-hover:scale-110 sm:h-9 sm:w-9 md:h-10 md:w-10"
             />
-            <span className="text-lg font-semibold tracking-[-0.01em] text-header-100 sm:text-xl md:text-2xl">
+            <span className="text-header-100 text-lg font-semibold tracking-[-0.01em] sm:text-xl md:text-2xl">
               Hillview<span className="text-blue-600">TV</span>
             </span>
             {isLive && (
-              <span className="flex items-center gap-1.5 rounded-full border border-red-100 bg-red-50 px-2 py-0.5 text-[0.6rem] font-bold uppercase tracking-wider text-red-600">
+              <span className="flex items-center gap-1.5 rounded-full border border-red-100 bg-red-50 px-2 py-0.5 text-[0.6rem] font-bold tracking-wider text-red-600 uppercase">
                 <span className="live-dot inline-block h-1.5 w-1.5 rounded-full bg-red-500" />
                 Live
               </span>
@@ -157,11 +157,11 @@ const Navbar = (props: NavbarProps) => {
       {/* Mobile dropdown */}
       <div
         className={clsx(
-          "relative left-0 z-10 w-full border-b border-neutral-150 bg-white/95 backdrop-blur-md transition-all duration-200 ease-in-out md:hidden",
+          "border-neutral-150 relative left-0 z-10 w-full border-b bg-white/95 backdrop-blur-md transition-all duration-200 ease-in-out md:hidden",
           showMobileNav ? "shadow-lg" : "hidden",
         )}
       >
-        <nav aria-label="Mobile" className="flex flex-col px-4 pb-3 pt-1">
+        <nav aria-label="Mobile" className="flex flex-col px-4 pt-1 pb-3">
           {navButtons.map((i) => (
             <Link
               href={i.url}
@@ -184,7 +184,7 @@ const Navbar = (props: NavbarProps) => {
       <div
         role="presentation"
         className={clsx(
-          "fixed inset-0 z-[1]",
+          "fixed inset-0 z-1",
           showMobileNav ? "pointer-events-auto" : "pointer-events-none",
         )}
         onClick={() => setShowMobileNav(false)}

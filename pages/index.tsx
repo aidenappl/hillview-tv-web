@@ -56,7 +56,7 @@ const LatestCard = ({ video }: { video: Video }) => (
       <div className="relative aspect-video w-40 shrink-0 overflow-hidden rounded-lg sm:w-44">
         <ContentImage image={video.thumbnail} alt={video.title} />
         {formatDuration(video.duration) && (
-          <span className="absolute bottom-1.5 right-1.5 z-10 rounded bg-black/75 px-1.5 py-0.5 text-[0.6rem] font-semibold tabular-nums text-white">
+          <span className="absolute right-1.5 bottom-1.5 z-10 rounded-sm bg-black/75 px-1.5 py-0.5 text-[0.6rem] font-semibold text-white tabular-nums">
             {formatDuration(video.duration)}
           </span>
         )}
@@ -65,7 +65,7 @@ const LatestCard = ({ video }: { video: Video }) => (
           <div className="flex h-8 w-8 items-center justify-center rounded-full bg-white/0 opacity-0 shadow-lg transition-all duration-200 group-hover:bg-white/90 group-hover:opacity-100">
             <svg
               xmlns="http://www.w3.org/2000/svg"
-              className="h-3.5 w-3.5 translate-x-px text-header-100"
+              className="text-header-100 h-3.5 w-3.5 translate-x-px"
               viewBox="0 0 24 24"
               fill="currentColor"
               aria-hidden="true"
@@ -78,11 +78,11 @@ const LatestCard = ({ video }: { video: Video }) => (
       {/* Text */}
       <div className="flex min-w-0 flex-col justify-center gap-1">
         {video.ft && (
-          <p className="text-[0.62rem] font-medium uppercase tracking-wider text-neutral-400">
+          <p className="text-[0.62rem] font-medium tracking-wider text-neutral-400 uppercase">
             {video.ft}
           </p>
         )}
-        <h3 className="line-clamp-2 text-sm font-semibold leading-snug text-header-100 transition-colors duration-150 group-hover:text-primary-100">
+        <h3 className="text-header-100 group-hover:text-primary-100 line-clamp-2 text-sm leading-snug font-semibold transition-colors duration-150">
           {video.title}
         </h3>
         {video.description && (
@@ -142,8 +142,8 @@ const Home: NextPage<HomeProps> = ({ spotlight, latestVideos }) => {
     <Layout>
       <JsonLd data={siteJsonLd} />
       {/* ── Top newsletter banner ── */}
-      <div className="border-b border-primary-100/20 bg-primary-100 px-4 py-3">
-        <div className="mx-auto flex max-w-screen-xl flex-wrap items-center justify-center gap-x-6 gap-y-2.5 sm:flex-nowrap">
+      <div className="border-primary-100/20 bg-primary-100 border-b px-4 py-3">
+        <div className="mx-auto flex max-w-(--breakpoint-xl) flex-wrap items-center justify-center gap-x-6 gap-y-2.5 sm:flex-nowrap">
           <p className="text-center text-sm font-medium text-white sm:text-left">
             Get notified when new productions are posted —
           </p>
@@ -162,12 +162,12 @@ const Home: NextPage<HomeProps> = ({ spotlight, latestVideos }) => {
                 if (e.key === "Enter") submitNewsletterForm();
               }}
               placeholder="your@email.com"
-              className="h-8 w-44 rounded-full border border-white/25 bg-white/15 px-4 text-xs text-white placeholder:text-white/55 focus:bg-white/20 focus:outline-none sm:w-52"
+              className="h-8 w-44 rounded-full border border-white/25 bg-white/15 px-4 text-xs text-white placeholder:text-white/55 focus:bg-white/20 focus:outline-hidden sm:w-52"
             />
             <button
               onClick={submitNewsletterForm}
               disabled={loadingNewsletter}
-              className="flex h-8 w-20 items-center justify-center rounded-full bg-white text-xs font-bold text-primary-100 transition-colors hover:bg-white/90 disabled:opacity-60"
+              className="text-primary-100 flex h-8 w-20 items-center justify-center rounded-full bg-white text-xs font-bold transition-colors hover:bg-white/90 disabled:opacity-60"
             >
               {loadingNewsletter ? (
                 <Spinner style="default" size={14} />
@@ -180,10 +180,10 @@ const Home: NextPage<HomeProps> = ({ spotlight, latestVideos }) => {
       </div>
 
       {/* ── Hero ── */}
-      <section className="relative overflow-hidden border-b border-neutral-150 px-6 py-24 sm:py-32 lg:py-40">
+      <section className="border-neutral-150 relative overflow-hidden border-b px-6 py-24 sm:py-32 lg:py-40">
         {/* Sun — right side */}
         <div
-          className="pointer-events-none absolute right-[-4%] top-1/2 hidden -translate-y-1/2 select-none lg:block"
+          className="pointer-events-none absolute top-1/2 right-[-4%] hidden -translate-y-1/2 select-none lg:block"
           aria-hidden="true"
         >
           <div
@@ -207,18 +207,18 @@ const Home: NextPage<HomeProps> = ({ spotlight, latestVideos }) => {
           </div>
         </div>
 
-        <div className="relative z-10 mx-auto max-w-screen-xl">
+        <div className="relative z-10 mx-auto max-w-(--breakpoint-xl)">
           <div className="max-w-3xl">
             {/* Eyebrow */}
             <div className="mb-6 flex items-center gap-3">
-              <div className="h-px w-6 bg-primary-100" aria-hidden="true" />
-              <span className="text-xs font-semibold uppercase tracking-[0.14em] text-primary-100">
+              <div className="bg-primary-100 h-px w-6" aria-hidden="true" />
+              <span className="text-primary-100 text-xs font-semibold tracking-[0.14em] uppercase">
                 Hillview Middle School &middot; Student Broadcast Network
               </span>
             </div>
 
             {/* Headline */}
-            <h1 className="text-[3rem] font-black leading-[1.05] tracking-tight text-header-100 sm:text-6xl lg:text-[5rem]">
+            <h1 className="text-header-100 text-[3rem] leading-[1.05] font-black tracking-tight sm:text-6xl lg:text-[5rem]">
               Putting the <span className="text-primary-100">spotlight</span> on
               the stories that matter.
             </h1>
@@ -233,7 +233,7 @@ const Home: NextPage<HomeProps> = ({ spotlight, latestVideos }) => {
             <div className="mt-10 flex flex-wrap gap-3">
               <Link
                 href="/content"
-                className="inline-flex items-center gap-2 rounded-lg bg-primary-100 px-7 py-3.5 text-sm font-bold text-white transition-colors duration-150 hover:bg-[#0d6efd]"
+                className="bg-primary-100 inline-flex items-center gap-2 rounded-lg px-7 py-3.5 text-sm font-bold text-white transition-colors duration-150 hover:bg-[#0d6efd]"
               >
                 Browse Content
                 <svg
@@ -265,12 +265,12 @@ const Home: NextPage<HomeProps> = ({ spotlight, latestVideos }) => {
 
       {/* ── Spotlight ── */}
       {spotlight.length > 0 && (
-        <section className="border-b border-neutral-150 px-6 py-16 sm:py-20">
-          <div className="mx-auto max-w-screen-xl">
+        <section className="border-neutral-150 border-b px-6 py-16 sm:py-20">
+          <div className="mx-auto max-w-(--breakpoint-xl)">
             {/* Section header */}
             <div className="mb-10 flex items-end justify-between gap-6">
               <div>
-                <h2 className="text-3xl font-bold tracking-tight text-header-100 sm:text-4xl">
+                <h2 className="text-header-100 text-3xl font-bold tracking-tight sm:text-4xl">
                   Spotlight
                 </h2>
                 <p className="mt-1.5 text-sm text-neutral-400">
@@ -331,11 +331,11 @@ const Home: NextPage<HomeProps> = ({ spotlight, latestVideos }) => {
       {/* ── Latest Content ── */}
       {latestVideos.length > 0 && (
         <section className="bg-neutral-50 px-6 py-16 sm:py-20">
-          <div className="mx-auto max-w-screen-xl">
+          <div className="mx-auto max-w-(--breakpoint-xl)">
             {/* Section header */}
             <div className="mb-10 flex items-end justify-between gap-6">
               <div>
-                <h2 className="text-3xl font-bold tracking-tight text-header-100 sm:text-4xl">
+                <h2 className="text-header-100 text-3xl font-bold tracking-tight sm:text-4xl">
                   Latest
                 </h2>
                 <p className="mt-1.5 text-sm text-neutral-400">
@@ -378,7 +378,7 @@ const Home: NextPage<HomeProps> = ({ spotlight, latestVideos }) => {
       {/* ── Newsletter ── */}
       <section className="border-t border-neutral-200 px-6 py-16 sm:py-20">
         <div className="mx-auto max-w-lg text-center">
-          <h2 className="text-2xl font-bold tracking-tight text-header-100 sm:text-3xl">
+          <h2 className="text-header-100 text-2xl font-bold tracking-tight sm:text-3xl">
             Stay in the loop
           </h2>
           <p className="mt-3 text-sm leading-relaxed text-neutral-400 sm:text-base">
@@ -400,14 +400,14 @@ const Home: NextPage<HomeProps> = ({ spotlight, latestVideos }) => {
               onKeyUp={(e) => {
                 if (e.key === "Enter") submitNewsletterForm();
               }}
-              className="h-11 min-w-0 flex-1 rounded-full border border-neutral-200 bg-white px-5 text-sm shadow-sm placeholder:text-neutral-400 focus:outline-none"
+              className="h-11 min-w-0 flex-1 rounded-full border border-neutral-200 bg-white px-5 text-sm shadow-sm placeholder:text-neutral-400 focus:outline-hidden"
               placeholder="your@email.com"
             />
             <button
               type="submit"
               disabled={loadingNewsletter}
               onClick={submitNewsletterForm}
-              className="flex h-11 w-28 shrink-0 items-center justify-center rounded-full bg-primary-100 text-sm font-bold text-white shadow-[0_2px_8px_rgba(25,123,255,0.25)] transition-all duration-200 hover:bg-[#0d6efd] hover:shadow-[0_4px_12px_rgba(25,123,255,0.35)] disabled:opacity-60"
+              className="bg-primary-100 flex h-11 w-28 shrink-0 items-center justify-center rounded-full text-sm font-bold text-white shadow-[0_2px_8px_rgba(25,123,255,0.25)] transition-all duration-200 hover:bg-[#0d6efd] hover:shadow-[0_4px_12px_rgba(25,123,255,0.35)] disabled:opacity-60"
             >
               {loadingNewsletter ? (
                 <Spinner style="light" size={18} />

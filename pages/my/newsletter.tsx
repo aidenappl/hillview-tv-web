@@ -40,7 +40,7 @@ const MyNewsletter: NextPage = () => {
               </p>
             )}
             <button
-              className="flex w-[140px] items-center justify-center rounded-md bg-primary-100 px-3.5 py-2.5 text-sm font-semibold text-white shadow disabled:opacity-60"
+              className="bg-primary-100 flex w-[140px] items-center justify-center rounded-md px-3.5 py-2.5 text-sm font-semibold text-white shadow disabled:opacity-60"
               disabled={!email}
               onClick={async () => {
                 // handle unsubscribe
@@ -81,7 +81,7 @@ const MyNewsletter: NextPage = () => {
             </p>
             <Link
               href={"/"}
-              className="flex w-[140px] items-center justify-center rounded-md bg-primary-100 px-3.5 py-2.5 text-sm font-semibold text-white shadow"
+              className="bg-primary-100 flex w-[140px] items-center justify-center rounded-md px-3.5 py-2.5 text-sm font-semibold text-white shadow"
             >
               Go Home
             </Link>

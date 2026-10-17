@@ -41,18 +41,18 @@ class ErrorBoundary extends React.Component<
               height={44}
               className="h-9 w-9 transition-transform duration-300 group-hover:scale-110 sm:h-10 sm:w-10"
             />
-            <span className="text-xl font-semibold tracking-[-0.01em] text-header-100 sm:text-2xl">
+            <span className="text-header-100 text-xl font-semibold tracking-[-0.01em] sm:text-2xl">
               Hillview<span className="text-blue-600">TV</span>
             </span>
           </a>
           <div className="flex items-center gap-3">
-            <div className="h-px w-6 bg-primary-100" aria-hidden="true" />
-            <span className="text-xs font-semibold uppercase tracking-[0.14em] text-primary-100">
+            <div className="bg-primary-100 h-px w-6" aria-hidden="true" />
+            <span className="text-primary-100 text-xs font-semibold tracking-[0.14em] uppercase">
               Something Went Wrong
             </span>
-            <div className="h-px w-6 bg-primary-100" aria-hidden="true" />
+            <div className="bg-primary-100 h-px w-6" aria-hidden="true" />
           </div>
-          <h1 className="max-w-lg text-3xl font-black leading-tight tracking-tight text-header-100 sm:text-4xl">
+          <h1 className="text-header-100 max-w-lg text-3xl leading-tight font-black tracking-tight sm:text-4xl">
             We hit some
             <span className="text-primary-100"> technical difficulties.</span>
           </h1>
@@ -64,7 +64,7 @@ class ErrorBoundary extends React.Component<
             {/* eslint-disable-next-line @next/next/no-html-link-for-pages */}
             <a
               href="/"
-              className="inline-flex items-center rounded-lg bg-primary-100 px-6 py-3 text-sm font-bold text-white transition-colors duration-150 hover:bg-[#0d6efd]"
+              className="bg-primary-100 inline-flex items-center rounded-lg px-6 py-3 text-sm font-bold text-white transition-colors duration-150 hover:bg-[#0d6efd]"
             >
               Back to Home
             </a>

@@ -15,13 +15,13 @@ const VideoPreview = ({ video, featured = false }: VideoPreviewProps) => {
       {/* Outer wrapper: p-4 padding, background animates out from the card */}
       <div className="group relative p-4">
         {/* Blue background — scales out + fades in on hover */}
-        <div className="absolute inset-0 scale-95 rounded-2xl bg-primary-100/10 opacity-0 transition-all duration-300 ease-out group-hover:scale-100 group-hover:opacity-100" />
+        <div className="bg-primary-100/10 absolute inset-0 scale-95 rounded-2xl opacity-0 transition-all duration-300 ease-out group-hover:scale-100 group-hover:opacity-100" />
 
         {/* Inner card */}
         <div
           className={clsx(
-            "relative cursor-pointer overflow-hidden rounded-xl shadow-sm ring-1 ring-transparent transition-all duration-300 group-hover:shadow-md group-hover:ring-primary-100/40",
-            featured ? "aspect-video sm:aspect-[21/9]" : "aspect-video",
+            "group-hover:ring-primary-100/40 relative cursor-pointer overflow-hidden rounded-xl shadow-sm ring-1 ring-transparent transition-all duration-300 group-hover:shadow-md",
+            featured ? "aspect-video sm:aspect-21/9" : "aspect-video",
           )}
         >
           {/* Thumbnail */}
@@ -35,7 +35,7 @@ const VideoPreview = ({ video, featured = false }: VideoPreviewProps) => {
 
           {/* Duration badge */}
           {formatDuration(video.duration) && (
-            <span className="absolute right-2 top-2 z-10 rounded bg-black/75 px-1.5 py-0.5 text-[0.65rem] font-semibold tabular-nums text-white">
+            <span className="absolute top-2 right-2 z-10 rounded-sm bg-black/75 px-1.5 py-0.5 text-[0.65rem] font-semibold text-white tabular-nums">
               {formatDuration(video.duration)}
             </span>
           )}
@@ -43,7 +43,7 @@ const VideoPreview = ({ video, featured = false }: VideoPreviewProps) => {
           {/* Gradient */}
           <div
             className={clsx(
-              "absolute inset-0 bg-gradient-to-t",
+              "absolute inset-0 bg-linear-to-t",
               featured
                 ? "from-black/90 via-black/30 to-transparent"
                 : "from-black/80 via-black/25 to-transparent",
@@ -53,18 +53,18 @@ const VideoPreview = ({ video, featured = false }: VideoPreviewProps) => {
           {/* Bottom content */}
           <div
             className={clsx(
-              "absolute bottom-0 left-0 right-0",
+              "absolute right-0 bottom-0 left-0",
               featured ? "p-5 sm:p-7" : "p-4",
             )}
           >
             {featured ? (
               <>
                 {video.ft && (
-                  <p className="mb-1 text-[0.65rem] font-medium uppercase tracking-wider text-white/60">
+                  <p className="mb-1 text-[0.65rem] font-medium tracking-wider text-white/60 uppercase">
                     {video.ft}
                   </p>
                 )}
-                <h3 className="line-clamp-2 text-xl font-semibold leading-snug text-white sm:text-2xl md:text-3xl">
+                <h3 className="line-clamp-2 text-xl leading-snug font-semibold text-white sm:text-2xl md:text-3xl">
                   {video.title}
                 </h3>
                 {video.description && (
@@ -73,7 +73,7 @@ const VideoPreview = ({ video, featured = false }: VideoPreviewProps) => {
                   </p>
                 )}
                 <div className="mt-4">
-                  <span className="inline-flex items-center gap-2 rounded-full bg-white/20 px-4 py-2 text-sm font-medium text-white backdrop-blur-sm transition-colors duration-200 group-hover:bg-white/30">
+                  <span className="inline-flex items-center gap-2 rounded-full bg-white/20 px-4 py-2 text-sm font-medium text-white backdrop-blur-xs transition-colors duration-200 group-hover:bg-white/30">
                     Watch Now
                     <svg
                       xmlns="http://www.w3.org/2000/svg"
@@ -98,11 +98,11 @@ const VideoPreview = ({ video, featured = false }: VideoPreviewProps) => {
                 {/* Title + date — slides up on hover */}
                 <div className="transition-transform duration-300 ease-out group-hover:-translate-y-2">
                   {video.ft && (
-                    <p className="mb-0.5 text-[0.65rem] font-medium uppercase tracking-wider text-white/60">
+                    <p className="mb-0.5 text-[0.65rem] font-medium tracking-wider text-white/60 uppercase">
                       {video.ft}
                     </p>
                   )}
-                  <h3 className="line-clamp-2 text-sm font-semibold leading-snug text-white sm:text-base">
+                  <h3 className="line-clamp-2 text-sm leading-snug font-semibold text-white sm:text-base">
                     {video.title}
                   </h3>
                 </div>

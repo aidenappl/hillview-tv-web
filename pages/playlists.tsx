@@ -65,10 +65,10 @@ const PlaylistCard = ({
   <Link href={"/playlist/" + playlist.route}>
     <div className="group relative p-3">
       {/* Blue background — scales out on hover */}
-      <div className="absolute inset-0 scale-95 rounded-2xl bg-primary-100/10 opacity-0 transition-all duration-300 ease-out group-hover:scale-100 group-hover:opacity-100" />
+      <div className="bg-primary-100/10 absolute inset-0 scale-95 rounded-2xl opacity-0 transition-all duration-300 ease-out group-hover:scale-100 group-hover:opacity-100" />
 
       {/* Horizontal card */}
-      <div className="relative flex items-center gap-4 rounded-xl border border-neutral-150 bg-white p-3 shadow-sm transition-all duration-300 group-hover:border-primary-100/30 group-hover:shadow-md sm:gap-5">
+      <div className="border-neutral-150 group-hover:border-primary-100/30 relative flex items-center gap-4 rounded-xl border bg-white p-3 shadow-sm transition-all duration-300 group-hover:shadow-md sm:gap-5">
         {/* Thumbnail */}
         <div className="relative aspect-video w-36 shrink-0 overflow-hidden rounded-lg transition-all duration-300 group-hover:shadow-sm sm:w-44 md:w-52">
           <div className="absolute inset-0 transition-transform duration-500 ease-out group-hover:scale-105">
@@ -83,7 +83,7 @@ const PlaylistCard = ({
         {/* Content */}
         <div className="min-w-0 flex-1 py-1">
           <div className="flex items-start justify-between gap-3">
-            <h3 className="line-clamp-2 text-base font-semibold leading-snug text-header-100 transition-colors duration-200 group-hover:text-primary-100 sm:text-lg">
+            <h3 className="text-header-100 group-hover:text-primary-100 line-clamp-2 text-base leading-snug font-semibold transition-colors duration-200 sm:text-lg">
               {playlist.name}
             </h3>
             <span className="mt-0.5 shrink-0 rounded-full bg-neutral-100 px-2.5 py-0.5 text-[0.65rem] font-semibold text-neutral-500">
@@ -98,7 +98,7 @@ const PlaylistCard = ({
             </p>
           )}
 
-          <div className="mt-3 flex items-center gap-1 text-sm font-medium text-primary-100 opacity-0 transition-opacity duration-200 group-hover:opacity-100">
+          <div className="text-primary-100 mt-3 flex items-center gap-1 text-sm font-medium opacity-0 transition-opacity duration-200 group-hover:opacity-100">
             View Playlist
             <svg
               xmlns="http://www.w3.org/2000/svg"
@@ -132,10 +132,10 @@ const Playlists = (props: PlaylistsPageProps) => {
     <Layout>
       <JsonLd data={breadcrumbJsonLd} />
       <div className="flex w-full flex-col items-center">
-        <div className="w-full max-w-screen-2xl px-4 pb-24 sm:px-6 md:px-8">
+        <div className="w-full max-w-(--breakpoint-2xl) px-4 pb-24 sm:px-6 md:px-8">
           {/* Page header */}
-          <div className="pb-10 pt-12 text-center md:pb-12 md:pt-16">
-            <h1 className="text-4xl font-bold tracking-tight text-header-100 sm:text-5xl md:text-6xl">
+          <div className="pt-12 pb-10 text-center md:pt-16 md:pb-12">
+            <h1 className="text-header-100 text-4xl font-bold tracking-tight sm:text-5xl md:text-6xl">
               Playlists
             </h1>
             <p className="mt-3 text-sm text-neutral-400 sm:text-base">
@@ -145,10 +145,10 @@ const Playlists = (props: PlaylistsPageProps) => {
 
           {/* Section label */}
           <div className="mb-1 flex items-center gap-4">
-            <span className="shrink-0 text-[0.65rem] font-bold uppercase tracking-widest text-neutral-400">
+            <span className="shrink-0 text-[0.65rem] font-bold tracking-widest text-neutral-400 uppercase">
               All Playlists
             </span>
-            <div className="h-px w-full bg-neutral-150" />
+            <div className="bg-neutral-150 h-px w-full" />
           </div>
 
           {/* Horizontal list — 1 col on mobile, 2 cols on md+ */}

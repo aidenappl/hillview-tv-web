@@ -62,10 +62,10 @@ interface ContentPageProps {
 
 const SectionLabel = ({ title }: { title: string }) => (
   <div className="mb-5 flex items-center gap-4">
-    <span className="shrink-0 text-[0.65rem] font-bold uppercase tracking-widest text-neutral-400">
+    <span className="shrink-0 text-[0.65rem] font-bold tracking-widest text-neutral-400 uppercase">
       {title}
     </span>
-    <div className="h-px w-full bg-neutral-150" />
+    <div className="bg-neutral-150 h-px w-full" />
   </div>
 );
 
@@ -138,10 +138,10 @@ const Content = (props: ContentPageProps) => {
     <Layout>
       <JsonLd data={breadcrumbJsonLd} />
       <div className="flex w-full flex-col items-center">
-        <div className="w-full max-w-screen-2xl px-4 pb-24 sm:px-6 md:px-8">
+        <div className="w-full max-w-(--breakpoint-2xl) px-4 pb-24 sm:px-6 md:px-8">
           {/* Page header */}
-          <div className="pb-10 pt-12 text-center md:pb-12 md:pt-16">
-            <h1 className="text-4xl font-bold tracking-tight text-header-100 sm:text-5xl md:text-6xl">
+          <div className="pt-12 pb-10 text-center md:pt-16 md:pb-12">
+            <h1 className="text-header-100 text-4xl font-bold tracking-tight sm:text-5xl md:text-6xl">
               Our Content
             </h1>
             <p className="mt-3 text-sm text-neutral-400 sm:text-base">
@@ -170,7 +170,7 @@ const Content = (props: ContentPageProps) => {
               <input
                 id="search-videos"
                 type="text"
-                className="h-12 w-full rounded-full border border-neutral-200 bg-white pl-11 pr-10 text-sm shadow-sm transition placeholder:text-neutral-400"
+                className="h-12 w-full rounded-full border border-neutral-200 bg-white pr-10 pl-11 text-sm shadow-sm transition placeholder:text-neutral-400"
                 placeholder="Search productions…"
                 value={searchQuery}
                 onChange={handleSearch}

@@ -67,11 +67,11 @@ const Playlist = (props: PlaylistPageProps) => {
     <Layout>
       <JsonLd data={[itemListJsonLd, breadcrumbJsonLd]} />
       <div className="flex w-full flex-col items-center">
-        <div className="w-full max-w-screen-2xl px-4 pb-24 sm:px-6 md:px-8">
+        <div className="w-full max-w-(--breakpoint-2xl) px-4 pb-24 sm:px-6 md:px-8">
           {/* Hero banner */}
           <div className="relative mt-8 overflow-hidden rounded-2xl md:mt-10">
             {/* Banner image */}
-            <div className="relative aspect-[21/9] w-full sm:aspect-[3/1]">
+            <div className="relative aspect-21/9 w-full sm:aspect-3/1">
               <Image
                 src={props.playlist.banner_image}
                 alt={props.playlist.name}
@@ -83,7 +83,7 @@ const Playlist = (props: PlaylistPageProps) => {
             </div>
 
             {/* Gradient overlay */}
-            <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/30 to-transparent" />
+            <div className="absolute inset-0 bg-linear-to-t from-black/85 via-black/30 to-transparent" />
 
             {/* Overlay content */}
             <div className="absolute inset-0 flex flex-col justify-between p-6 sm:p-8 md:p-10">
@@ -91,7 +91,7 @@ const Playlist = (props: PlaylistPageProps) => {
               <div>
                 <Link
                   href="/playlists"
-                  className="inline-flex items-center gap-1.5 rounded-full bg-white/10 px-3 py-1.5 text-xs font-medium text-white backdrop-blur-sm transition-colors hover:bg-white/20"
+                  className="inline-flex items-center gap-1.5 rounded-full bg-white/10 px-3 py-1.5 text-xs font-medium text-white backdrop-blur-xs transition-colors hover:bg-white/20"
                 >
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
@@ -114,7 +114,7 @@ const Playlist = (props: PlaylistPageProps) => {
 
               {/* Title + meta at bottom */}
               <div>
-                <h1 className="text-3xl font-bold leading-tight text-white drop-shadow-sm sm:text-4xl md:text-5xl">
+                <h1 className="text-3xl leading-tight font-bold text-white drop-shadow-xs sm:text-4xl md:text-5xl">
                   {props.playlist.name}
                 </h1>
                 {props.playlist.description && (
@@ -122,7 +122,7 @@ const Playlist = (props: PlaylistPageProps) => {
                     {props.playlist.description}
                   </p>
                 )}
-                <p className="mt-3 text-[0.65rem] font-bold uppercase tracking-widest text-white/50">
+                <p className="mt-3 text-[0.65rem] font-bold tracking-widest text-white/50 uppercase">
                   {props.playlist.videos.length}{" "}
                   {props.playlist.videos.length === 1 ? "video" : "videos"}
                 </p>
@@ -131,11 +131,11 @@ const Playlist = (props: PlaylistPageProps) => {
           </div>
 
           {/* Section label */}
-          <div className="mb-1 mt-10 flex items-center gap-4">
-            <span className="shrink-0 text-[0.65rem] font-bold uppercase tracking-widest text-neutral-400">
+          <div className="mt-10 mb-1 flex items-center gap-4">
+            <span className="shrink-0 text-[0.65rem] font-bold tracking-widest text-neutral-400 uppercase">
               Videos
             </span>
-            <div className="h-px w-full bg-neutral-150" />
+            <div className="bg-neutral-150 h-px w-full" />
           </div>
 
           {/* Video grid */}

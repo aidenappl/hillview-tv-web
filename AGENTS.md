@@ -8,7 +8,7 @@ Served at **hillview.tv (and www.hillview.tv)** from Lattice stack 38 "Hillview 
 
 ## 2. Stack & dependencies
 
-- Next.js 16 (**Pages Router**), React 18, Tailwind CSS v3, TypeScript, axios (`services/http/requestHandler.ts`), Font Awesome (free), react-hot-toast, `@aidenappleby/monitor-js`
+- Next.js 16 (**Pages Router**), React 18, Tailwind CSS v4 (`@tailwindcss/postcss`, CSS-first config in `styles/globals.css` — no `tailwind.config.js`), TypeScript, axios (`services/http/requestHandler.ts`), Font Awesome (free), react-hot-toast, `@aidenappleby/monitor-js`
 - Node 24 (Docker `node:24-alpine`), `output: "standalone"`
 - Telemetry: `@aidenappleby/monitor-js` ^1.2.1 → Monitor zone **hillview** (§6)
 
@@ -21,7 +21,7 @@ hillview-tv-web/
   hooks/                       # `Query*` data hooks
   lib/                         # `video.ts` helpers, `monitor-server.ts`, `monitor-relay.ts`
   services/                    # `http/requestHandler.ts` (axios `FetchAPI`), `monitor.service.ts` (browser Monitor)
-  styles/                      # Tailwind globals
+  styles/                      # Tailwind v4 entry (`@import "tailwindcss"`, `@theme`) + base styles
   public/                      # static assets
   instrumentation.ts           # onRequestError → Monitor (Node runtime only)
   instrumentation-client.ts    # creates the browser Monitor before hydration
@@ -54,6 +54,7 @@ dev check      # lint + prettier --check + tsc --noEmit
 - Report errors with `reportError(name, error, data)` from `services/monitor.service.ts` in boundaries and catch blocks that change what the user sees. Never put form values, tokens or response bodies in event data.
 - The Monitor ingest key never reaches the browser: the browser SDK posts to the same-origin `/api/monitor`, which validates the batch, forces `service` to `hillview-tv-web`, adds the key and forwards.
 - Legacy codebase: some components predate the estate standards (e.g. component libraries, Pages Router). Don't extend those patterns.
+- **Tailwind v4 CSS layering:** utilities live in `@layer utilities`, and unlayered CSS beats any layer. Put element-level rules (`html`, `body`, `a`, `*`, resets) inside `@layer base` in `styles/globals.css`, or they will override utility classes. Theme tokens go in `@theme`, not a JS config.
 
 ## 6. Domain & architecture
 

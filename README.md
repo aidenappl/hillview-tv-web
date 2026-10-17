@@ -16,7 +16,7 @@ One of three Hillview web apps (hillview.tv, team.hillview.tv, watch.hillview.tv
 
 ## Tech stack
 
-Next.js 16 (**Pages Router**), React 18, Tailwind CSS v3, TypeScript, axios (`services/http/requestHandler.ts`), Font Awesome (free), react-hot-toast, `@aidenappleby/monitor-js` · Docker · Lattice
+Next.js 16 (**Pages Router**), React 18, Tailwind CSS v4 (`@tailwindcss/postcss`, CSS-first config in `styles/globals.css` — no `tailwind.config.js`), TypeScript, axios (`services/http/requestHandler.ts`), Font Awesome (free), react-hot-toast, `@aidenappleby/monitor-js` · Docker · Lattice
 
 ## Getting started
 
