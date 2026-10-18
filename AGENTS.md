@@ -60,7 +60,7 @@ dev check      # lint + prettier --check + tsc --noEmit
 
 **Request flow:** Cloudflare (proxied, `hillview.tv` zone) → NPM proxy host → worker-5 `10.15.10.79:3010` → Next.js standalone server. Browser API calls go straight to `https://api.hillview.tv`.
 
-**Downloads:** the watch page links to `GET {NEXT_PUBLIC_API_URL}/video/v1.1/download/{uuid}` (hillviewVideoAPI), which 302s to a named presigned S3 or Cloudflare Stream link. The site no longer proxies video bytes (the old `/api/download` route was removed when the site left Vercel — it would have streamed every download over the studio's single WAN).
+**Downloads:** the watch page links to `GET {NEXT_PUBLIC_API_URL}/video/v1.1/download/{uuid}` (hillviewVideoAPI), which 302s to a named presigned S3 or Cloudflare Stream link. The site no longer proxies video bytes (the old `/api/download` route was removed when the site left Vercel — it would have streamed every download over the studio's single WAN). The download is counted first with `POST /video/v1.1/recordDownload/{uuid}` sent as `fetch(..., { keepalive: true })` — **not** `FetchAPI`: the click navigates straight to `/download`, and that navigation cancelled the axios request, so downloads went uncounted and logged as Network Errors (Oct 2026).
 
 **Caching:** SSR pages are cached at Cloudflare for 5 minutes and served stale for a day while revalidating; `/_next/static/*` is immutable; `/_next/image` responses are optimised on worker CPU (sharp) and cached both in the `hillview-tv-web-next-cache` volume and at Cloudflare. Purge the Cloudflare cache for hillview.tv after a content change that must show immediately.
 
