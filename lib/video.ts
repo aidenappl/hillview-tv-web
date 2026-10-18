@@ -2,16 +2,35 @@
 // the sitemap video extension, and VideoObject structured data.
 
 const CLOUDFLARE_CUSTOMER = "customer-nakrsdfbtn3mdz5z.cloudflarestream.com";
+const MUX_STREAM = "https://stream.mux.com/";
+
+// Videos are moving from Cloudflare Stream to Mux (Oct 2026); both play until
+// the library has moved. Mux urls are https://stream.mux.com/{playback_id}.m3u8.
 
 export interface VideoUrlInput {
   url?: string | null;
   download_url?: string | null;
   cloudflare_id?: string | null;
+  mux_playback_id?: string | null;
 }
+
+// Mux playback id for a video, or null when it isn't on Mux.
+export const getMuxPlaybackId = (video: VideoUrlInput): string | null => {
+  if (video.mux_playback_id) return video.mux_playback_id;
+  const url = video.url ?? "";
+  if (!url.startsWith(MUX_STREAM)) return null;
+  const m = url
+    .slice(MUX_STREAM.length)
+    .match(/^([A-Za-z0-9]+)\.m3u8(?:[?#]|$)/);
+  return m?.[1] ?? null;
+};
 
 // Player/embed URL (iframe), or null if the source can't be embedded.
 export const getEmbedUrl = (video: VideoUrlInput): string | null => {
   const url = video.url ?? "";
+
+  const muxId = getMuxPlaybackId(video);
+  if (muxId) return `https://player.mux.com/${muxId}`;
 
   if (
     url.includes("cloudflarestream.com") ||

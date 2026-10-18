@@ -8,7 +8,7 @@ Served at **hillview.tv (and www.hillview.tv)** from Lattice stack 38 "Hillview 
 
 ## 2. Stack & dependencies
 
-- Next.js 16 (**Pages Router**), React 18, Tailwind CSS v4 (`@tailwindcss/postcss`, CSS-first config in `styles/globals.css` — no `tailwind.config.js`), TypeScript, axios (`services/http/requestHandler.ts`), Font Awesome (free), react-hot-toast, `@aidenappleby/monitor-js`
+- Next.js 16 (**Pages Router**), React 18, Tailwind CSS v4 (`@tailwindcss/postcss`, CSS-first config in `styles/globals.css` — no `tailwind.config.js`), TypeScript, axios (`services/http/requestHandler.ts`), Font Awesome (free), react-hot-toast, `@mux/mux-player-react` (watch page), `@aidenappleby/monitor-js`
 - Node 24 (Docker `node:24-alpine`), `output: "standalone"`
 - Telemetry: `@aidenappleby/monitor-js` ^1.2.1 → Monitor zone **hillview** (§6)
 
@@ -19,7 +19,7 @@ hillview-tv-web/
   pages/                       # routes; `pages/api/` holds `health`, `monitor` (telemetry relay), `live-status` (Vimeo), `sitemap.xml`
   components/                  # UI (PascalCase)
   hooks/                       # `Query*` data hooks
-  lib/                         # `video.ts` helpers, `monitor-server.ts`, `monitor-relay.ts`
+  lib/                         # `video.ts` helpers (embed/content urls, Mux playback id, VTT parsing), `monitor-server.ts`, `monitor-relay.ts`
   services/                    # `http/requestHandler.ts` (axios `FetchAPI`), `monitor.service.ts` (browser Monitor)
   styles/                      # Tailwind v4 entry (`@import "tailwindcss"`, `@theme`) + base styles
   public/                      # static assets
@@ -60,7 +60,9 @@ dev check      # lint + prettier --check + tsc --noEmit
 
 **Request flow:** Cloudflare (proxied, `hillview.tv` zone) → NPM proxy host → worker-5 `10.15.10.79:3010` → Next.js standalone server. Browser API calls go straight to `https://api.hillview.tv`.
 
-**Downloads:** the watch page links to `GET {NEXT_PUBLIC_API_URL}/video/v1.1/download/{uuid}` (hillviewVideoAPI), which 302s to a named presigned S3 or Cloudflare Stream link. The site no longer proxies video bytes (the old `/api/download` route was removed when the site left Vercel — it would have streamed every download over the studio's single WAN). The download is counted first with `POST /video/v1.1/recordDownload/{uuid}` sent as `fetch(..., { keepalive: true })` — **not** `FetchAPI`: the click navigates straight to `/download`, and that navigation cancelled the axios request, so downloads went uncounted and logged as Network Errors (Oct 2026).
+**Player (Stream → Mux, Oct 2026):** `/watch` picks the player from the video: a Mux video (`mux_playback_id`, or a `https://stream.mux.com/{id}.m3u8` url — `getMuxPlaybackId`) renders `<MuxPlayer>` (on-demand, poster = the stored thumbnail unless it is the upload default, `metadata` = uuid/title for Mux Data, captions come from the HLS text track); a Cloudflare Stream video keeps the Stream iframe and its player SDK until the library has moved. Transcript cues seek either player and follow its `timeupdate`. `getEmbedUrl` gives `https://player.mux.com/{id}` for Mux videos — that is the JSON-LD `embedUrl`, the sitemap `player_loc` and og:video. `image.mux.com` is an allowed `next/image` host and, with `stream.mux.com`, is preconnected in `_document.tsx`.
+
+**Downloads:** the watch page links to `GET {NEXT_PUBLIC_API_URL}/video/v1.1/download/{uuid}` (hillviewVideoAPI), which 302s to a named presigned S3, Mux MP4 or Cloudflare Stream link. The site no longer proxies video bytes (the old `/api/download` route was removed when the site left Vercel — it would have streamed every download over the studio's single WAN). The download is counted first with `POST /video/v1.1/recordDownload/{uuid}` sent as `fetch(..., { keepalive: true })` — **not** `FetchAPI`: the click navigates straight to `/download`, and that navigation cancelled the axios request, so downloads went uncounted and logged as Network Errors (Oct 2026).
 
 **Caching:** SSR pages are cached at Cloudflare for 5 minutes and served stale for a day while revalidating; `/_next/static/*` is immutable; `/_next/image` responses are optimised on worker CPU (sharp) and cached both in the `hillview-tv-web-next-cache` volume and at Cloudflare. Purge the Cloudflare cache for hillview.tv after a content change that must show immediately.
 
