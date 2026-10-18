@@ -209,14 +209,6 @@ const Home: NextPage<HomeProps> = ({ spotlight, latestVideos }) => {
 
         <div className="relative z-10 mx-auto max-w-(--breakpoint-xl)">
           <div className="max-w-3xl">
-            {/* Eyebrow */}
-            <div className="mb-6 flex items-center gap-3">
-              <div className="bg-primary-100 h-px w-6" aria-hidden="true" />
-              <span className="text-primary-100 text-xs font-semibold tracking-[0.14em] uppercase">
-                Hillview Middle School &middot; Student Broadcast Network
-              </span>
-            </div>
-
             {/* Headline */}
             <h1 className="text-header-100 text-[3rem] leading-[1.05] font-black tracking-tight sm:text-6xl lg:text-[5rem]">
               Putting the <span className="text-primary-100">spotlight</span> on
