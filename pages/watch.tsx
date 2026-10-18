@@ -6,6 +6,7 @@ import { DateTime } from "luxon";
 import Link from "next/link";
 import Script from "next/script";
 import toast from "react-hot-toast";
+import MuxPlayer, { MuxPlayerRefAttributes } from "@mux/mux-player-react";
 
 import QueryVideo from "../hooks/QueryVideo";
 import { FetchAPI } from "../services/http/requestHandler";
@@ -13,6 +14,7 @@ import JsonLd from "../components/JsonLd";
 import Transcript from "../components/Transcript";
 import {
   getEmbedUrl,
+  getMuxPlaybackId,
   getContentUrl,
   toIso8601Duration,
   formatDuration,
@@ -48,6 +50,7 @@ interface Video {
   thumbnail: string;
   url: string;
   cloudflare_id?: string;
+  mux_playback_id?: string;
   download_url?: string;
   allow_downloads: boolean;
   duration?: number;
@@ -62,9 +65,18 @@ interface PageProps {
   canonicalUrl: string;
 }
 
-type PlayerSource = { type: "iframe"; src: string } | { type: "unavailable" };
+type PlayerSource =
+  | { type: "mux"; playbackId: string }
+  | { type: "iframe"; src: string }
+  | { type: "unavailable" };
+
+// The upload default; Mux makes a better poster from the video itself.
+const DEFAULT_THUMBNAIL = "https://content.hillview.tv/thumbnails/default.jpg";
 
 const resolvePlayerSource = (video: Video): PlayerSource => {
+  const playbackId = getMuxPlaybackId(video);
+  if (playbackId) return { type: "mux", playbackId };
+
   const embed = getEmbedUrl(video);
   if (!embed) {
     console.error("Unrecognized video URL format:", video.url);
@@ -188,6 +200,10 @@ const Watch = (props: PageProps) => {
   const isCloudflarePlayer =
     player.type === "iframe" && player.src.includes("cloudflarestream.com");
 
+  const isMuxPlayer = player.type === "mux";
+
+  const playerBoxRef = useRef<HTMLDivElement | null>(null);
+  const muxRef = useRef<MuxPlayerRefAttributes | null>(null);
   const iframeRef = useRef<HTMLIFrameElement | null>(null);
   const streamPlayerRef = useRef<StreamPlayer | null>(null);
   const [sdkReady, setSdkReady] = useState(
@@ -217,14 +233,26 @@ const Watch = (props: PageProps) => {
     return () => sp.removeEventListener("timeupdate", onTime);
   }, [isCloudflarePlayer, sdkReady, cues]);
 
-  // Seek the Cloudflare Stream player to a transcript cue's timestamp.
+  // Highlight the active transcript cue while Mux Player plays.
+  const onMuxTimeUpdate = () => {
+    const mp = muxRef.current;
+    if (!mp || cues.length === 0) return;
+    const idx = findActiveCueIndex(cues, mp.currentTime);
+    setActiveCue((prev) => (prev === idx ? prev : idx));
+  };
+
+  // Seek the player (Mux Player or the Cloudflare Stream iframe) to a
+  // transcript cue's timestamp.
   const seekTo = (seconds: number) => {
-    const sp = streamPlayerRef.current;
-    if (!sp) return;
+    const target = isMuxPlayer ? muxRef.current : streamPlayerRef.current;
+    if (!target) return;
     try {
-      sp.currentTime = seconds;
-      sp.play();
-      iframeRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
+      target.currentTime = seconds;
+      void target.play();
+      playerBoxRef.current?.scrollIntoView({
+        behavior: "smooth",
+        block: "start",
+      });
     } catch (error) {
       console.error("Seek failed:", error);
     }
@@ -261,7 +289,7 @@ const Watch = (props: PageProps) => {
   };
 
   // The video API answers with a 302 to a named, time-limited link straight
-  // to S3 or Cloudflare Stream, so the file never passes through this server.
+  // to S3, Mux or Cloudflare Stream, so the file never passes through this server.
   const handleDownload = () => {
     recordDownload();
     const href = `${process.env.NEXT_PUBLIC_API_URL}/video/v1.1/download/${encodeURIComponent(props.video.uuid)}`;
@@ -324,8 +352,36 @@ const Watch = (props: PageProps) => {
         </div>
 
         {/* ── Video player ── */}
-        {player.type === "iframe" ? (
-          <div className="ring-neutral-150 overflow-hidden rounded-xl shadow-sm ring-1">
+        {player.type === "mux" ? (
+          <div
+            ref={playerBoxRef}
+            className="ring-neutral-150 overflow-hidden rounded-xl bg-black shadow-sm ring-1"
+          >
+            <MuxPlayer
+              ref={muxRef}
+              playbackId={player.playbackId}
+              streamType="on-demand"
+              poster={
+                props.video.thumbnail &&
+                props.video.thumbnail !== DEFAULT_THUMBNAIL
+                  ? props.video.thumbnail
+                  : undefined
+              }
+              title={props.video.title}
+              metadata={{
+                video_id: props.video.uuid,
+                video_title: props.video.title,
+              }}
+              accentColor="#0d6efd"
+              onTimeUpdate={onMuxTimeUpdate}
+              style={{ aspectRatio: "16 / 9", width: "100%", display: "block" }}
+            />
+          </div>
+        ) : player.type === "iframe" ? (
+          <div
+            ref={playerBoxRef}
+            className="ring-neutral-150 overflow-hidden rounded-xl shadow-sm ring-1"
+          >
             <div className="relative pt-[56.25%]">
               <iframe
                 ref={iframeRef}
@@ -450,7 +506,7 @@ const Watch = (props: PageProps) => {
           )}
 
           {/* Transcript — timestamped cues; full text stays in the DOM (crawlable)
-              while collapsed. On Cloudflare videos, timestamps seek the player. */}
+              while collapsed. On Mux and Cloudflare videos, timestamps seek the player. */}
           {cues.length > 0 && (
             <details className="group border-neutral-150 mt-6 rounded-xl border bg-neutral-50/60">
               <summary className="text-header-100 flex cursor-pointer list-none items-center justify-between gap-2 px-5 py-3.5 text-sm font-semibold">
@@ -474,7 +530,7 @@ const Watch = (props: PageProps) => {
               <Transcript
                 cues={cues}
                 activeIndex={activeCue}
-                onSeek={isCloudflarePlayer ? seekTo : undefined}
+                onSeek={isMuxPlayer || isCloudflarePlayer ? seekTo : undefined}
               />
             </details>
           )}
