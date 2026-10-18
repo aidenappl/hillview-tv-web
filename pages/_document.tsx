@@ -9,11 +9,6 @@ export default function Document() {
           href="https://content.hillview.tv"
           crossOrigin=""
         />
-        <link
-          rel="preconnect"
-          href="https://customer-nakrsdfbtn3mdz5z.cloudflarestream.com"
-          crossOrigin=""
-        />
         <link rel="preconnect" href="https://stream.mux.com" crossOrigin="" />
         <link rel="preconnect" href="https://image.mux.com" crossOrigin="" />
         <link rel="dns-prefetch" href="https://api.hillview.tv" />

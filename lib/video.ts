@@ -1,16 +1,14 @@
 // Shared video-URL resolution — single source of truth for the watch page,
 // the sitemap video extension, and VideoObject structured data.
 
-const CLOUDFLARE_CUSTOMER = "customer-nakrsdfbtn3mdz5z.cloudflarestream.com";
 const MUX_STREAM = "https://stream.mux.com/";
 
-// Videos are moving from Cloudflare Stream to Mux (Oct 2026); both play until
-// the library has moved. Mux urls are https://stream.mux.com/{playback_id}.m3u8.
+// Every video plays from Mux (moved from Cloudflare Stream, Oct 2026). Mux urls
+// are https://stream.mux.com/{playback_id}.m3u8.
 
 export interface VideoUrlInput {
   url?: string | null;
   download_url?: string | null;
-  cloudflare_id?: string | null;
   mux_playback_id?: string | null;
 }
 
@@ -31,17 +29,6 @@ export const getEmbedUrl = (video: VideoUrlInput): string | null => {
 
   const muxId = getMuxPlaybackId(video);
   if (muxId) return `https://player.mux.com/${muxId}`;
-
-  if (
-    url.includes("cloudflarestream.com") ||
-    url.includes("videodelivery.net")
-  ) {
-    return url.replaceAll("/manifest/video.m3u8", "/iframe");
-  }
-
-  if (video.cloudflare_id) {
-    return `https://${CLOUDFLARE_CUSTOMER}/${video.cloudflare_id}/iframe`;
-  }
 
   if (url.includes("vimeo")) {
     const match = url.match(/\/external\/(\d+)\.m3u8/);
