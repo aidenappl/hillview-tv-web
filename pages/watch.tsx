@@ -246,15 +246,18 @@ const Watch = (props: PageProps) => {
     recordView();
   }, [props.video.uuid]);
 
-  const recordDownload = async () => {
-    try {
-      await FetchAPI({
-        method: "POST",
-        url: `/video/v1.1/recordDownload/${props.video.uuid}`,
-      });
-    } catch (error) {
+  // keepalive, not FetchAPI: handleDownload navigates to /download straight
+  // after this, and the navigation cancelled the axios POST mid-flight — the
+  // download was never counted and the browser reported a Network Error. A
+  // keepalive request outlives the page that sent it. Body-less, so it stays a
+  // CORS simple request (no preflight) to an endpoint that needs no auth.
+  const recordDownload = () => {
+    fetch(
+      `${process.env.NEXT_PUBLIC_API_URL}/video/v1.1/recordDownload/${encodeURIComponent(props.video.uuid)}`,
+      { method: "POST", keepalive: true },
+    ).catch((error) => {
       console.error("Error recording download:", error);
-    }
+    });
   };
 
   // The video API answers with a 302 to a named, time-limited link straight
