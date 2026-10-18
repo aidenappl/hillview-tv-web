@@ -4,7 +4,6 @@ import { useRouter } from "next/router";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { DateTime } from "luxon";
 import Link from "next/link";
-import Script from "next/script";
 import toast from "react-hot-toast";
 import MuxPlayer, { MuxPlayerRefAttributes } from "@mux/mux-player-react";
 
@@ -22,19 +21,6 @@ import {
   findActiveCueIndex,
 } from "../lib/video";
 
-// Cloudflare Stream Player SDK shape (only what we use).
-interface StreamPlayer {
-  currentTime: number;
-  play: () => void;
-  addEventListener: (event: string, handler: () => void) => void;
-  removeEventListener: (event: string, handler: () => void) => void;
-}
-declare global {
-  interface Window {
-    Stream?: (iframe: HTMLIFrameElement) => StreamPlayer;
-  }
-}
-
 interface GeneralNSM {
   id: number;
   name: string;
@@ -49,7 +35,6 @@ interface Video {
   description: string;
   thumbnail: string;
   url: string;
-  cloudflare_id?: string;
   mux_playback_id?: string;
   download_url?: string;
   allow_downloads: boolean;
@@ -81,21 +66,6 @@ const resolvePlayerSource = (video: Video): PlayerSource => {
   if (!embed) {
     console.error("Unrecognized video URL format:", video.url);
     return { type: "unavailable" };
-  }
-
-  // Cloudflare's iframe player takes poster + sizing params; others embed clean.
-  if (
-    embed.includes("cloudflarestream.com") ||
-    embed.includes("videodelivery.net")
-  ) {
-    const params = new URLSearchParams({
-      preload: "auto",
-      poster: video.thumbnail ?? "",
-      fit: "clip",
-      width: "1280",
-      height: "720",
-    });
-    return { type: "iframe", src: `${embed}?${params.toString()}` };
   }
 
   return { type: "iframe", src: embed };
@@ -197,41 +167,11 @@ const Watch = (props: PageProps) => {
   };
 
   const player = resolvePlayerSource(props.video);
-  const isCloudflarePlayer =
-    player.type === "iframe" && player.src.includes("cloudflarestream.com");
-
   const isMuxPlayer = player.type === "mux";
 
   const playerBoxRef = useRef<HTMLDivElement | null>(null);
   const muxRef = useRef<MuxPlayerRefAttributes | null>(null);
-  const iframeRef = useRef<HTMLIFrameElement | null>(null);
-  const streamPlayerRef = useRef<StreamPlayer | null>(null);
-  const [sdkReady, setSdkReady] = useState(
-    typeof window !== "undefined" && !!window.Stream,
-  );
   const [activeCue, setActiveCue] = useState(-1);
-
-  // Attach to the Cloudflare Stream player once its SDK is ready, and track the
-  // playback position to highlight the active transcript cue.
-  useEffect(() => {
-    if (
-      !isCloudflarePlayer ||
-      !sdkReady ||
-      !iframeRef.current ||
-      !window.Stream
-    ) {
-      return;
-    }
-    const sp = window.Stream(iframeRef.current);
-    streamPlayerRef.current = sp;
-    if (cues.length === 0) return;
-    const onTime = () => {
-      const idx = findActiveCueIndex(cues, sp.currentTime);
-      setActiveCue((prev) => (prev === idx ? prev : idx));
-    };
-    sp.addEventListener("timeupdate", onTime);
-    return () => sp.removeEventListener("timeupdate", onTime);
-  }, [isCloudflarePlayer, sdkReady, cues]);
 
   // Highlight the active transcript cue while Mux Player plays.
   const onMuxTimeUpdate = () => {
@@ -241,10 +181,9 @@ const Watch = (props: PageProps) => {
     setActiveCue((prev) => (prev === idx ? prev : idx));
   };
 
-  // Seek the player (Mux Player or the Cloudflare Stream iframe) to a
-  // transcript cue's timestamp.
+  // Seek Mux Player to a transcript cue's timestamp.
   const seekTo = (seconds: number) => {
-    const target = isMuxPlayer ? muxRef.current : streamPlayerRef.current;
+    const target = muxRef.current;
     if (!target) return;
     try {
       target.currentTime = seconds;
@@ -289,7 +228,7 @@ const Watch = (props: PageProps) => {
   };
 
   // The video API answers with a 302 to a named, time-limited link straight
-  // to S3, Mux or Cloudflare Stream, so the file never passes through this server.
+  // to S3 or Mux, so the file never passes through this server.
   const handleDownload = () => {
     recordDownload();
     const href = `${process.env.NEXT_PUBLIC_API_URL}/video/v1.1/download/${encodeURIComponent(props.video.uuid)}`;
@@ -316,13 +255,6 @@ const Watch = (props: PageProps) => {
   return (
     <Layout>
       <JsonLd data={[videoJsonLd, breadcrumbJsonLd]} />
-      {isCloudflarePlayer && cues.length > 0 && (
-        <Script
-          src="https://embed.cloudflarestream.com/embed/sdk.latest.js"
-          strategy="afterInteractive"
-          onLoad={() => setSdkReady(true)}
-        />
-      )}
 
       <div className="mx-auto w-full max-w-(--breakpoint-xl) px-6 pt-8 pb-20 sm:pt-10">
         {/* ── Back link ── */}
@@ -384,7 +316,6 @@ const Watch = (props: PageProps) => {
           >
             <div className="relative pt-[56.25%]">
               <iframe
-                ref={iframeRef}
                 src={player.src}
                 className="absolute inset-0 h-full w-full border-none"
                 allow="accelerometer; gyroscope; autoplay; encrypted-media; picture-in-picture"
@@ -506,7 +437,7 @@ const Watch = (props: PageProps) => {
           )}
 
           {/* Transcript — timestamped cues; full text stays in the DOM (crawlable)
-              while collapsed. On Mux and Cloudflare videos, timestamps seek the player. */}
+              while collapsed. On Mux videos, timestamps seek the player. */}
           {cues.length > 0 && (
             <details className="group border-neutral-150 mt-6 rounded-xl border bg-neutral-50/60">
               <summary className="text-header-100 flex cursor-pointer list-none items-center justify-between gap-2 px-5 py-3.5 text-sm font-semibold">
@@ -530,7 +461,7 @@ const Watch = (props: PageProps) => {
               <Transcript
                 cues={cues}
                 activeIndex={activeCue}
-                onSeek={isMuxPlayer || isCloudflarePlayer ? seekTo : undefined}
+                onSeek={isMuxPlayer ? seekTo : undefined}
               />
             </details>
           )}

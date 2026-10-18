@@ -12,10 +12,6 @@ const nextConfig = {
       },
       {
         protocol: "https",
-        hostname: "customer-nakrsdfbtn3mdz5z.cloudflarestream.com",
-      },
-      {
-        protocol: "https",
         hostname: "image.mux.com",
       },
     ],
