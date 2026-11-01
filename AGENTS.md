@@ -64,7 +64,7 @@ dev check      # lint + prettier --check + tsc --noEmit
 
 **Downloads:** the watch page links to `GET {NEXT_PUBLIC_API_URL}/video/v1.1/download/{uuid}` (hillviewVideoAPI), which 302s to a named presigned S3 or Mux MP4 link. The site no longer proxies video bytes (the old `/api/download` route was removed when the site left Vercel — it would have streamed every download over the studio's single WAN). The download is counted first with `POST /video/v1.1/recordDownload/{uuid}` sent as `fetch(..., { keepalive: true })` — **not** `FetchAPI`: the click navigates straight to `/download`, and that navigation cancelled the axios request, so downloads went uncounted and logged as Network Errors (Oct 2026).
 
-**Caching:** SSR pages are cached at Cloudflare for 5 minutes and served stale for a day while revalidating; `/_next/static/*` is immutable; `/_next/image` responses are optimised on worker CPU (sharp) and cached both in the `hillview-tv-web-next-cache` volume and at Cloudflare. Purge the Cloudflare cache for hillview.tv after a content change that must show immediately.
+**Caching:** SSR pages are cached at Cloudflare for 5 minutes and served stale for a day while revalidating; `/_next/static/*` is immutable; `/_next/image` responses are optimised on worker CPU (sharp) and cached both in the `hillview-tv-web-next-cache` volume (`images.minimumCacheTTL` 31 days — thumbnails are immutable, and Next aborts origin fetches after 7s with a 504, so re-fetching a whole grid from OpenBucket at once times out) and at Cloudflare. Purge the Cloudflare cache for hillview.tv after a content change that must show immediately.
 
 ### Monitor telemetry
 

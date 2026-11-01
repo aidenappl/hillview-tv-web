@@ -15,7 +15,7 @@ const QueryRoute = async (path: string): Promise<RouteRedirect | null> => {
     return null;
   }
 
-  // Fetching playlist
+  // Checking for a short link
   const response = await FetchAPI<RouteRedirect>({
     url: `/links/v1.1/check/${encodeURIComponent(path)}`,
     method: "GET",
@@ -28,7 +28,11 @@ const QueryRoute = async (path: string): Promise<RouteRedirect | null> => {
   if (response.success) {
     return response.data;
   } else {
-    console.error("Error fetching playlist:", response.error);
+    // A path with no short link is an empty-body 404 (error_code 0): a
+    // routine miss, mostly bots. Only log real failures.
+    if (response.error_code !== 0 && response.error_code !== 404) {
+      console.error("Error checking route:", response.error);
+    }
     return null;
   }
 };
