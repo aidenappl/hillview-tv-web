@@ -5,6 +5,10 @@ const nextConfig = {
   reactStrictMode: true,
   poweredByHeader: false,
   images: {
+    // Thumbnails are immutable (unique filenames). The 4h default made the
+    // optimizer re-fetch whole grids from OpenBucket at once, and fetches
+    // past its 7s limit surfaced as 504s on /_next/image.
+    minimumCacheTTL: 2678400,
     remotePatterns: [
       {
         protocol: "https",
