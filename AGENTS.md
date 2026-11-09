@@ -19,12 +19,12 @@ hillview-tv-web/
   pages/                       # routes; `pages/api/` holds `health`, `monitor` (telemetry relay), `live-status` (Vimeo), `sitemap.xml`
   components/                  # UI (PascalCase)
   hooks/                       # `Query*` data hooks
-  lib/                         # `video.ts` helpers (embed/content urls, Mux playback id, VTT parsing), `monitor-server.ts`, `monitor-relay.ts`
+  lib/                         # `video.ts` helpers (embed/content urls, Mux playback id, VTT parsing), `monitor-server.ts`, `monitor-relay.ts`, `browser-recovery.ts` (storage guard, stale-chunk reload)
   services/                    # `http/requestHandler.ts` (axios `FetchAPI`), `monitor.service.ts` (browser Monitor)
   styles/                      # Tailwind v4 entry (`@import "tailwindcss"`, `@theme`) + base styles
   public/                      # static assets
   instrumentation.ts           # onRequestError → Monitor (Node runtime only)
-  instrumentation-client.ts    # creates the browser Monitor before hydration
+  instrumentation-client.ts    # creates the browser Monitor before hydration; then guardStorage() and recoverFromStaleChunks()
   next.config.*                # standalone output, image hosts, security headers
   Dockerfile                   # node:24-alpine build → standalone runner as uid 1001, HEALTHCHECK /api/health
   .github/workflows/push-to-registry.yml   # main → registry.appleby.cloud → Lattice redeploy
@@ -98,6 +98,8 @@ Service **`hillview-tv-web`**, zone **`hillview`** (Lattice stack 37). Server-si
 - Never expose `MONITOR_API_KEY` to the browser or prefix it `NEXT_PUBLIC_`.
 - Never proxy large files through this server — the studio has one WAN.
 - Keep `lib/monitor-relay.ts` / `lib/monitor-server.ts` in step with the sibling Hillview web repos.
+- **Blocked storage.** Browsers that block site data (Safari "Block all cookies", Firefox with storage off, sandboxed iframes) throw `SecurityError: The operation is insecure.` on any `localStorage` / `sessionStorage` access. Mux Player (media-chrome) reads its subtitle/volume/muted prefs from `localStorage` unguarded, which broke `/watch`. `guardStorage()` swaps in an in-memory `Storage` when the real one throws; never rely on storage surviving a reload.
+- **Stale chunks after a deploy.** A tab running the previous build gets Turbopack's "module factory is not available" (or a ChunkLoadError) once the new build stops serving its chunks. `recoverFromStaleChunks()` reloads the page once (at most once a minute, tracked in `sessionStorage`); a repeat is left to Monitor.
 
 ### Nexus
 
